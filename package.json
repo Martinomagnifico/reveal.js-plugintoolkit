@@ -1,0 +1,47 @@
+{
+  "name": "reveal-plugin-toolkit",
+  "version": "0.1.0",
+  "description": "Toolkit for building Reveal.js plugins",
+  "main": "dist/reveal-plugin-toolkit.js",
+  "module": "dist/reveal-plugin-toolkit.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "author": {
+    "name": "Martijn De Jongh (Martino)",
+    "email": "martijn.de.jongh@gmail.com",
+    "web": "https://martinomagnifico.github.io",
+    "url": "https://martinomagnifico.github.io",
+    "username": "martinomagnifico"
+  },
+  "homepage": "https://github.com/martinomagnifico/reveal-plugin-toolkit",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinomagnifico/reveal-plugin-toolkit.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:demo": "cd demo && vite build",
+    "preview": "cd demo && vite preview",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "deepmerge": "^4.3.1"
+  },
+  "peerDependencies": {
+    "reveal.js": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/reveal.js": "^4.4.2",
+    "reveal.js": "^4.5.0",
+    "typescript": "^5.0.4",
+    "vite": "latest",
+    "vite-plugin-dts": "^2.3.0"
+  }
+}

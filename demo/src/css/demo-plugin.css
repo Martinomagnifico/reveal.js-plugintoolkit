@@ -1,0 +1,16 @@
+.reveal .slides section {
+	border: 2px solid rgba(0, 128, 0, 0.2);
+	border-radius: 5px;
+}
+
+.demo-plugin-indicator {
+	position: fixed;
+	bottom: 10px;
+	left: 10px;
+	background: green;
+	color: white;
+	padding: 5px 10px;
+	border-radius: 3px;
+	z-index: 1000;
+	font-family: var(--r-heading-font), sans-serif;
+  }

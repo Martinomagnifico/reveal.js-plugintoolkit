@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reveal.js Demo Plugin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Demo Plugin</h1>
+                <p>This demonstrates the Reveal.js Plugin Toolkit</p>
+            </section>
+            <section>
+                <h2>Second Slide</h2>
+                <p>Check the bottom right corner for the plugin indicator</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.0/dist/reveal.js"></script>
+    <script src="./plugin/demo-plugin/demo-plugin.js"></script>
+    <script>
+        // Initialize Reveal.js
+        Reveal.initialize({
+			plugins: [ RevealDemoPlugin ],
+            'demo-plugin': {
+                debug: true,
+                demoOption: 'custom value'
+            }
+        });
+    </script>
+</body>
+</html>
