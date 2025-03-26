@@ -1,17 +1,14 @@
 import type { Api } from 'reveal.js';
 import type { Config } from './config';
 
+// From npm the next line would be: ... from 'reveal.js-plugintoolkit'
 import { PluginBase, pluginCSS } from '../../../src';
 
 import { defaultConfig } from './config';
 import { DemoPlugin } from './main';
 
-
-
 // We are importing the CSS here. This import will not be present in the output JS files.
 import '../css/demo-plugin.css';
-
-
 
 const init = async (plugin: PluginBase<Config>, deck: Api, config: Config): Promise<void> => {
     

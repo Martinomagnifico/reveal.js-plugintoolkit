@@ -1,9 +1,9 @@
 {
-  "name": "reveal-plugin-toolkit",
+  "name": "reveal.js-plugintoolkit",
   "version": "0.1.0",
   "description": "Toolkit for building Reveal.js plugins",
-  "main": "dist/reveal-plugin-toolkit.js",
-  "module": "dist/reveal-plugin-toolkit.mjs",
+  "main": "dist/reveal.js-plugintoolkit.js",
+  "module": "dist/reveal.js-plugintoolkit.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
@@ -17,11 +17,11 @@
     "url": "https://martinomagnifico.github.io",
     "username": "martinomagnifico"
   },
-  "homepage": "https://github.com/martinomagnifico/reveal-plugin-toolkit",
+  "homepage": "https://github.com/martinomagnifico/reveal.js-plugintoolkit",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/martinomagnifico/reveal-plugin-toolkit.git"
+    "url": "git+https://github.com/martinomagnifico/reveal.js-plugintoolkit.git"
   },
   "scripts": {
     "dev": "vite",

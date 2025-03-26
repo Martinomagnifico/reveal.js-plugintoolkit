@@ -53,24 +53,39 @@ export const processDeveloperPaths = async (
   let pathsToTry: string[] = [];
   
   if (typeof devPaths === 'object' && !Array.isArray(devPaths)) {
-    // Environment-specific paths object
-    if (hasNodeModules && devPaths.npm) {
-      pathsToTry = Array.isArray(devPaths.npm) ? devPaths.npm : [devPaths.npm];
-      debug && console.log(`[${pluginId}] Using npm paths`);
-    } else if (devPaths.standard) {
-      pathsToTry = Array.isArray(devPaths.standard) ? devPaths.standard : [devPaths.standard];
-      debug && console.log(`[${pluginId}] Using standard paths`);
+    // Environment-specific paths
+    const envPaths = devPaths as PluginCssPaths;
+    
+    // Start with environment-specific paths
+    if (hasNodeModules && envPaths.npm) {
+      const npmPaths = Array.isArray(envPaths.npm) ? envPaths.npm : [envPaths.npm];
+      pathsToTry = [...pathsToTry, ...npmPaths];
+      debug && console.log(`[${pluginId}] Using npm paths first`);
     }
     
-    // Add fallback paths if specified
-    if (devPaths.fallback) {
-      const fallbacks = Array.isArray(devPaths.fallback) ? devPaths.fallback : [devPaths.fallback];
-      pathsToTry = [...pathsToTry, ...fallbacks];
+    // Always add standard paths (either as primary or fallback)
+    if (envPaths.standard) {
+      const standardPaths = Array.isArray(envPaths.standard) ? envPaths.standard : [envPaths.standard];
+      pathsToTry = [...pathsToTry, ...standardPaths];
+      
+      // Only log this if we're not in npm environment
+      if (!hasNodeModules || !envPaths.npm) {
+        debug && console.log(`[${pluginId}] Using standard paths`);
+      } else {
+        debug && console.log(`[${pluginId}] Adding standard paths as fallback`);
+      }
+    }
+    
+    // Add explicit fallback paths
+    if (envPaths.fallback) {
+      const fallbackPaths = Array.isArray(envPaths.fallback) ? envPaths.fallback : [envPaths.fallback];
+      pathsToTry = [...pathsToTry, ...fallbackPaths];
     }
   } else {
     // Simple string or array of strings
     pathsToTry = Array.isArray(devPaths) ? devPaths : [devPaths as string];
   }
   
+  // Try each path in order
   return tryPaths(pluginId, pathsToTry, 'dev', debug);
 };

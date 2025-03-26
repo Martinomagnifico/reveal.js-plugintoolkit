@@ -29,86 +29,113 @@ Pluginbase provides a base class for plugins that has standardized functionality
 - **JavaScript Support**: Can be used in JavaScript projects as well.
 - **Plugin Interface**: Allows you to define additional methods that can be called from outside the plugin.
 
+Here's a minimal plugin using PluginBase:
 
+```javascript
+import { PluginBase } from 'reveal-plugin-toolkit';
 
-#### Example (TypeScript)
+// Minimal default configuration
+const defaultConfig = {
+  message: 'Hello World',
+  display: true
+};
+
+// Simple initialization function that just logs config values
+const init = (plugin, deck, config) => {
+  if (config.display) {
+    console.log(config.message);
+  }
+};
+
+// Export the plugin
+export default () => {
+  const plugin = new PluginBase('minimal', init, defaultConfig);
+  return plugin.createInterface();
+};
+```
+
+or the same in TypeScript:
 
 ```typescript
 import { PluginBase } from 'reveal-plugin-toolkit';
 import type { Api } from 'reveal.js';
 
-// Define your plugin configuration interface
-interface MyPluginConfig {
-  optionOne: string;
-  optionTwo: number;
-  cssautoload?: boolean;
-  csspath?: string | string[];
+// Define configuration interface
+interface MinimalConfig {
+  message: string;
+  display: boolean;
 }
 
-// Define default configuration
-const defaultConfig: MyPluginConfig = {
-  optionOne: "default",
-  optionTwo: 42,
-  cssautoload: true
+// Minimal default configuration
+const defaultConfig: MinimalConfig = {
+  message: 'Hello World',
+  display: true
 };
 
-// Plugin initialization function
-const init = async (plugin: PluginBase<MyPluginConfig>, deck: Api, config: MyPluginConfig) => {
-  // Your initialization code here
-  console.log(`Plugin initialized with option: ${config.optionOne}`);
-  
-  // Store data for later use
-  plugin.data.elements = document.querySelectorAll('.my-elements');
+// Simple initialization function that just logs config values
+const init = (plugin: PluginBase<MinimalConfig>, deck: Api, config: MinimalConfig): void => {
+  if (config.display) {
+    console.log(config.message);
+  }
 };
 
-// Create and export the plugin
+// Export the plugin
 export default () => {
-  const plugin = new PluginBase<MyPluginConfig>('my-plugin', init, defaultConfig);
-  
-  return plugin.createInterface({
-    // Additional methods
-    doSomething: () => {
-      // Implementation
-      return "result";
-    }
-  });
+  const plugin = new PluginBase<MinimalConfig>('minimal', init, defaultConfig);
+  return plugin.createInterface();
 };
 ```
 
-or we can do something similar in JavaScript:
 
-#### Example (JavaScript)
+
+The above code will generate this:
 
 ```javascript
-import { PluginBase } from 'reveal-plugin-toolkit';
-import { Api } from 'reveal.js';
-// Define your plugin configuration interface
-const defaultConfig = {
-  optionOne: "default",
-  optionTwo: 42,
-  cssautoload: true
-};
-// Plugin initialization function
-const init = async (plugin, deck, config) => {
-  // Your initialization code here
-  console.log(`Plugin initialized with option: ${config.optionOne}`);
-  
-  // Store data for later use
-  plugin.data.elements = document.querySelectorAll('.my-elements');
-};
-// Create and export the plugin
+import deepmerge from 'deepmerge';
+
 export default () => {
-  const plugin = new PluginBase('my-plugin', init, defaultConfig);
-  
-  return plugin.createInterface({
-    // Additional methods
-    doSomething: () => {
-      // Implementation
-      return "result";
+  // Plugin implementation
+  const plugin = {
+    id: 'minimal',
+    
+    initializeConfig: function(deck) {
+      const defaultConfig = { message: 'Hello World', display: true };
+      const revealConfig = deck.getConfig();
+      const userConfig = revealConfig['minimal'] || {};
+      
+      this.mergedConfig = deepmerge(defaultConfig, userConfig, {
+        arrayMerge: (_, sourceArray) => sourceArray,
+        clone: true
+      });
+    },
+    
+    getCurrentConfig: function() {
+      if (!this.mergedConfig) {
+        throw new Error('Plugin configuration has not been initialized');
+      }
+      return this.mergedConfig;
+    },
+    
+    init: function(deck) {
+      this.initializeConfig(deck);
+      
+      // Your simple init function
+      const config = this.getCurrentConfig();
+      if (config.display) {
+        console.log(config.message);
+      }
     }
-  });
+  };
+  
+  // Return the interface
+  return {
+    id: plugin.id,
+    init: (deck) => plugin.init(deck),
+    getConfig: () => plugin.getCurrentConfig()
+  };
 };
 ```
+
 
 
 
