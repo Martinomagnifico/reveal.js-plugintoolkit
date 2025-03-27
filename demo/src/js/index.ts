@@ -18,14 +18,8 @@ const init = async (plugin: PluginBase<Config>, deck: Api, config: Config): Prom
         try {
             await pluginCSS({
                 id: plugin.pluginId,
-                enableLoading: config.cssautoload,
-                userPath: config.csspath,
-                developerPaths: {
-                    // You could also use the pluginId as a variable here
-                    npm: 'node_modules/reveal.js-demo-plugin/dist/demo-plugin.css',
-                    standard: 'plugin/demo-plugin/demo-plugin.css',
-                    fallback: './css/demo-plugin.css'
-                },
+                cssautoload: config.cssautoload,
+                csspath: config.csspath,
                 debug: config.debug
             });
         } catch (err) {

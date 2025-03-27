@@ -1,17 +1,9 @@
 /**
- * Environment-specific paths structure
+ * Options for the pluginCSS function
  */
-export interface PluginCssPaths {
-	npm?: string | string[];       // Paths to try first in npm environments
-	standard?: string | string[];  // Paths to try first in standard environments
-	fallback?: string | string[];  // Paths to try if environment detection fails
-  }
-  
-  /**
-   * Environment detection results
-   */
-  export interface Environment {
-	isDevEnv: boolean;
-	isLocalFilesystem: boolean;
-	hasNodeModules: boolean;
+export interface PluginCssOptions {
+	id: string;                   // Required: Plugin identifier
+	cssautoload?: boolean;        // Optional: Enable/disable CSS loading (default true)
+	csspath?: string | false;     // Optional: User-specified CSS path
+	debug?: boolean;              // Optional: Enable debug logging (default false)
   }

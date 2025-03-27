@@ -1,9 +1,9 @@
 {
   "name": "reveal.js-plugintoolkit",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Toolkit for building Reveal.js plugins",
-  "main": "dist/reveal.js-plugintoolkit.js",
-  "module": "dist/reveal.js-plugintoolkit.mjs",
+  "main": "dist/plugintoolkit.js",
+  "module": "dist/plugintoolkit.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
