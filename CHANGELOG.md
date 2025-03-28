@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2025-03-28
+### Changed
+- Change Reveal dependency to be a >= 4 dependency.
+
+
 ## [0.1.3] - 2025-03-26
 ### Changed
 - Remove any failed CSS links from the DOM
