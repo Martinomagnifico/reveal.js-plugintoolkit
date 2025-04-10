@@ -1,1 +1,1 @@
-.reveal .slides section{border:2px solid rgba(0,128,0,.2);border-radius:5px}.demo-plugin-indicator{position:fixed;bottom:10px;left:10px;background:green;color:#fff;padding:5px 10px;border-radius:3px;z-index:1000;font-family:var(--r-heading-font),sans-serif}
+:root{--r-background-color: #051525;--r-heading-text-transform: none;--r-heading1-size: 2.7em;--r-main-font-size: 36px}.demo-plugin-indicator{position:fixed;bottom:10px;left:10px;background:green;color:#fff;padding:5px 10px;border-radius:3px;z-index:1000;font-family:var(--r-heading-font),sans-serif}

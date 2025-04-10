@@ -3,6 +3,7 @@ import type { Config } from './config';
 
 // From npm the next line would be: ... from 'reveal.js-plugintoolkit'
 import { PluginBase, pluginCSS } from '../../../src';
+import { pluginDebug } from '../../../src';
 
 import { defaultConfig } from './config';
 import { DemoPlugin } from './main';
@@ -12,6 +13,9 @@ import '../css/demo-plugin.css';
 
 const init = async (plugin: PluginBase<Config>, deck: Api, config: Config): Promise<void> => {
     
+    // Enable debug mode if needed
+    pluginDebug.initialize(config.debug, 'demo-plugin');
+
     // Load CSS if needed
     if (config.cssautoload) {
 
@@ -23,7 +27,7 @@ const init = async (plugin: PluginBase<Config>, deck: Api, config: Config): Prom
                 debug: config.debug
             });
         } catch (err) {
-            console.warn('CSS loading failed, but plugin will continue:', err);
+            pluginDebug.warn('CSS loading failed, but plugin will continue:', err);
         }
     }
     

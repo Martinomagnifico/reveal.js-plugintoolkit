@@ -6,7 +6,7 @@ const CSS_ID_ATTR = 'data-css-id';
 /**
  * Helper function to load a CSS file via link element
  */
-export const linkAndLoad = (pluginId: string, path: string, debug: boolean): Promise<void> => {
+export const linkAndLoad = (pluginId: string, path: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -19,8 +19,7 @@ export const linkAndLoad = (pluginId: string, path: string, debug: boolean): Pro
       if (link.parentNode) {
         link.parentNode.removeChild(link);
       }
-      debug && console.log(`[${pluginId}] Timeout loading CSS from: ${path}`);
-      reject(new Error(`Timeout loading CSS from: ${path}`));
+      reject(new Error(`[${pluginId}] Timeout loading CSS from: ${path}`));
     }, 5000); // 5 second timeout
     
     // Success handler
@@ -36,7 +35,7 @@ export const linkAndLoad = (pluginId: string, path: string, debug: boolean): Pro
       if (link.parentNode) {
         link.parentNode.removeChild(link);
       }
-      reject(new Error(`Failed to load CSS from: ${path}`));
+      reject(new Error(`[${pluginId}] Failed to load CSS from: ${path}`));
     };
     
     // Add to DOM

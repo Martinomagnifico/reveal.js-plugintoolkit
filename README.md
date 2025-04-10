@@ -2,17 +2,22 @@
 
 A toolkit for creating structured, maintainable Reveal.js plugins with standardized configuration management, CSS loading, and initialization patterns.
 
-There are, for the moment, TWO separate functionalities to the toolkit:
+There are a few functionalities to the toolkit:
 
-  - [PluginBase](#1-plugin-base)
-  - [PluginCSS](#2-plugin-css)
+  - [PluginBase](#1-pluginbase)
+  - [pluginCSS](#2-plugincss)
+  - [pluginDebug](#3-plugindebug)
 
-Both of them will be described in detail below.
+These will be described in detail below.
 
 Installation
+
 ```bash
 npm install reveal.js-plugintoolkit
 ```
+
+---
+
 
 ## 1. PluginBase
 
@@ -138,7 +143,7 @@ export default () => {
 
 
 
-## 2. Plugin-CSS
+## 2. pluginCSS
 
 The toolkit provides a flexible CSS loading utility that simplifies plugin styling. The path is derived from the JS path that the plugin is loaded from. It is expected that the CSS is in the same location. If a path is correctly found, it will be inserted in the DOM.
 
@@ -181,3 +186,77 @@ Reveal.initialize({
     }
 });
 ```
+
+
+## 3. pluginDebug
+
+
+When using different Reveal.js plugins, you may want to enable debug output for your plugin, but only if the user has enabled it.
+If multiple plugins are active, then it might be useful to have a label for each plugin in the console output.
+These two features are provided by this pluginDebug tooling.
+
+The functionality needs to be enabled first. Otherwise, the pluginDebug object will not output anything.
+Like this: 
+
+```javascript
+pluginDebug.initialize(true, 'MY-PLUGIN');
+```
+The first parameter enables the pluginDebug output, and the second parameter is the label that will be used in the console output. You will probably pass the first parameter from the config of your plugin when an end user turns logging on.
+
+After initializing, you can use the pluginDebug object to log messages, create groups, and use other console methods.
+
+
+
+### Basic logging
+
+```javascript
+pluginDebug.log('Application started');
+```
+
+Console output: 
+
+```
+[MY-PLUGIN]: Application started
+```
+
+### Using groups
+
+```javascript
+pluginDebug.group('User Authentication');
+pluginDebug.log('Checking credentials');
+pluginDebug.log('Validating token');
+pluginDebug.groupEnd();
+```
+
+Console output:
+
+```
+▶ [MY-PLUGIN]: User Authentication
+    Checking credentials
+    Validating token
+```
+
+
+### Using other console methods
+
+```javascript
+pluginDebug.table(userData);
+
+Console output: 
+[MY-PLUGIN]: (followed by a table of userData)
+```
+
+pluginDebug.table(tableData) - Display a table with default header
+
+pluginDebug.table(tableData, columns) - Display a table with specific columns
+
+pluginDebug.table("Tablename:", tableData) - Display a table with a custom message
+
+pluginDebug.table("Tablename:", tableData, columns) - Display a table with custom message and specific columns
+
+
+--- 
+
+## License
+
+MIT licensed | Copyright © 2025 Martijn De Jongh (Martino)

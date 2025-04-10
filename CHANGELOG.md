@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.7] - 2025-04-03
+### Added
+- Changed pluginDebug.error, this will be shown regardless of the debug setting.
+- For console tables, allow a custom label for the table header.
+
+
+## [0.1.6] - 2025-04-03
+### Added
+- Added debug method
+
+
+## [0.1.5] - 2025-03-31
+### Changed
+- Less logging about addition of paths.
+
+
 ## [0.1.4] - 2025-03-28
 ### Changed
 - Change Reveal dependency to be a >= 4 dependency.

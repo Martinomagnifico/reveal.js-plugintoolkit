@@ -37,7 +37,6 @@ export const pluginCSS = async (options: PluginCssOptions): Promise<void> => {
   // 1. Add user-specified path (highest priority)
   if (typeof csspath === 'string' && csspath.trim() !== '') {
     paths.push(csspath);
-    debug && console.log(`[${id}] Added user-specified path: ${csspath}`);
   }
   
   // 2. Auto-detected path from script location
@@ -45,23 +44,16 @@ export const pluginCSS = async (options: PluginCssOptions): Promise<void> => {
   if (scriptPath) {
     const autoPath = `${scriptPath}${id}.css`;
     paths.push(autoPath);
-    debug && console.log(`[${id}] Added auto-detected path from script location: ${autoPath}`);
   }
   
   // 3. Standard fallback paths
   const standardPath = `plugin/${id}/${id}.css`;
   paths.push(standardPath);
-  debug && console.log(`[${id}] Added standard fallback path: ${standardPath}`);
-  
-  const pluginsPath = `plugins/${id}/${id}.css`;
-  paths.push(pluginsPath);
-  debug && console.log(`[${id}] Added standard fallback path: ${pluginsPath}`);
   
   // Try each path in order
   for (const path of paths) {
     try {
-      debug && console.log(`[${id}] Trying CSS path: ${path}`);
-      await linkAndLoad(id, path, debug);
+      await linkAndLoad(id, path);
       
       // Determine path type for more informative success message
       let pathType = "CSS";
@@ -69,9 +61,9 @@ export const pluginCSS = async (options: PluginCssOptions): Promise<void> => {
       if (csspath && path === csspath) {
         pathType = "user-specified CSS";
       } else if (scriptPath && path === `${scriptPath}${id}.css`) {
-        pathType = "auto-detected script location CSS";
+        pathType = "CSS (auto-detected from script location)";
       } else {
-        pathType = "standard fallback CSS";
+        pathType = "CSS (standard fallback)";
       }
       
       debug && console.log(`[${id}] ${pathType} loaded successfully from: ${path}`);
