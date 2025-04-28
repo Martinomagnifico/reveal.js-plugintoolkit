@@ -119,36 +119,53 @@ const p = (n) => {
 };
 class $ {
   constructor() {
-    // Flag to enable/disable all debugging output
+    /** Flag to enable/disable all debugging output */
     l(this, "debugMode", !1);
-    // Label to prefix all debug messages with
+    /** Label to prefix all debug messages with */
     l(this, "label", "DEBUG");
-    // Tracks the current depth of console groups for proper formatting
+    /** Tracks the current depth of console groups for proper formatting */
     l(this, "groupDepth", 0);
-    // Creates a new console group and tracks the group depth. 
-    // Groups will always display the label prefix in their header.
+    /**
+     * Creates a new console group and tracks the group depth.
+     * Groups will always display the label prefix in their header.
+     * 
+     * @param args - Arguments to pass to console.group
+     */
     l(this, "group", (...e) => {
       this.debugLog("group", ...e), this.groupDepth++;
     });
-    // Creates a new collapsed console group and tracks the group depth.
+    /**
+     * Creates a new collapsed console group and tracks the group depth.
+     * 
+     * @param args - Arguments to pass to console.groupCollapsed
+     */
     l(this, "groupCollapsed", (...e) => {
       this.debugLog("groupCollapsed", ...e), this.groupDepth++;
     });
-    // Ends the current console group and updates the group depth tracker.
+    /**
+     * Ends the current console group and updates the group depth tracker.
+     */
     l(this, "groupEnd", () => {
       this.groupDepth > 0 && (this.groupDepth--, this.debugLog("groupEnd"));
     });
-    // Formats and logs an error message with the debug label. 
-    // Error messages are always shown, even when debug mode is disabled.
+    /**
+     * Formats and logs an error message with the debug label.
+     * Error messages are always shown, even when debug mode is disabled.
+     * 
+     * @param args - Arguments to pass to console.error
+     */
     l(this, "error", (...e) => {
       const t = this.debugMode;
       this.debugMode = !0, this.formatAndLog(console.error, e), this.debugMode = t;
     });
-    // Displays a table in the console with the pluginDebug label.
-    // Special implementation for console.table to handle tabular data properly.
-    // @param messageOrData - Either a message string or the tabular data
-    // @param propertiesOrData - Either property names or tabular data (if first param was message)
-    // @param optionalProperties - Optional property names (if first param was message)
+    /**
+     * Displays a table in the console with the pluginDebug label.
+     * Special implementation for console.table to handle tabular data properly.
+     * 
+     * @param messageOrData - Either a message string or the tabular data
+     * @param propertiesOrData - Either property names or tabular data (if first param was message)
+     * @param optionalProperties - Optional property names (if first param was message)
+     */
     l(this, "table", (e, t, i) => {
       if (this.debugMode)
         try {
@@ -157,9 +174,12 @@ class $ {
           console.error(`[${this.label}]: Error showing table:`, o), console.log(`[${this.label}]: Raw data:`, e);
         }
     });
-    // Helper method that formats and logs messages with the pluginDebug label.
-    // @param logMethod - The console method to use for logging
-    // @param args - Arguments to pass to the console method
+    /**
+     * Helper method that formats and logs messages with the pluginDebug label.
+     * 
+     * @param logMethod - The console method to use for logging
+     * @param args - Arguments to pass to the console method
+     */
     l(this, "formatAndLog", (e, t) => {
       if (this.debugMode)
         try {
@@ -169,17 +189,25 @@ class $ {
         }
     });
   }
-  // Initializes the debug utility with custom settings.
+  /**
+   * Initializes the debug utility with custom settings.
+   * 
+   * @param isDebug - Whether debug output should be enabled
+   * @param label - Custom label to prefix all debug messages with
+   */
   initialize(e, t = "DEBUG") {
     this.debugMode = e, this.label = t;
   }
-  // Core method that handles calling console methods with proper formatting.
-  // - Adds label prefix to messages outside of groups
-  // - Skips label prefix for messages inside groups to avoid redundancy
-  // - Always adds label prefix to group headers
-  // - Error messages are always shown regardless of debug mode
-  // @param methodName - Name of the console method to call
-  // @param args - Arguments to pass to the console method
+  /**
+   * Core method that handles calling console methods with proper formatting.
+   * - Adds label prefix to messages outside of groups
+   * - Skips label prefix for messages inside groups to avoid redundancy
+   * - Always adds label prefix to group headers
+   * - Error messages are always shown regardless of debug mode
+   * 
+   * @param methodName - Name of the console method to call
+   * @param args - Arguments to pass to the console method
+   */
   debugLog(e, ...t) {
     const i = console[e];
     if (!this.debugMode && e !== "error" || typeof i != "function") return;
@@ -203,17 +231,20 @@ class $ {
     this.groupDepth > 0 ? o.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
   }
 }
-const y = (n) => new Proxy(n, {
-  get: (e, t) => {
-    if (t in e)
-      return e[t];
-    const i = t.toString();
-    if (typeof console[i] == "function")
-      return (...o) => {
-        e.debugLog(i, ...o);
-      };
-  }
-}), E = y(new $());
+function y(n) {
+  return new Proxy(n, {
+    get: (e, t) => {
+      if (t in e)
+        return e[t];
+      const i = t.toString();
+      if (typeof console[i] == "function")
+        return (...o) => {
+          e.debugLog(i, ...o);
+        };
+    }
+  });
+}
+const E = y(new $());
 export {
   w as PluginBase,
   L as pluginCSS,

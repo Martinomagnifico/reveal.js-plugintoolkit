@@ -1,17 +1,10 @@
-/**
- * Type definition for console.table method to ensure proper typing
- * Extended to optionally include a message before the table
- */
+// Type definition for console.table method to ensure proper typing, Extended to optionally include a message before the table
 type TableMethod = {
 	(tabularData: unknown, properties?: readonly string[]): void;
 	(message: string, tabularData: unknown, properties?: readonly string[]): void;
 };
 
-/**
- * Type definition mapping all console methods to a simplified function signature.
- * This creates a type with all the same method names as the Console interface
- * but with a consistent parameter and return type.
- */
+// Type definition mapping all console methods to a simplified function signature. This creates a type with all the same method names as the Console interface but with a consistent parameter and return type.
 type ConsoleMethods = {
 	[K in keyof Console]: K extends 'table' 
 		? TableMethod  // Use our explicit TableMethod type for 'table'
@@ -20,66 +13,48 @@ type ConsoleMethods = {
 			: never;
 };
 
-/**
- * Combined type that includes both the Debug class methods and all console methods.
- * This allows TypeScript to recognize dynamically added console methods.
- */
+// Combined type that includes both the Debug class methods and all console methods. This allows TypeScript to recognize dynamically added console methods.
 type DebugWithConsoleMethods = PluginDebug & ConsoleMethods;
 
-/**
- * Debug utility class that provides enhanced console logging capabilities.
- * 
- * Features:
- * - Global on/off toggle for all debug output
- * - Custom label prefixing for messages
- * - Dynamic access to all console methods
- * - Smart handling of console groups
- */
+
+// Debug utility class that provides enhanced console logging capabilities. 
+// Features: 
+// - Global on/off toggle for all debug output, 
+// - Custom label prefixing for messages, 
+// - Dynamic access to all console methods, 
+// - Smart handling of console groups
+
 class PluginDebug {
-	/** Flag to enable/disable all debugging output */
+	// Flag to enable/disable all debugging output
 	debugMode = false;
 	
-	/** Label to prefix all debug messages with */
+	// Label to prefix all debug messages with
 	label = "DEBUG";
 	
-	/** Tracks the current depth of console groups for proper formatting */
+	// Tracks the current depth of console groups for proper formatting
 	groupDepth = 0;
 
-	/**
-	 * Initializes the debug utility with custom settings.
-	 * 
-	 * @param isDebug - Whether debug output should be enabled
-	 * @param label - Custom label to prefix all debug messages with
-	 */
+	// Initializes the debug utility with custom settings.
 	initialize(isDebug: boolean, label = "DEBUG"): void {
 		this.debugMode = isDebug;
 		this.label = label;
 	}
 
-	/**
-	 * Creates a new console group and tracks the group depth.
-	 * Groups will always display the label prefix in their header.
-	 * 
-	 * @param args - Arguments to pass to console.group
-	 */
+	// Creates a new console group and tracks the group depth. 
+	// Groups will always display the label prefix in their header.
+
 	group = (...args: unknown[]): void => {
 		this.debugLog('group', ...args);
 		this.groupDepth++;
 	};
 
-	/**
-	 * Creates a new collapsed console group and tracks the group depth.
-	 * 
-	 * @param args - Arguments to pass to console.groupCollapsed
-	 */
+	// Creates a new collapsed console group and tracks the group depth.
 	groupCollapsed = (...args: unknown[]): void => {
 		this.debugLog('groupCollapsed', ...args);
 		this.groupDepth++;
 	};
 
-	/**
-	 * Ends the current console group and updates the group depth tracker.
-	 */
+	// Ends the current console group and updates the group depth tracker.
 	groupEnd = (): void => {
 		if (this.groupDepth > 0) {
 			this.groupDepth--;
@@ -87,12 +62,9 @@ class PluginDebug {
 		}
 	};
 
-	/**
-	 * Formats and logs an error message with the debug label.
-	 * Error messages are always shown, even when debug mode is disabled.
-	 * 
-	 * @param args - Arguments to pass to console.error
-	 */
+
+	// Formats and logs an error message with the debug label. 
+	// Error messages are always shown, even when debug mode is disabled.
 	error = (...args: unknown[]): void => {
 		// Always show errors, regardless of debug mode
 		// Save the current debug mode
@@ -108,14 +80,12 @@ class PluginDebug {
 		this.debugMode = currentDebugMode;
 	};
 
-	/**
-	 * Displays a table in the console with the pluginDebug label.
-	 * Special implementation for console.table to handle tabular data properly.
-	 * 
-	 * @param messageOrData - Either a message string or the tabular data
-	 * @param propertiesOrData - Either property names or tabular data (if first param was message)
-	 * @param optionalProperties - Optional property names (if first param was message)
-	 */
+	// Displays a table in the console with the pluginDebug label.
+	// Special implementation for console.table to handle tabular data properly.
+	// @param messageOrData - Either a message string or the tabular data
+	// @param propertiesOrData - Either property names or tabular data (if first param was message)
+	// @param optionalProperties - Optional property names (if first param was message)
+
 	table: TableMethod = (
 		messageOrData: unknown,
 		propertiesOrData?: unknown | readonly string[],
@@ -158,12 +128,11 @@ class PluginDebug {
 		}
 	};
 
-	/**
-	 * Helper method that formats and logs messages with the pluginDebug label.
-	 * 
-	 * @param logMethod - The console method to use for logging
-	 * @param args - Arguments to pass to the console method
-	 */
+
+	// Helper method that formats and logs messages with the pluginDebug label.
+	// @param logMethod - The console method to use for logging
+	// @param args - Arguments to pass to the console method
+
 	formatAndLog = (logMethod: (...args: unknown[]) => void, args: unknown[]): void => {
 		if (!this.debugMode) return;
 		
@@ -186,16 +155,15 @@ class PluginDebug {
 		}
 	};
 
-	/**
-	 * Core method that handles calling console methods with proper formatting.
-	 * - Adds label prefix to messages outside of groups
-	 * - Skips label prefix for messages inside groups to avoid redundancy
-	 * - Always adds label prefix to group headers
-	 * - Error messages are always shown regardless of debug mode
-	 * 
-	 * @param methodName - Name of the console method to call
-	 * @param args - Arguments to pass to the console method
-	 */
+
+	// Core method that handles calling console methods with proper formatting.
+	// - Adds label prefix to messages outside of groups
+	// - Skips label prefix for messages inside groups to avoid redundancy
+	// - Always adds label prefix to group headers
+	// - Error messages are always shown regardless of debug mode
+	// @param methodName - Name of the console method to call
+	// @param args - Arguments to pass to the console method
+
 	debugLog(methodName: keyof Console, ...args: unknown[]): void {
 		// Early return if debugging is disabled (except for errors) or method doesn't exist
 		const method = console[methodName];
@@ -258,31 +226,26 @@ class PluginDebug {
 	}
 }
 
-/**
- * Creates a proxy-based debug utility instance that dynamically handles console methods.
- * 
- * @param debugInstance - The Debug instance to wrap with a proxy
- * @returns A proxied Debug instance that can handle all console methods
- */
-function createDebugProxy(debugInstance: PluginDebug): DebugWithConsoleMethods {
-	return new Proxy(debugInstance, {
-		get: (target: PluginDebug, prop: string | symbol): unknown => {
-			// If the property exists on the object, return it
+
+// Creates a proxy-based debug utility instance that dynamically handles console methods.
+// @param debugInstance - The Debug instance to wrap with a proxy
+// @returns A proxied Debug instance that can handle all console methods
+
+
+const createDebugProxy = (debugInstance: PluginDebug): DebugWithConsoleMethods =>
+	new Proxy(debugInstance, {
+		get: (target, prop) => {
 			if (prop in target) {
 				return target[prop as keyof PluginDebug];
 			}
-			
-			// For console methods, create a dynamic handler
 			const propString = prop.toString();
 			if (typeof console[propString as keyof Console] === 'function') {
-				return (...args: unknown[]): void => {
+				return (...args: unknown[]) => {
 					target.debugLog(propString as keyof Console, ...args);
 				};
 			}
-			
 			return undefined;
 		}
 	}) as DebugWithConsoleMethods;
-}
 
 export const pluginDebug = createDebugProxy(new PluginDebug());

@@ -30,9 +30,6 @@ export class PluginBase<TConfig extends object = Record<string, never>> {
 
     /**
      * Create a new plugin instance
-     * @param idOrOptions Plugin ID string or options object
-     * @param init Optional initialization function
-     * @param defaultConfig Optional default configuration
      */
     constructor(
         idOrOptions: string | PluginOptions<TConfig>,

@@ -85,9 +85,6 @@ const x = /* @__PURE__ */ D(O);
 class z {
   /**
    * Create a new plugin instance
-   * @param idOrOptions Plugin ID string or options object
-   * @param init Optional initialization function
-   * @param defaultConfig Optional default configuration
    */
   constructor(e, t, i) {
     c(this, "defaultConfig");
@@ -202,53 +199,36 @@ const _ = (o) => {
 };
 class F {
   constructor() {
-    /** Flag to enable/disable all debugging output */
+    // Flag to enable/disable all debugging output
     c(this, "debugMode", !1);
-    /** Label to prefix all debug messages with */
+    // Label to prefix all debug messages with
     c(this, "label", "DEBUG");
-    /** Tracks the current depth of console groups for proper formatting */
+    // Tracks the current depth of console groups for proper formatting
     c(this, "groupDepth", 0);
-    /**
-     * Creates a new console group and tracks the group depth.
-     * Groups will always display the label prefix in their header.
-     * 
-     * @param args - Arguments to pass to console.group
-     */
+    // Creates a new console group and tracks the group depth. 
+    // Groups will always display the label prefix in their header.
     c(this, "group", (...e) => {
       this.debugLog("group", ...e), this.groupDepth++;
     });
-    /**
-     * Creates a new collapsed console group and tracks the group depth.
-     * 
-     * @param args - Arguments to pass to console.groupCollapsed
-     */
+    // Creates a new collapsed console group and tracks the group depth.
     c(this, "groupCollapsed", (...e) => {
       this.debugLog("groupCollapsed", ...e), this.groupDepth++;
     });
-    /**
-     * Ends the current console group and updates the group depth tracker.
-     */
+    // Ends the current console group and updates the group depth tracker.
     c(this, "groupEnd", () => {
       this.groupDepth > 0 && (this.groupDepth--, this.debugLog("groupEnd"));
     });
-    /**
-     * Formats and logs an error message with the debug label.
-     * Error messages are always shown, even when debug mode is disabled.
-     * 
-     * @param args - Arguments to pass to console.error
-     */
+    // Formats and logs an error message with the debug label. 
+    // Error messages are always shown, even when debug mode is disabled.
     c(this, "error", (...e) => {
       const t = this.debugMode;
       this.debugMode = !0, this.formatAndLog(console.error, e), this.debugMode = t;
     });
-    /**
-     * Displays a table in the console with the pluginDebug label.
-     * Special implementation for console.table to handle tabular data properly.
-     * 
-     * @param messageOrData - Either a message string or the tabular data
-     * @param propertiesOrData - Either property names or tabular data (if first param was message)
-     * @param optionalProperties - Optional property names (if first param was message)
-     */
+    // Displays a table in the console with the pluginDebug label.
+    // Special implementation for console.table to handle tabular data properly.
+    // @param messageOrData - Either a message string or the tabular data
+    // @param propertiesOrData - Either property names or tabular data (if first param was message)
+    // @param optionalProperties - Optional property names (if first param was message)
     c(this, "table", (e, t, i) => {
       if (this.debugMode)
         try {
@@ -257,12 +237,9 @@ class F {
           console.error(`[${this.label}]: Error showing table:`, l), console.log(`[${this.label}]: Raw data:`, e);
         }
     });
-    /**
-     * Helper method that formats and logs messages with the pluginDebug label.
-     * 
-     * @param logMethod - The console method to use for logging
-     * @param args - Arguments to pass to the console method
-     */
+    // Helper method that formats and logs messages with the pluginDebug label.
+    // @param logMethod - The console method to use for logging
+    // @param args - Arguments to pass to the console method
     c(this, "formatAndLog", (e, t) => {
       if (this.debugMode)
         try {
@@ -272,25 +249,17 @@ class F {
         }
     });
   }
-  /**
-   * Initializes the debug utility with custom settings.
-   * 
-   * @param isDebug - Whether debug output should be enabled
-   * @param label - Custom label to prefix all debug messages with
-   */
+  // Initializes the debug utility with custom settings.
   initialize(e, t = "DEBUG") {
     this.debugMode = e, this.label = t;
   }
-  /**
-   * Core method that handles calling console methods with proper formatting.
-   * - Adds label prefix to messages outside of groups
-   * - Skips label prefix for messages inside groups to avoid redundancy
-   * - Always adds label prefix to group headers
-   * - Error messages are always shown regardless of debug mode
-   * 
-   * @param methodName - Name of the console method to call
-   * @param args - Arguments to pass to the console method
-   */
+  // Core method that handles calling console methods with proper formatting.
+  // - Adds label prefix to messages outside of groups
+  // - Skips label prefix for messages inside groups to avoid redundancy
+  // - Always adds label prefix to group headers
+  // - Error messages are always shown regardless of debug mode
+  // @param methodName - Name of the console method to call
+  // @param args - Arguments to pass to the console method
   debugLog(e, ...t) {
     const i = console[e];
     if (!this.debugMode && e !== "error" || typeof i != "function") return;
@@ -314,20 +283,17 @@ class F {
     this.groupDepth > 0 ? l.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? l.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : l.call(console, `[${this.label}]:`, ...t);
   }
 }
-function B(o) {
-  return new Proxy(o, {
-    get: (e, t) => {
-      if (t in e)
-        return e[t];
-      const i = t.toString();
-      if (typeof console[i] == "function")
-        return (...l) => {
-          e.debugLog(i, ...l);
-        };
-    }
-  });
-}
-const y = B(new F()), N = {
+const B = (o) => new Proxy(o, {
+  get: (e, t) => {
+    if (t in e)
+      return e[t];
+    const i = t.toString();
+    if (typeof console[i] == "function")
+      return (...l) => {
+        e.debugLog(i, ...l);
+      };
+  }
+}), y = B(new F()), N = {
   demoOption: "default value",
   cssautoload: !0,
   csspath: "",

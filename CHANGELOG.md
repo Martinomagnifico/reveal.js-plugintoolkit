@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9] - 2025-04-27
+### Changed
+- Removed some comments
+- Update Vite
+- Update Vite-plugin-dts
+
+
 ## [0.1.8] - 2025-04-10
 ### Changed
 - Update Vite

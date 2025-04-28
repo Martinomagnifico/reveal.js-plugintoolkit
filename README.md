@@ -1,5 +1,7 @@
 # Reveal.js Plugin Toolkit
 
+[![Version](https://img.shields.io/npm/v/reveal.js-plugintoolkit)](#) [![Downloads](https://img.shields.io/npm/dt/reveal.js-plugintoolkit)](https://github.com/martinomagnifico/reveal.js-plugintoolkit/archive/refs/heads/master.zip)
+
 A toolkit for creating structured, maintainable Reveal.js plugins with standardized configuration management, CSS loading, and initialization patterns.
 
 There are a few functionalities to the toolkit:
