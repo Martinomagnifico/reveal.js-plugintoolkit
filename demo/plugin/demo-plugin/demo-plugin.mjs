@@ -1,134 +1,161 @@
-var P = Object.defineProperty;
-var T = (o, e, t) => e in o ? P(o, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : o[e] = t;
-var c = (o, e, t) => T(o, typeof e != "symbol" ? e + "" : e, t);
-function D(o) {
-  return o && o.__esModule && Object.prototype.hasOwnProperty.call(o, "default") ? o.default : o;
+var I = Object.defineProperty;
+var P = (r, e, t) => e in r ? I(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var c = (r, e, t) => P(r, typeof e != "symbol" ? e + "" : e, t);
+function T(r) {
+  return r && r.__esModule && Object.prototype.hasOwnProperty.call(r, "default") ? r.default : r;
 }
-var m, j;
+var C, w;
 function L() {
-  if (j) return m;
-  j = 1;
-  var o = function(r) {
-    return e(r) && !t(r);
+  if (w) return C;
+  w = 1;
+  var r = function(l) {
+    return e(l) && !t(l);
   };
   function e(n) {
     return !!n && typeof n == "object";
   }
   function t(n) {
-    var r = Object.prototype.toString.call(n);
-    return r === "[object RegExp]" || r === "[object Date]" || f(n);
+    var l = Object.prototype.toString.call(n);
+    return l === "[object RegExp]" || l === "[object Date]" || a(n);
   }
-  var i = typeof Symbol == "function" && Symbol.for, l = i ? Symbol.for("react.element") : 60103;
-  function f(n) {
-    return n.$$typeof === l;
+  var i = typeof Symbol == "function" && Symbol.for, o = i ? Symbol.for("react.element") : 60103;
+  function a(n) {
+    return n.$$typeof === o;
   }
-  function g(n) {
+  function d(n) {
     return Array.isArray(n) ? [] : {};
   }
-  function h(n, r) {
-    return r.clone !== !1 && r.isMergeableObject(n) ? p(g(n), n, r) : n;
+  function g(n, l) {
+    return l.clone !== !1 && l.isMergeableObject(n) ? b(d(n), n, l) : n;
   }
-  function d(n, r, s) {
-    return n.concat(r).map(function(a) {
-      return h(a, s);
+  function f(n, l, s) {
+    return n.concat(l).map(function(h) {
+      return g(h, s);
     });
   }
-  function b(n, r) {
-    if (!r.customMerge)
-      return p;
-    var s = r.customMerge(n);
-    return typeof s == "function" ? s : p;
+  function p(n, l) {
+    if (!l.customMerge)
+      return b;
+    var s = l.customMerge(n);
+    return typeof s == "function" ? s : b;
   }
-  function M(n) {
-    return Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(n).filter(function(r) {
-      return Object.propertyIsEnumerable.call(n, r);
+  function m(n) {
+    return Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(n).filter(function(l) {
+      return Object.propertyIsEnumerable.call(n, l);
     }) : [];
   }
   function $(n) {
-    return Object.keys(n).concat(M(n));
+    return Object.keys(n).concat(m(n));
   }
-  function S(n, r) {
+  function v(n, l) {
     try {
-      return r in n;
+      return l in n;
     } catch {
       return !1;
     }
   }
-  function E(n, r) {
-    return S(n, r) && !(Object.hasOwnProperty.call(n, r) && Object.propertyIsEnumerable.call(n, r));
+  function M(n, l) {
+    return v(n, l) && !(Object.hasOwnProperty.call(n, l) && Object.propertyIsEnumerable.call(n, l));
   }
-  function A(n, r, s) {
-    var a = {};
+  function j(n, l, s) {
+    var h = {};
     return s.isMergeableObject(n) && $(n).forEach(function(u) {
-      a[u] = h(n[u], s);
-    }), $(r).forEach(function(u) {
-      E(n, u) || (S(n, u) && s.isMergeableObject(r[u]) ? a[u] = b(u, s)(n[u], r[u], s) : a[u] = h(r[u], s));
-    }), a;
+      h[u] = g(n[u], s);
+    }), $(l).forEach(function(u) {
+      M(n, u) || (v(n, u) && s.isMergeableObject(l[u]) ? h[u] = p(u, s)(n[u], l[u], s) : h[u] = g(l[u], s));
+    }), h;
   }
-  function p(n, r, s) {
-    s = s || {}, s.arrayMerge = s.arrayMerge || d, s.isMergeableObject = s.isMergeableObject || o, s.cloneUnlessOtherwiseSpecified = h;
-    var a = Array.isArray(r), u = Array.isArray(n), v = a === u;
-    return v ? a ? s.arrayMerge(n, r, s) : A(n, r, s) : h(r, s);
+  function b(n, l, s) {
+    s = s || {}, s.arrayMerge = s.arrayMerge || f, s.isMergeableObject = s.isMergeableObject || r, s.cloneUnlessOtherwiseSpecified = g;
+    var h = Array.isArray(l), u = Array.isArray(n), D = h === u;
+    return D ? h ? s.arrayMerge(n, l, s) : j(n, l, s) : g(l, s);
   }
-  p.all = function(r, s) {
-    if (!Array.isArray(r))
+  b.all = function(l, s) {
+    if (!Array.isArray(l))
       throw new Error("first argument should be an array");
-    return r.reduce(function(a, u) {
-      return p(a, u, s);
+    return l.reduce(function(h, u) {
+      return b(h, u, s);
     }, {});
   };
-  var I = p;
-  return m = I, m;
+  var A = b;
+  return C = A, C;
 }
 var O = L();
-const x = /* @__PURE__ */ D(O);
+const x = /* @__PURE__ */ T(O), _ = () => {
+  const r = typeof window < "u", e = typeof document < "u", t = r && typeof location < "u" && /localhost|127\.0\.0\.1/.test(location.hostname);
+  let i = !1;
+  try {
+    i = new Function('return typeof module !== "undefined" && !!module.hot')();
+  } catch {
+  }
+  let o = !1;
+  try {
+    o = new Function('return typeof import.meta !== "undefined" && typeof import.meta.env !== "undefined" && import.meta.env.DEV === true')();
+  } catch {
+  }
+  const a = r && typeof navigator < "u" && /vite|localhost|127\.0\.0\.1/.test(location.origin) && /AppleWebKit|Chrome|Vite/.test(navigator.userAgent), d = e && !!document.querySelector('script[type="module"]');
+  let g = !1;
+  try {
+    g = new Function('return typeof process !== "undefined" && process.env && (process.env.ROLLUP_WATCH === "true" || process.env.NODE_ENV === "development")')();
+  } catch {
+  }
+  let f = !1;
+  try {
+    f = new Function('return typeof define === "function" && !!define.amd')();
+  } catch {
+  }
+  return {
+    isDevServer: t,
+    isWebpackHMR: i,
+    isVite: o,
+    isVitePreview: a,
+    hasModuleScripts: d,
+    isModuleBundler: g,
+    isAMD: f,
+    isBundlerEnvironment: i || o || a || d || g || f || t
+  };
+};
 class z {
-  /**
-   * Create a new plugin instance
-   */
+  // Create a new plugin instance
   constructor(e, t, i) {
     c(this, "defaultConfig");
     c(this, "pluginInit");
     c(this, "pluginId");
     c(this, "mergedConfig", null);
+    c(this, "userConfigData", null);
     /** Public data storage for plugin state */
     c(this, "data", {});
+    // Gets information about the current JavaScript environment
+    c(this, "getEnvironmentInfo", () => _());
     typeof e == "string" ? (this.pluginId = e, this.pluginInit = t, this.defaultConfig = i || {}) : (this.pluginId = e.id, this.pluginInit = e.init, this.defaultConfig = e.defaultConfig || {});
   }
-  /**
-   * Initialize plugin configuration by merging default and user settings
-   */
+  // Initialize plugin configuration by merging default and user settings
   initializeConfig(e) {
-    const t = this.defaultConfig, l = e.getConfig()[this.pluginId] || {};
-    this.mergedConfig = x(t, l, {
-      arrayMerge: (f, g) => g,
+    const t = this.defaultConfig, o = e.getConfig()[this.pluginId] || {};
+    this.userConfigData = o, this.mergedConfig = x(t, o, {
+      arrayMerge: (a, d) => d,
       clone: !0
     });
   }
-  /**
-   * Get the current plugin configuration
-   */
+  // Get the current plugin configuration
   getCurrentConfig() {
     if (!this.mergedConfig)
       throw new Error("Plugin configuration has not been initialized");
     return this.mergedConfig;
   }
-  /**
-   * Get plugin data if any exists
-   */
+  // Get plugin data if any exists
   getData() {
     return Object.keys(this.data).length > 0 ? this.data : void 0;
   }
-  /**
-   * Initialize the plugin
-   */
+  get userConfig() {
+    return this.userConfigData || {};
+  }
+  // Initialize the plugin
   init(e) {
     if (this.initializeConfig(e), this.pluginInit)
       return this.pluginInit(this, e, this.getCurrentConfig());
   }
-  /**
-   * Create the plugin interface containing all exports
-   */
+  // Create the plugin interface containing all exports
   createInterface(e = {}) {
     return {
       id: this.pluginId,
@@ -139,9 +166,9 @@ class z {
     };
   }
 }
-const _ = (o) => {
+const F = (r) => {
   const e = document.querySelector(
-    `script[src$="${o}.js"], script[src$="${o}.min.js"], script[src$="${o}.mjs"]`
+    `script[src$="${r}.js"], script[src$="${r}.min.js"], script[src$="${r}.mjs"]`
   );
   if (e != null && e.src) {
     const t = e.getAttribute("src") || "", i = t.lastIndexOf("/");
@@ -153,51 +180,51 @@ const _ = (o) => {
       return import.meta.url.slice(0, import.meta.url.lastIndexOf("/") + 1);
   } catch {
   }
-  return `plugin/${o}/`;
-}, w = "data-css-id", R = (o, e) => new Promise((t, i) => {
-  const l = document.createElement("link");
-  l.rel = "stylesheet", l.href = e, l.setAttribute(w, o);
-  const f = setTimeout(() => {
-    l.parentNode && l.parentNode.removeChild(l), i(new Error(`[${o}] Timeout loading CSS from: ${e}`));
+  return `plugin/${r}/`;
+}, E = "data-css-id", R = (r, e) => new Promise((t, i) => {
+  const o = document.createElement("link");
+  o.rel = "stylesheet", o.href = e, o.setAttribute(E, r);
+  const a = setTimeout(() => {
+    o.parentNode && o.parentNode.removeChild(o), i(new Error(`[${r}] Timeout loading CSS from: ${e}`));
   }, 5e3);
-  l.onload = () => {
-    clearTimeout(f), t();
-  }, l.onerror = () => {
-    clearTimeout(f), l.parentNode && l.parentNode.removeChild(l), i(new Error(`[${o}] Failed to load CSS from: ${e}`));
-  }, document.head.appendChild(l);
-}), U = (o) => document.querySelectorAll(`[${w}="${o}"]`).length > 0, q = async (o) => {
+  o.onload = () => {
+    clearTimeout(a), t();
+  }, o.onerror = () => {
+    clearTimeout(a), o.parentNode && o.parentNode.removeChild(o), i(new Error(`[${r}] Failed to load CSS from: ${e}`));
+  }, document.head.appendChild(o);
+}), U = (r) => document.querySelectorAll(`[${E}="${r}"]`).length > 0, B = async (r) => {
   const {
     id: e,
     cssautoload: t = !0,
     csspath: i = "",
-    debug: l = !1
-  } = o;
+    debug: o = !1
+  } = r;
   if (t === !1 || i === !1) return;
   if (U(e)) {
-    l && console.log(`[${e}] CSS already loaded, skipping`);
+    o && console.log(`[${e}] CSS already loaded, skipping`);
     return;
   }
-  const f = [];
-  typeof i == "string" && i.trim() !== "" && f.push(i);
-  const g = _(e);
-  if (g) {
-    const d = `${g}${e}.css`;
-    f.push(d);
+  const a = [];
+  typeof i == "string" && i.trim() !== "" && a.push(i);
+  const d = F(e);
+  if (d) {
+    const f = `${d}${e}.css`;
+    a.push(f);
   }
-  const h = `plugin/${e}/${e}.css`;
-  f.push(h);
-  for (const d of f)
+  const g = `plugin/${e}/${e}.css`;
+  a.push(g);
+  for (const f of a)
     try {
-      await R(e, d);
-      let b = "CSS";
-      i && d === i ? b = "user-specified CSS" : g && d === `${g}${e}.css` ? b = "CSS (auto-detected from script location)" : b = "CSS (standard fallback)", l && console.log(`[${e}] ${b} loaded successfully from: ${d}`);
+      await R(e, f);
+      let p = "CSS";
+      i && f === i ? p = "user-specified CSS" : d && f === `${d}${e}.css` ? p = "CSS (auto-detected from script location)" : p = "CSS (standard fallback)", o && console.log(`[${e}] ${p} loaded successfully from: ${f}`);
       return;
     } catch {
-      l && console.log(`[${e}] Failed to load CSS from: ${d}`);
+      o && console.log(`[${e}] Failed to load CSS from: ${f}`);
     }
   console.warn(`[${e}] Could not load CSS from any location`);
 };
-class F {
+class V {
   constructor() {
     // Flag to enable/disable all debugging output
     c(this, "debugMode", !1);
@@ -233,8 +260,8 @@ class F {
       if (this.debugMode)
         try {
           typeof e == "string" && t !== void 0 && typeof t != "string" ? (this.groupDepth === 0 ? console.log(`[${this.label}]: ${e}`) : console.log(e), i ? console.table(t, i) : console.table(t)) : (this.groupDepth === 0 && console.log(`[${this.label}]: Table data`), typeof t == "object" && Array.isArray(t) ? console.table(e, t) : console.table(e));
-        } catch (l) {
-          console.error(`[${this.label}]: Error showing table:`, l), console.log(`[${this.label}]: Raw data:`, e);
+        } catch (o) {
+          console.error(`[${this.label}]: Error showing table:`, o), console.log(`[${this.label}]: Raw data:`, e);
         }
     });
     // Helper method that formats and logs messages with the pluginDebug label.
@@ -263,13 +290,13 @@ class F {
   debugLog(e, ...t) {
     const i = console[e];
     if (!this.debugMode && e !== "error" || typeof i != "function") return;
-    const l = i;
+    const o = i;
     if (e === "group" || e === "groupCollapsed") {
-      t.length > 0 && typeof t[0] == "string" ? l.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : l.call(console, `[${this.label}]:`, ...t);
+      t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
       return;
     }
     if (e === "groupEnd") {
-      l.call(console);
+      o.call(console);
       return;
     }
     if (e === "table") {
@@ -280,26 +307,26 @@ class F {
       );
       return;
     }
-    this.groupDepth > 0 ? l.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? l.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : l.call(console, `[${this.label}]:`, ...t);
+    this.groupDepth > 0 ? o.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
   }
 }
-const B = (o) => new Proxy(o, {
+const q = (r) => new Proxy(r, {
   get: (e, t) => {
     if (t in e)
       return e[t];
     const i = t.toString();
     if (typeof console[i] == "function")
-      return (...l) => {
-        e.debugLog(i, ...l);
+      return (...o) => {
+        e.debugLog(i, ...o);
       };
   }
-}), y = B(new F()), N = {
+}), y = q(new V()), N = {
   demoOption: "default value",
   cssautoload: !0,
   csspath: "",
   debug: !1
 };
-class C {
+class S {
   constructor(e, t) {
     c(this, "deck");
     c(this, "options");
@@ -312,24 +339,26 @@ class C {
     e.className = "demo-plugin-indicator", e.textContent = "Demo Plugin Active", document.body.appendChild(e), y.log("Indicator element added");
   }
   static create(e, t) {
-    const i = new C(e, t);
+    const i = new S(e, t);
     return i.initialize(), i;
   }
 }
-const G = async (o, e, t) => {
-  if (y.initialize(t.debug, "demo-plugin"), t.cssautoload)
+const W = async (r, e, t) => {
+  y.initialize(t.debug, "demo-plugin");
+  const i = r.getEnvironmentInfo();
+  if (y.log("Environment:", i), t.cssautoload)
     try {
-      await q({
-        id: o.pluginId,
+      await B({
+        id: r.pluginId,
         cssautoload: t.cssautoload,
         csspath: t.csspath,
         debug: t.debug
       });
-    } catch (i) {
-      y.warn("CSS loading failed, but plugin will continue:", i);
+    } catch (o) {
+      y.warn("CSS loading failed, but plugin will continue:", o);
     }
-  await C.create(e, t);
-}, V = () => new z("demo-plugin", G, N).createInterface();
+  await S.create(e, t);
+}, H = () => new z("demo-plugin", W, N).createInterface();
 export {
-  V as default
+  H as default
 };

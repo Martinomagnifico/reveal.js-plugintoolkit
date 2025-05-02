@@ -16,6 +16,10 @@ const init = async (plugin: PluginBase<Config>, deck: Api, config: Config): Prom
     // Enable debug mode if needed
     pluginDebug.initialize(config.debug, 'demo-plugin');
 
+    // Just give some info about the environment
+    const env = plugin.getEnvironmentInfo();
+    pluginDebug.log('Environment:', env);
+
     // Load CSS if needed
     if (config.cssautoload) {
 

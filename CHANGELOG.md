@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.0] - 2025-05-03
+### Added
+- Added an environment checker: plugin.getEnvironmentInfo()
+- Added the original user config object to the plugin: plugin.userConfig
+
+### Changed
+- Removed some comments
+- Update Vite
+
+
 ## [0.1.9] - 2025-04-27
 ### Changed
 - Removed some comments

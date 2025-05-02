@@ -1,116 +1,144 @@
 var h = Object.defineProperty;
-var d = (n, e, t) => e in n ? h(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
-var l = (n, e, t) => d(n, typeof e != "symbol" ? e + "" : e, t);
-import a from "deepmerge";
-class w {
-  /**
-   * Create a new plugin instance
-   */
-  constructor(e, t, i) {
+var g = (i, e, t) => e in i ? h(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
+var l = (i, e, t) => g(i, typeof e != "symbol" ? e + "" : e, t);
+import p from "deepmerge";
+const b = () => {
+  const i = typeof window < "u", e = typeof document < "u", t = i && typeof location < "u" && /localhost|127\.0\.0\.1/.test(location.hostname);
+  let n = !1;
+  try {
+    n = new Function('return typeof module !== "undefined" && !!module.hot')();
+  } catch {
+  }
+  let o = !1;
+  try {
+    o = new Function('return typeof import.meta !== "undefined" && typeof import.meta.env !== "undefined" && import.meta.env.DEV === true')();
+  } catch {
+  }
+  const s = i && typeof navigator < "u" && /vite|localhost|127\.0\.0\.1/.test(location.origin) && /AppleWebKit|Chrome|Vite/.test(navigator.userAgent), c = e && !!document.querySelector('script[type="module"]');
+  let f = !1;
+  try {
+    f = new Function('return typeof process !== "undefined" && process.env && (process.env.ROLLUP_WATCH === "true" || process.env.NODE_ENV === "development")')();
+  } catch {
+  }
+  let r = !1;
+  try {
+    r = new Function('return typeof define === "function" && !!define.amd')();
+  } catch {
+  }
+  return {
+    isDevServer: t,
+    isWebpackHMR: n,
+    isVite: o,
+    isVitePreview: s,
+    hasModuleScripts: c,
+    isModuleBundler: f,
+    isAMD: r,
+    isBundlerEnvironment: n || o || s || c || f || r || t
+  };
+};
+class E {
+  // Create a new plugin instance
+  constructor(e, t, n) {
     l(this, "defaultConfig");
     l(this, "pluginInit");
     l(this, "pluginId");
     l(this, "mergedConfig", null);
+    l(this, "userConfigData", null);
     /** Public data storage for plugin state */
     l(this, "data", {});
-    typeof e == "string" ? (this.pluginId = e, this.pluginInit = t, this.defaultConfig = i || {}) : (this.pluginId = e.id, this.pluginInit = e.init, this.defaultConfig = e.defaultConfig || {});
+    // Gets information about the current JavaScript environment
+    l(this, "getEnvironmentInfo", () => b());
+    typeof e == "string" ? (this.pluginId = e, this.pluginInit = t, this.defaultConfig = n || {}) : (this.pluginId = e.id, this.pluginInit = e.init, this.defaultConfig = e.defaultConfig || {});
   }
-  /**
-   * Initialize plugin configuration by merging default and user settings
-   */
+  // Initialize plugin configuration by merging default and user settings
   initializeConfig(e) {
     const t = this.defaultConfig, o = e.getConfig()[this.pluginId] || {};
-    this.mergedConfig = a(t, o, {
+    this.userConfigData = o, this.mergedConfig = p(t, o, {
       arrayMerge: (s, c) => c,
       clone: !0
     });
   }
-  /**
-   * Get the current plugin configuration
-   */
+  // Get the current plugin configuration
   getCurrentConfig() {
     if (!this.mergedConfig)
       throw new Error("Plugin configuration has not been initialized");
     return this.mergedConfig;
   }
-  /**
-   * Get plugin data if any exists
-   */
+  // Get plugin data if any exists
   getData() {
     return Object.keys(this.data).length > 0 ? this.data : void 0;
   }
-  /**
-   * Initialize the plugin
-   */
+  get userConfig() {
+    return this.userConfigData || {};
+  }
+  // Initialize the plugin
   init(e) {
     if (this.initializeConfig(e), this.pluginInit)
       return this.pluginInit(this, e, this.getCurrentConfig());
   }
-  /**
-   * Create the plugin interface containing all exports
-   */
+  // Create the plugin interface containing all exports
   createInterface(e = {}) {
     return {
       id: this.pluginId,
-      init: (i) => this.init(i),
+      init: (n) => this.init(n),
       getConfig: () => this.getCurrentConfig(),
       getData: () => this.getData(),
       ...e
     };
   }
 }
-const p = (n) => {
+const C = (i) => {
   const e = document.querySelector(
-    `script[src$="${n}.js"], script[src$="${n}.min.js"], script[src$="${n}.mjs"]`
+    `script[src$="${i}.js"], script[src$="${i}.min.js"], script[src$="${i}.mjs"]`
   );
   if (e != null && e.src) {
-    const t = e.getAttribute("src") || "", i = t.lastIndexOf("/");
-    if (i !== -1)
-      return t.substring(0, i + 1);
+    const t = e.getAttribute("src") || "", n = t.lastIndexOf("/");
+    if (n !== -1)
+      return t.substring(0, n + 1);
   }
   try {
     if (typeof import.meta < "u" && import.meta.url)
       return import.meta.url.slice(0, import.meta.url.lastIndexOf("/") + 1);
   } catch {
   }
-  return `plugin/${n}/`;
-}, f = "data-css-id", b = (n, e) => new Promise((t, i) => {
+  return `plugin/${i}/`;
+}, a = "data-css-id", y = (i, e) => new Promise((t, n) => {
   const o = document.createElement("link");
-  o.rel = "stylesheet", o.href = e, o.setAttribute(f, n);
+  o.rel = "stylesheet", o.href = e, o.setAttribute(a, i);
   const s = setTimeout(() => {
-    o.parentNode && o.parentNode.removeChild(o), i(new Error(`[${n}] Timeout loading CSS from: ${e}`));
+    o.parentNode && o.parentNode.removeChild(o), n(new Error(`[${i}] Timeout loading CSS from: ${e}`));
   }, 5e3);
   o.onload = () => {
     clearTimeout(s), t();
   }, o.onerror = () => {
-    clearTimeout(s), o.parentNode && o.parentNode.removeChild(o), i(new Error(`[${n}] Failed to load CSS from: ${e}`));
+    clearTimeout(s), o.parentNode && o.parentNode.removeChild(o), n(new Error(`[${i}] Failed to load CSS from: ${e}`));
   }, document.head.appendChild(o);
-}), C = (n) => document.querySelectorAll(`[${f}="${n}"]`).length > 0, L = async (n) => {
+}), m = (i) => document.querySelectorAll(`[${a}="${i}"]`).length > 0, D = async (i) => {
   const {
     id: e,
     cssautoload: t = !0,
-    csspath: i = "",
+    csspath: n = "",
     debug: o = !1
-  } = n;
-  if (t === !1 || i === !1) return;
-  if (C(e)) {
+  } = i;
+  if (t === !1 || n === !1) return;
+  if (m(e)) {
     o && console.log(`[${e}] CSS already loaded, skipping`);
     return;
   }
   const s = [];
-  typeof i == "string" && i.trim() !== "" && s.push(i);
-  const c = p(e);
+  typeof n == "string" && n.trim() !== "" && s.push(n);
+  const c = C(e);
   if (c) {
     const r = `${c}${e}.css`;
     s.push(r);
   }
-  const g = `plugin/${e}/${e}.css`;
-  s.push(g);
+  const f = `plugin/${e}/${e}.css`;
+  s.push(f);
   for (const r of s)
     try {
-      await b(e, r);
+      await y(e, r);
       let u = "CSS";
-      i && r === i ? u = "user-specified CSS" : c && r === `${c}${e}.css` ? u = "CSS (auto-detected from script location)" : u = "CSS (standard fallback)", o && console.log(`[${e}] ${u} loaded successfully from: ${r}`);
+      n && r === n ? u = "user-specified CSS" : c && r === `${c}${e}.css` ? u = "CSS (auto-detected from script location)" : u = "CSS (standard fallback)", o && console.log(`[${e}] ${u} loaded successfully from: ${r}`);
       return;
     } catch {
       o && console.log(`[${e}] Failed to load CSS from: ${r}`);
@@ -149,10 +177,10 @@ class $ {
     // @param messageOrData - Either a message string or the tabular data
     // @param propertiesOrData - Either property names or tabular data (if first param was message)
     // @param optionalProperties - Optional property names (if first param was message)
-    l(this, "table", (e, t, i) => {
+    l(this, "table", (e, t, n) => {
       if (this.debugMode)
         try {
-          typeof e == "string" && t !== void 0 && typeof t != "string" ? (this.groupDepth === 0 ? console.log(`[${this.label}]: ${e}`) : console.log(e), i ? console.table(t, i) : console.table(t)) : (this.groupDepth === 0 && console.log(`[${this.label}]: Table data`), typeof t == "object" && Array.isArray(t) ? console.table(e, t) : console.table(e));
+          typeof e == "string" && t !== void 0 && typeof t != "string" ? (this.groupDepth === 0 ? console.log(`[${this.label}]: ${e}`) : console.log(e), n ? console.table(t, n) : console.table(t)) : (this.groupDepth === 0 && console.log(`[${this.label}]: Table data`), typeof t == "object" && Array.isArray(t) ? console.table(e, t) : console.table(e));
         } catch (o) {
           console.error(`[${this.label}]: Error showing table:`, o), console.log(`[${this.label}]: Raw data:`, e);
         }
@@ -164,8 +192,8 @@ class $ {
       if (this.debugMode)
         try {
           this.groupDepth > 0 ? e.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? e.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : e.call(console, `[${this.label}]:`, ...t);
-        } catch (i) {
-          console.error(`[${this.label}]: Error in logging:`, i), console.log(`[${this.label}]: Original log data:`, ...t);
+        } catch (n) {
+          console.error(`[${this.label}]: Error in logging:`, n), console.log(`[${this.label}]: Original log data:`, ...t);
         }
     });
   }
@@ -181,9 +209,9 @@ class $ {
   // @param methodName - Name of the console method to call
   // @param args - Arguments to pass to the console method
   debugLog(e, ...t) {
-    const i = console[e];
-    if (!this.debugMode && e !== "error" || typeof i != "function") return;
-    const o = i;
+    const n = console[e];
+    if (!this.debugMode && e !== "error" || typeof n != "function") return;
+    const o = n;
     if (e === "group" || e === "groupCollapsed") {
       t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
       return;
@@ -203,19 +231,19 @@ class $ {
     this.groupDepth > 0 ? o.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
   }
 }
-const y = (n) => new Proxy(n, {
+const S = (i) => new Proxy(i, {
   get: (e, t) => {
     if (t in e)
       return e[t];
-    const i = t.toString();
-    if (typeof console[i] == "function")
+    const n = t.toString();
+    if (typeof console[n] == "function")
       return (...o) => {
-        e.debugLog(i, ...o);
+        e.debugLog(n, ...o);
       };
   }
-}), E = y(new $());
+}), A = S(new $());
 export {
-  w as PluginBase,
-  L as pluginCSS,
-  E as pluginDebug
+  E as PluginBase,
+  D as pluginCSS,
+  A as pluginDebug
 };
