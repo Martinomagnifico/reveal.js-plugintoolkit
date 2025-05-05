@@ -149,6 +149,11 @@ export default () => {
 
 The toolkit provides a flexible CSS loading utility that simplifies plugin styling. The path is derived from the JS path that the plugin is loaded from. It is expected that the CSS is in the same location. If a path is correctly found, it will be inserted in the DOM.
 
+The CSS filename is expected to be the same as the JS filename, and the following locations are checked:
+
+- script-path/myplugin.css (same location as the JS)
+- plugin/myplugin/myplugin.css (like other Reveal plugins)
+
 ### Usage
 
 ```typescript
@@ -162,6 +167,29 @@ await pluginCSS({
     debug: config.debug // Optional: Enable debug logging (default false)
 });
 ```
+
+### Usage, enhanced
+
+If you also use the pluginBase class, you can simplify the above like this:
+
+```typescript
+import { pluginCSS } from 'reveal.js-plugintoolkit';
+
+// Inside your plugin initialization function
+await pluginCSS(plugin, config);
+
+```
+
+where config is still optional. The enhanced version of pluginCSS also detects if the environment uses script(type="module") or is in a bundler environment, where dynamic linking of CSS might give errors. Dynamic linking is then skipped, because `import` is the way to style your plugin in that case. If that import is also omitted, a console warning will show that. 
+
+To be able to test if the CSS is successfully loaded in any way like `import`, your plugin will need to add a variable to the root, where `pluginid` should be the actual plugin id of your plugin:
+
+```css
+:root {
+    --cssimported-pluginid: true;
+}
+```
+
 
 ### Interface for the end user
 
@@ -188,6 +216,11 @@ Reveal.initialize({
     }
 });
 ```
+
+
+
+
+
 
 
 ## 3. pluginDebug

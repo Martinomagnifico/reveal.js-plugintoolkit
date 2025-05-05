@@ -16,25 +16,14 @@ const init = async (plugin: PluginBase<Config>, deck: Api, config: Config): Prom
     // Enable debug mode if needed
     pluginDebug.initialize(config.debug, 'demo-plugin');
 
-    // Just give some info about the environment
+    // Just give some optional info about the environment
     const env = plugin.getEnvironmentInfo();
     pluginDebug.log('Environment:', env);
 
-    // Load CSS if needed
-    if (config.cssautoload) {
+    // Handle CSS loading with a single line - this includes environment detection and will automatically check if CSS is already imported
+    await pluginCSS(plugin, config);
 
-        try {
-            await pluginCSS({
-                id: plugin.pluginId,
-                cssautoload: config.cssautoload,
-                csspath: config.csspath,
-                debug: config.debug
-            });
-        } catch (err) {
-            pluginDebug.warn('CSS loading failed, but plugin will continue:', err);
-        }
-    }
-    
+
     // Initialize the plugin and wait for it to complete
     // This will block Reveal.js initialization until DemoPlugin is fully ready
     await DemoPlugin.create(deck, config);

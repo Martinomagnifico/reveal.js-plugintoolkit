@@ -1,8 +1,8 @@
-var h = Object.defineProperty;
-var g = (i, e, t) => e in i ? h(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
-var l = (i, e, t) => g(i, typeof e != "symbol" ? e + "" : e, t);
-import p from "deepmerge";
-const b = () => {
+var p = Object.defineProperty;
+var m = (i, e, t) => e in i ? p(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
+var l = (i, e, t) => m(i, typeof e != "symbol" ? e + "" : e, t);
+import b from "deepmerge";
+const y = () => {
   const i = typeof window < "u", e = typeof document < "u", t = i && typeof location < "u" && /localhost|127\.0\.0\.1/.test(location.hostname);
   let n = !1;
   try {
@@ -14,10 +14,10 @@ const b = () => {
     o = new Function('return typeof import.meta !== "undefined" && typeof import.meta.env !== "undefined" && import.meta.env.DEV === true')();
   } catch {
   }
-  const s = i && typeof navigator < "u" && /vite|localhost|127\.0\.0\.1/.test(location.origin) && /AppleWebKit|Chrome|Vite/.test(navigator.userAgent), c = e && !!document.querySelector('script[type="module"]');
-  let f = !1;
+  const s = i && typeof navigator < "u" && /vite|localhost|127\.0\.0\.1/.test(location.origin) && /AppleWebKit|Chrome|Vite/.test(navigator.userAgent), u = e && !!document.querySelector('script[type="module"]');
+  let d = !1;
   try {
-    f = new Function('return typeof process !== "undefined" && process.env && (process.env.ROLLUP_WATCH === "true" || process.env.NODE_ENV === "development")')();
+    d = new Function('return typeof process !== "undefined" && process.env && (process.env.ROLLUP_WATCH === "true" || process.env.NODE_ENV === "development")')();
   } catch {
   }
   let r = !1;
@@ -30,13 +30,13 @@ const b = () => {
     isWebpackHMR: n,
     isVite: o,
     isVitePreview: s,
-    hasModuleScripts: c,
-    isModuleBundler: f,
+    hasModuleScripts: u,
+    isModuleBundler: d,
     isAMD: r,
-    isBundlerEnvironment: n || o || s || c || f || r || t
+    isBundlerEnvironment: n || o || s || u || d || r || t
   };
 };
-class E {
+class I {
   // Create a new plugin instance
   constructor(e, t, n) {
     l(this, "defaultConfig");
@@ -47,14 +47,14 @@ class E {
     /** Public data storage for plugin state */
     l(this, "data", {});
     // Gets information about the current JavaScript environment
-    l(this, "getEnvironmentInfo", () => b());
+    l(this, "getEnvironmentInfo", () => y());
     typeof e == "string" ? (this.pluginId = e, this.pluginInit = t, this.defaultConfig = n || {}) : (this.pluginId = e.id, this.pluginInit = e.init, this.defaultConfig = e.defaultConfig || {});
   }
   // Initialize plugin configuration by merging default and user settings
   initializeConfig(e) {
     const t = this.defaultConfig, o = e.getConfig()[this.pluginId] || {};
-    this.userConfigData = o, this.mergedConfig = p(t, o, {
-      arrayMerge: (s, c) => c,
+    this.userConfigData = o, this.mergedConfig = b(t, o, {
+      arrayMerge: (s, u) => u,
       clone: !0
     });
   }
@@ -102,9 +102,9 @@ const C = (i) => {
   } catch {
   }
   return `plugin/${i}/`;
-}, a = "data-css-id", y = (i, e) => new Promise((t, n) => {
+}, g = "data-css-id", S = (i, e) => new Promise((t, n) => {
   const o = document.createElement("link");
-  o.rel = "stylesheet", o.href = e, o.setAttribute(a, i);
+  o.rel = "stylesheet", o.href = e, o.setAttribute(g, i);
   const s = setTimeout(() => {
     o.parentNode && o.parentNode.removeChild(o), n(new Error(`[${i}] Timeout loading CSS from: ${e}`));
   }, 5e3);
@@ -113,7 +113,21 @@ const C = (i) => {
   }, o.onerror = () => {
     clearTimeout(s), o.parentNode && o.parentNode.removeChild(o), n(new Error(`[${i}] Failed to load CSS from: ${e}`));
   }, document.head.appendChild(o);
-}), m = (i) => document.querySelectorAll(`[${a}="${i}"]`).length > 0, D = async (i) => {
+}), h = (i) => document.querySelectorAll(`[${g}="${i}"]`).length > 0, $ = (i) => new Promise((e) => {
+  if (t())
+    return e(!0);
+  setTimeout(() => {
+    e(t());
+  }, 50);
+  function t() {
+    if (h(i)) return !0;
+    try {
+      return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${i}`).trim() !== "";
+    } catch {
+      return !1;
+    }
+  }
+}), f = async (i) => {
   const {
     id: e,
     cssautoload: t = !0,
@@ -121,31 +135,50 @@ const C = (i) => {
     debug: o = !1
   } = i;
   if (t === !1 || n === !1) return;
-  if (m(e)) {
+  if (h(e)) {
     o && console.log(`[${e}] CSS already loaded, skipping`);
     return;
   }
   const s = [];
   typeof n == "string" && n.trim() !== "" && s.push(n);
-  const c = C(e);
-  if (c) {
-    const r = `${c}${e}.css`;
+  const u = C(e);
+  if (u) {
+    const r = `${u}${e}.css`;
     s.push(r);
   }
-  const f = `plugin/${e}/${e}.css`;
-  s.push(f);
+  const d = `plugin/${e}/${e}.css`;
+  s.push(d);
   for (const r of s)
     try {
-      await y(e, r);
-      let u = "CSS";
-      n && r === n ? u = "user-specified CSS" : c && r === `${c}${e}.css` ? u = "CSS (auto-detected from script location)" : u = "CSS (standard fallback)", o && console.log(`[${e}] ${u} loaded successfully from: ${r}`);
+      await S(e, r);
+      let c = "CSS";
+      n && r === n ? c = "user-specified CSS" : u && r === `${u}${e}.css` ? c = "CSS (auto-detected from script location)" : c = "CSS (standard fallback)", o && console.log(`[${e}] ${c} loaded successfully from: ${r}`);
       return;
     } catch {
       o && console.log(`[${e}] Failed to load CSS from: ${r}`);
     }
   console.warn(`[${e}] Could not load CSS from any location`);
 };
-class $ {
+async function D(i, e) {
+  if ("getEnvironmentInfo" in i && e) {
+    const t = i, n = t.getEnvironmentInfo();
+    if (await $(t.pluginId)) {
+      e.debug && console.log(`[${t.pluginId}] CSS already imported, skipping`);
+      return;
+    }
+    if ("cssautoload" in t.userConfig ? !!e.cssautoload : !n.isBundlerEnvironment)
+      return f({
+        id: t.pluginId,
+        cssautoload: !0,
+        csspath: e.csspath,
+        debug: e.debug
+      });
+    n.isBundlerEnvironment && console.warn(`[${t.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`);
+    return;
+  }
+  return f(i);
+}
+class v {
   constructor() {
     // Flag to enable/disable all debugging output
     l(this, "debugMode", !1);
@@ -231,7 +264,7 @@ class $ {
     this.groupDepth > 0 ? o.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
   }
 }
-const S = (i) => new Proxy(i, {
+const w = (i) => new Proxy(i, {
   get: (e, t) => {
     if (t in e)
       return e[t];
@@ -241,9 +274,10 @@ const S = (i) => new Proxy(i, {
         e.debugLog(n, ...o);
       };
   }
-}), A = S(new $());
+}), L = w(new v());
 export {
-  E as PluginBase,
+  I as PluginBase,
+  $ as isCssImported,
   D as pluginCSS,
-  A as pluginDebug
+  L as pluginDebug
 };

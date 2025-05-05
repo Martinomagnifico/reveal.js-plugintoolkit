@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.1] - 2025-05-04
+### Added
+- Added enhanced version of pluginCSS
+
+
 ## [0.2.0] - 2025-05-03
 ### Added
 - Added an environment checker: plugin.getEnvironmentInfo()
