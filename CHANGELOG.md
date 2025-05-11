@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.2] - 2025-05-11
+### Added
+- Added pluginTools.addMoreDirectionEvents(deck). Fires slidechanged-h and -v when slide changes in a certain direction
+
+
 ## [0.2.1] - 2025-05-04
 ### Added
 - Added enhanced version of pluginCSS
