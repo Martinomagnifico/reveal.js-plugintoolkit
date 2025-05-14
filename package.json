@@ -1,6 +1,6 @@
 {
   "name": "reveal.js-plugintoolkit",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Toolkit for building Reveal.js plugins",
   "main": "dist/plugintoolkit.js",
   "module": "dist/plugintoolkit.mjs",
@@ -41,7 +41,7 @@
     "@types/reveal.js": "^4.4.2",
     "reveal.js": ">=5.0.0",
     "typescript": "^5.0.4",
-    "vite": "^6.3.4",
+    "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.3"
   }
 }

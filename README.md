@@ -9,6 +9,7 @@ There are a few functionalities to the toolkit:
   - [PluginBase](#1-pluginbase)
   - [pluginCSS](#2-plugincss)
   - [pluginDebug](#3-plugindebug)
+  - [Additional tools](#4-additional-tools)
 
 These will be described in detail below.
 
@@ -18,7 +19,7 @@ Installation
 npm install reveal.js-plugintoolkit
 ```
 
----
+-------------------
 
 
 ## 1. PluginBase
@@ -154,7 +155,7 @@ The CSS filename is expected to be the same as the JS filename, and the followin
 - script-path/myplugin.css (same location as the JS)
 - plugin/myplugin/myplugin.css (like other Reveal plugins)
 
-### Usage
+### Usage (will be removed in the future)
 
 ```typescript
 import { pluginCSS } from 'reveal.js-plugintoolkit';
@@ -163,14 +164,12 @@ import { pluginCSS } from 'reveal.js-plugintoolkit';
 await pluginCSS({
     id: 'my-plugin',  // The id of your plugin
     cssautoload: config.cssautoload, // Optional: Enable/disable loading
-    csspath: config.csspath, // Optional: User-specified path
+    csspath: config.csspath, // Optional: User-specified path (default empty)
     debug: config.debug // Optional: Enable debug logging (default false)
 });
 ```
 
 ### Usage, enhanced
-
-If you also use the pluginBase class, you can simplify the above like this:
 
 ```typescript
 import { pluginCSS } from 'reveal.js-plugintoolkit';
@@ -193,7 +192,9 @@ To be able to test if the CSS is successfully loaded in any way like `import`, y
 
 ### Interface for the end user
 
-Now the user, in their own Reveal initialization, may know of an alternative path to the CSS, or an actual changed CSS:
+If the user is in a module environment, the CSS will *NOT* be loaded automatically and a warning will be visible in the console where the user is encouraged to use `import`. 
+
+If the user is in a non-bundler environment, the CSS *NOT* be loaded automatically, but the user has a choice of the path:
 
 ```javascript
 Reveal.initialize({
@@ -204,6 +205,7 @@ Reveal.initialize({
     }
 });
 ```
+
 
 If, by any chance, the end-user wants some other kind of loading mechanism, then he/she can set `cssautoload` in their config to `false` (if you indeed provide that as an option in your plugin). As may be clear from the code, you can always rename that option.
 
@@ -216,9 +218,6 @@ Reveal.initialize({
     }
 });
 ```
-
-
-
 
 
 
@@ -281,16 +280,62 @@ Console output:
 [MY-PLUGIN]: (followed by a table of userData)
 ```
 
-pluginDebug.table(tableData) - Display a table with default header
-
-pluginDebug.table(tableData, columns) - Display a table with specific columns
-
-pluginDebug.table("Tablename:", tableData) - Display a table with a custom message
-
-pluginDebug.table("Tablename:", tableData, columns) - Display a table with custom message and specific columns
+- `pluginDebug.table(tableData)` - Display a table with default header
+- `pluginDebug.table(tableData, columns)` - Display a table with specific columns
+- `pluginDebug.table("Tablename:", tableData)` - Display a table with a custom message
+- `pluginDebug.table("Tablename:", tableData, columns)` - Display a table with custom message and specific columns
 
 
---- 
+
+## 4. Additional tools
+
+### Extra events (`eventTools`)
+
+When navigating in Reveal.js, you may want to know in which direction the user is navigating, or when a browser is resized, triggering scroll mode. The toolkit provides two functions that add events for these cases.
+
+- `addDirectionEvents(deck)`: Emits events for horizontal and vertical navigation. Fires `slidechanged-h` and `slidechanged-v` when the user navigates in a certain direction.
+- `addScrollModeEvents(deck)`: Emits events when a deck, by resizing, enters or exits scroll mode. Fires `scrollmode-enter` and `scrollmode-exit` when entering or exiting scroll mode.
+
+```javascript
+import { eventTools } from 'reveal.js-plugintoolkit';
+
+eventTools.addDirectionEvents(deck);
+eventTools.addScrollModeEvents(deck);
+
+```
+
+### Some section functions (`sectionTools`)
+
+- `isSection`: Check if the current slide is a section.
+- `isStack`: Check if the current slide is a stack.
+- `isVertical`: Check if the current section is vertical (is IN a stack).
+- `isHorizontal`: Check if the current section is horizontal (is not a stack itself and is not in a stack).
+- `getStack`: Get the stack of the current slide.
+- `getSectionType`: Get the type of the current section (will return horizontal, vertical or stack).
+
+```javascript
+import { sectionTools } from 'reveal.js-plugintoolkit';
+
+const isSection = sectionTools.isSection(slide);
+const isStack = sectionTools.isStack(slide);
+const isVertical = sectionTools.isVertical(slide);
+const isHorizontal = sectionTools.isHorizontal(slide);
+const stack = sectionTools.getStack(slide);
+const sectionType = sectionTools.getSectionType(slide);
+```
+
+-------------------
+
+### Getting all the tools
+
+The tools above can also be imported with a single namespace:
+
+```javascript
+import { pluginTools } from 'reveal.js-plugintoolkit'
+```
+
+
+-------------------
 
 ## License
 

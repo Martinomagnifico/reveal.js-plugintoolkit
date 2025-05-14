@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.4] - 2025-05-14
+### Changed
+- Add separate namespaces for eventTools and sectionTools.
+
+
+## [0.2.3] - 2025-05-14
+### Added
+- Added event tools. Fires scrollmode-entry and -exit when entering or exiting scroll mode when resizing the browser window. If you are writing a plugin that needs to know when scroll mode is entered or exited, you can use this event. It will be fired on the deck object. 
+- Added section tools: isSection, isStack, isVertical, isHorizontal, getStack (from a child slide), and getSectionType. These are useful for plugins that need to know about the current section or stack.
+
+### Changed
+- Renamed addMoreDirectionEvents to addDirectionEvents (the old name will be deprecated later).
+- Update Vite
+
+
 ## [0.2.2] - 2025-05-11
 ### Added
 - Added pluginTools.addMoreDirectionEvents(deck). Fires slidechanged-h and -v when slide changes in a certain direction
