@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.0] - 2025-05-21
+### Changed
+- If a user has specifically set the csspath and cssautoload to true, even in a module environment, the plugin will try to load it anyway.
+
+
 ## [0.2.4] - 2025-05-14
 ### Changed
 - Add separate namespaces for eventTools and sectionTools.

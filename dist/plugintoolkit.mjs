@@ -102,9 +102,9 @@ const D = (n) => {
   } catch {
   }
   return `plugin/${n}/`;
-}, m = "data-css-id", P = (n, e) => new Promise((t, i) => {
+}, y = "data-css-id", P = (n, e) => new Promise((t, i) => {
   const o = document.createElement("link");
-  o.rel = "stylesheet", o.href = e, o.setAttribute(m, n);
+  o.rel = "stylesheet", o.href = e, o.setAttribute(y, n);
   const r = setTimeout(() => {
     o.parentNode && o.parentNode.removeChild(o), i(new Error(`[${n}] Timeout loading CSS from: ${e}`));
   }, 5e3);
@@ -113,14 +113,14 @@ const D = (n) => {
   }, o.onerror = () => {
     clearTimeout(r), o.parentNode && o.parentNode.removeChild(o), i(new Error(`[${n}] Failed to load CSS from: ${e}`));
   }, document.head.appendChild(o);
-}), S = (n) => document.querySelectorAll(`[${m}="${n}"]`).length > 0, _ = (n) => new Promise((e) => {
+}), h = (n) => document.querySelectorAll(`[${y}="${n}"]`).length > 0, _ = (n) => new Promise((e) => {
   if (t())
     return e(!0);
   setTimeout(() => {
     e(t());
   }, 50);
   function t() {
-    if (S(n)) return !0;
+    if (h(n)) return !0;
     try {
       return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${n}`).trim() !== "";
     } catch {
@@ -128,17 +128,13 @@ const D = (n) => {
     }
   }
 }), b = async (n) => {
-  const {
-    id: e,
-    cssautoload: t = !0,
-    csspath: i = "",
-    debug: o = !1
-  } = n;
+  const { id: e, cssautoload: t = !0, csspath: i = "", debug: o = !1 } = n;
   if (t === !1 || i === !1) return;
-  if (S(e)) {
-    o && console.log(`[${e}] CSS already loaded, skipping`);
+  if (h(e) && !(typeof i == "string" && i.trim() !== "")) {
+    o && console.log(`[${e}] CSS is already loaded, skipping`);
     return;
   }
+  h(e) && typeof i == "string" && i.trim() !== "" && o && console.log(`[${e}] CSS is already loaded, also loading user-specified path: ${i}`);
   const r = [];
   typeof i == "string" && i.trim() !== "" && r.push(i);
   const s = D(e);
@@ -162,8 +158,8 @@ const D = (n) => {
 async function H(n, e) {
   if ("getEnvironmentInfo" in n && e) {
     const t = n, i = t.getEnvironmentInfo();
-    if (await _(t.pluginId)) {
-      e.debug && console.log(`[${t.pluginId}] CSS already imported, skipping`);
+    if (await _(t.pluginId) && !(typeof e.csspath == "string" && e.csspath.trim() !== "")) {
+      e.debug && console.log(`[${t.pluginId}] CSS is already imported, skipping`);
       return;
     }
     if ("cssautoload" in t.userConfig ? !!e.cssautoload : !i.isBundlerEnvironment)
@@ -173,7 +169,9 @@ async function H(n, e) {
         csspath: e.csspath,
         debug: e.debug
       });
-    i.isBundlerEnvironment && console.warn(`[${t.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`);
+    i.isBundlerEnvironment && console.warn(
+      `[${t.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`
+    );
     return;
   }
   return b(n);
@@ -274,7 +272,7 @@ const k = (n) => new Proxy(n, {
         e.debugLog(i, ...o);
       };
   }
-}), N = k(new x()), h = (n) => {
+}), N = k(new x()), m = (n) => {
   let [e, t] = [0, 0];
   n.on("slidechanged", (i) => {
     const { indexh: o, indexv: r, previousSlide: s, currentSlide: u } = i;
@@ -286,7 +284,7 @@ const k = (n) => new Proxy(n, {
       data: { previousSlide: s, currentSlide: u, indexh: o, indexv: r }
     }), [e, t] = [o, r];
   });
-}, y = h, C = (n) => {
+}, S = m, C = (n) => {
   const e = n.getViewportElement();
   if (!e)
     return console.warn("[verticator]: Could not find viewport element"), () => {
@@ -315,8 +313,8 @@ const k = (n) => new Proxy(n, {
   };
 }, B = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  addDirectionEvents: h,
-  addMoreDirectionEvents: y,
+  addDirectionEvents: m,
+  addMoreDirectionEvents: S,
   addScrollModeEvents: C
 }, Symbol.toStringTag, { value: "Module" }));
 var v = /* @__PURE__ */ ((n) => (n.HORIZONTAL = "horizontal", n.STACK = "stack", n.VERTICAL = "vertical", n.INVALID = "invalid", n))(v || {});
@@ -341,8 +339,8 @@ const d = (n) => n instanceof HTMLElement && n.tagName === "SECTION", g = (n) =>
   isVertical: p
 }, Symbol.toStringTag, { value: "Module" })), R = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  addDirectionEvents: h,
-  addMoreDirectionEvents: y,
+  addDirectionEvents: m,
+  addMoreDirectionEvents: S,
   addScrollModeEvents: C,
   getSectionType: w,
   getStack: E,

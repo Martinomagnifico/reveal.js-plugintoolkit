@@ -4,10 +4,10 @@ var u = (n, e, t) => x(n, typeof e != "symbol" ? e + "" : e, t);
 function O(n) {
   return n && n.__esModule && Object.prototype.hasOwnProperty.call(n, "default") ? n.default : n;
 }
-var v, w;
+var v, M;
 function z() {
-  if (w) return v;
-  w = 1;
+  if (M) return v;
+  M = 1;
   var n = function(l) {
     return e(l) && !t(l);
   };
@@ -47,7 +47,7 @@ function z() {
   function S(i) {
     return Object.keys(i).concat(b(i));
   }
-  function $(i, l) {
+  function w(i, l) {
     try {
       return l in i;
     } catch {
@@ -55,14 +55,14 @@ function z() {
     }
   }
   function j(i, l) {
-    return $(i, l) && !(Object.hasOwnProperty.call(i, l) && Object.propertyIsEnumerable.call(i, l));
+    return w(i, l) && !(Object.hasOwnProperty.call(i, l) && Object.propertyIsEnumerable.call(i, l));
   }
   function T(i, l, s) {
     var h = {};
     return s.isMergeableObject(i) && S(i).forEach(function(g) {
       h[g] = d(i[g], s);
     }), S(l).forEach(function(g) {
-      j(i, g) || ($(i, g) && s.isMergeableObject(l[g]) ? h[g] = p(g, s)(i[g], l[g], s) : h[g] = d(l[g], s));
+      j(i, g) || (w(i, g) && s.isMergeableObject(l[g]) ? h[g] = p(g, s)(i[g], l[g], s) : h[g] = d(l[g], s));
     }), h;
   }
   function y(i, l, s) {
@@ -181,9 +181,9 @@ const B = (n) => {
   } catch {
   }
   return `plugin/${n}/`;
-}, A = "data-css-id", R = (n, e) => new Promise((t, r) => {
+}, I = "data-css-id", R = (n, e) => new Promise((t, r) => {
   const o = document.createElement("link");
-  o.rel = "stylesheet", o.href = e, o.setAttribute(A, n);
+  o.rel = "stylesheet", o.href = e, o.setAttribute(I, n);
   const c = setTimeout(() => {
     o.parentNode && o.parentNode.removeChild(o), r(new Error(`[${n}] Timeout loading CSS from: ${e}`));
   }, 5e3);
@@ -192,32 +192,28 @@ const B = (n) => {
   }, o.onerror = () => {
     clearTimeout(c), o.parentNode && o.parentNode.removeChild(o), r(new Error(`[${n}] Failed to load CSS from: ${e}`));
   }, document.head.appendChild(o);
-}), I = (n) => document.querySelectorAll(`[${A}="${n}"]`).length > 0, k = (n) => new Promise((e) => {
+}), C = (n) => document.querySelectorAll(`[${I}="${n}"]`).length > 0, k = (n) => new Promise((e) => {
   if (t())
     return e(!0);
   setTimeout(() => {
     e(t());
   }, 50);
   function t() {
-    if (I(n)) return !0;
+    if (C(n)) return !0;
     try {
       return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${n}`).trim() !== "";
     } catch {
       return !1;
     }
   }
-}), M = async (n) => {
-  const {
-    id: e,
-    cssautoload: t = !0,
-    csspath: r = "",
-    debug: o = !1
-  } = n;
+}), A = async (n) => {
+  const { id: e, cssautoload: t = !0, csspath: r = "", debug: o = !1 } = n;
   if (t === !1 || r === !1) return;
-  if (I(e)) {
-    o && console.log(`[${e}] CSS already loaded, skipping`);
+  if (C(e) && !(typeof r == "string" && r.trim() !== "")) {
+    o && console.log(`[${e}] CSS is already loaded, skipping`);
     return;
   }
+  C(e) && typeof r == "string" && r.trim() !== "" && o && console.log(`[${e}] CSS is already loaded, also loading user-specified path: ${r}`);
   const c = [];
   typeof r == "string" && r.trim() !== "" && c.push(r);
   const a = B(e);
@@ -241,21 +237,23 @@ const B = (n) => {
 async function U(n, e) {
   if ("getEnvironmentInfo" in n && e) {
     const t = n, r = t.getEnvironmentInfo();
-    if (await k(t.pluginId)) {
-      e.debug && console.log(`[${t.pluginId}] CSS already imported, skipping`);
+    if (await k(t.pluginId) && !(typeof e.csspath == "string" && e.csspath.trim() !== "")) {
+      e.debug && console.log(`[${t.pluginId}] CSS is already imported, skipping`);
       return;
     }
     if ("cssautoload" in t.userConfig ? !!e.cssautoload : !r.isBundlerEnvironment)
-      return M({
+      return A({
         id: t.pluginId,
         cssautoload: !0,
         csspath: e.csspath,
         debug: e.debug
       });
-    r.isBundlerEnvironment && console.warn(`[${t.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`);
+    r.isBundlerEnvironment && console.warn(
+      `[${t.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`
+    );
     return;
   }
-  return M(n);
+  return A(n);
 }
 class H {
   constructor() {
@@ -392,15 +390,15 @@ const q = (n) => new Proxy(n, {
   return c.observe(e, { attributes: !0, attributeFilter: ["class"] }), () => {
     o = !1, c.disconnect();
   };
-}, C = (n) => n instanceof HTMLElement && n.tagName === "SECTION", Y = (n) => C(n) ? Array.from(n.children).some(
+}, E = (n) => n instanceof HTMLElement && n.tagName === "SECTION", Y = (n) => E(n) ? Array.from(n.children).some(
   (e) => e instanceof HTMLElement && e.tagName === "SECTION"
-) : !1, J = (n) => C(n) ? n.parentElement instanceof HTMLElement && n.parentElement.tagName === "SECTION" : !1, Q = (n) => C(n) ? J(n) ? "vertical" : Y(n) ? "stack" : "horizontal" : "invalid", X = {
+) : !1, J = (n) => E(n) ? n.parentElement instanceof HTMLElement && n.parentElement.tagName === "SECTION" : !1, Q = (n) => E(n) ? J(n) ? "vertical" : Y(n) ? "stack" : "horizontal" : "invalid", X = {
   demoOption: "default value",
   cssautoload: !0,
   csspath: "",
   debug: !1
 };
-class E {
+class $ {
   constructor(e, t) {
     u(this, "deck");
     u(this, "options");
@@ -430,14 +428,14 @@ class E {
     });
   }
   static create(e, t) {
-    const r = new E(e, t);
+    const r = new $(e, t);
     return r.initialize(), r;
   }
 }
 const Z = async (n, e, t) => {
   m.initialize(t.debug, "demo-plugin");
   const r = n.getEnvironmentInfo();
-  m.log("Environment:", r), await U(n, t), await E.create(e, t);
+  m.log("Environment:", r), await U(n, t), await $.create(e, t);
 }, te = () => new F("demo-plugin", Z, X).createInterface();
 export {
   te as default
