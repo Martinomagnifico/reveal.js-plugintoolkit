@@ -105,7 +105,7 @@ class PluginDebug {
 				
 				// Display the table with the data
 				if (optionalProperties) {
-					console.table(propertiesOrData, optionalProperties);
+					console.table(propertiesOrData, optionalProperties as string[]);
 				} else {
 					console.table(propertiesOrData);
 				}

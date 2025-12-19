@@ -1,14 +1,11 @@
-var L = Object.defineProperty;
-var x = (n, e, t) => e in n ? L(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
-var u = (n, e, t) => x(n, typeof e != "symbol" ? e + "" : e, t);
-function O(n) {
-  return n && n.__esModule && Object.prototype.hasOwnProperty.call(n, "default") ? n.default : n;
+function P(r) {
+  return r && r.__esModule && Object.prototype.hasOwnProperty.call(r, "default") ? r.default : r;
 }
-var v, M;
-function z() {
-  if (M) return v;
-  M = 1;
-  var n = function(l) {
+var S, w;
+function L() {
+  if (w) return S;
+  w = 1;
+  var r = function(l) {
     return e(l) && !t(l);
   };
   function e(i) {
@@ -18,74 +15,74 @@ function z() {
     var l = Object.prototype.toString.call(i);
     return l === "[object RegExp]" || l === "[object Date]" || c(i);
   }
-  var r = typeof Symbol == "function" && Symbol.for, o = r ? Symbol.for("react.element") : 60103;
+  var n = typeof Symbol == "function" && Symbol.for, o = n ? /* @__PURE__ */ Symbol.for("react.element") : 60103;
   function c(i) {
     return i.$$typeof === o;
   }
-  function a(i) {
+  function u(i) {
     return Array.isArray(i) ? [] : {};
   }
-  function d(i, l) {
-    return l.clone !== !1 && l.isMergeableObject(i) ? y(a(i), i, l) : i;
+  function a(i, l) {
+    return l.clone !== !1 && l.isMergeableObject(i) ? b(u(i), i, l) : i;
   }
-  function f(i, l, s) {
-    return i.concat(l).map(function(h) {
-      return d(h, s);
+  function d(i, l, s) {
+    return i.concat(l).map(function(g) {
+      return a(g, s);
     });
   }
   function p(i, l) {
     if (!l.customMerge)
-      return y;
+      return b;
     var s = l.customMerge(i);
-    return typeof s == "function" ? s : y;
+    return typeof s == "function" ? s : b;
   }
-  function b(i) {
+  function m(i) {
     return Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(i).filter(function(l) {
       return Object.propertyIsEnumerable.call(i, l);
     }) : [];
   }
-  function S(i) {
-    return Object.keys(i).concat(b(i));
+  function y(i) {
+    return Object.keys(i).concat(m(i));
   }
-  function w(i, l) {
+  function $(i, l) {
     try {
       return l in i;
     } catch {
       return !1;
     }
   }
-  function j(i, l) {
-    return w(i, l) && !(Object.hasOwnProperty.call(i, l) && Object.propertyIsEnumerable.call(i, l));
+  function I(i, l) {
+    return $(i, l) && !(Object.hasOwnProperty.call(i, l) && Object.propertyIsEnumerable.call(i, l));
   }
-  function T(i, l, s) {
-    var h = {};
-    return s.isMergeableObject(i) && S(i).forEach(function(g) {
-      h[g] = d(i[g], s);
-    }), S(l).forEach(function(g) {
-      j(i, g) || (w(i, g) && s.isMergeableObject(l[g]) ? h[g] = p(g, s)(i[g], l[g], s) : h[g] = d(l[g], s));
-    }), h;
+  function j(i, l, s) {
+    var g = {};
+    return s.isMergeableObject(i) && y(i).forEach(function(f) {
+      g[f] = a(i[f], s);
+    }), y(l).forEach(function(f) {
+      I(i, f) || ($(i, f) && s.isMergeableObject(l[f]) ? g[f] = p(f, s)(i[f], l[f], s) : g[f] = a(l[f], s));
+    }), g;
   }
-  function y(i, l, s) {
-    s = s || {}, s.arrayMerge = s.arrayMerge || f, s.isMergeableObject = s.isMergeableObject || n, s.cloneUnlessOtherwiseSpecified = d;
-    var h = Array.isArray(l), g = Array.isArray(i), P = h === g;
-    return P ? h ? s.arrayMerge(i, l, s) : T(i, l, s) : d(l, s);
+  function b(i, l, s) {
+    s = s || {}, s.arrayMerge = s.arrayMerge || d, s.isMergeableObject = s.isMergeableObject || r, s.cloneUnlessOtherwiseSpecified = a;
+    var g = Array.isArray(l), f = Array.isArray(i), D = g === f;
+    return D ? g ? s.arrayMerge(i, l, s) : j(i, l, s) : a(l, s);
   }
-  y.all = function(l, s) {
+  b.all = function(l, s) {
     if (!Array.isArray(l))
       throw new Error("first argument should be an array");
-    return l.reduce(function(h, g) {
-      return y(h, g, s);
+    return l.reduce(function(g, f) {
+      return b(g, f, s);
     }, {});
   };
-  var D = y;
-  return v = D, v;
+  var T = b;
+  return S = T, S;
 }
-var N = z();
-const _ = /* @__PURE__ */ O(N), V = () => {
-  const n = typeof window < "u", e = typeof document < "u", t = n && typeof location < "u" && /localhost|127\.0\.0\.1/.test(location.hostname);
-  let r = !1;
+var x = L();
+const O = /* @__PURE__ */ P(x), z = () => {
+  const r = typeof window < "u", e = typeof document < "u", t = r && typeof location < "u" && /localhost|127\.0\.0\.1/.test(location.hostname);
+  let n = !1;
   try {
-    r = new Function('return typeof module !== "undefined" && !!module.hot')();
+    n = new Function('return typeof module !== "undefined" && !!module.hot')();
   } catch {
   }
   let o = !1;
@@ -93,47 +90,45 @@ const _ = /* @__PURE__ */ O(N), V = () => {
     o = new Function('return typeof import.meta !== "undefined" && typeof import.meta.env !== "undefined" && import.meta.env.DEV === true')();
   } catch {
   }
-  const c = n && typeof navigator < "u" && /vite|localhost|127\.0\.0\.1/.test(location.origin) && /AppleWebKit|Chrome|Vite/.test(navigator.userAgent), a = e && !!document.querySelector('script[type="module"]');
-  let d = !1;
+  const c = r && typeof navigator < "u" && /vite|localhost|127\.0\.0\.1/.test(location.origin) && /AppleWebKit|Chrome|Vite/.test(navigator.userAgent), u = e && !!document.querySelector('script[type="module"]');
+  let a = !1;
   try {
-    d = new Function('return typeof process !== "undefined" && process.env && (process.env.ROLLUP_WATCH === "true" || process.env.NODE_ENV === "development")')();
+    a = new Function('return typeof process !== "undefined" && process.env && (process.env.ROLLUP_WATCH === "true" || process.env.NODE_ENV === "development")')();
   } catch {
   }
-  let f = !1;
+  let d = !1;
   try {
-    f = new Function('return typeof define === "function" && !!define.amd')();
+    d = new Function('return typeof define === "function" && !!define.amd')();
   } catch {
   }
   return {
     isDevServer: t,
-    isWebpackHMR: r,
+    isWebpackHMR: n,
     isVite: o,
     isVitePreview: c,
-    hasModuleScripts: a,
-    isModuleBundler: d,
-    isAMD: f,
-    isBundlerEnvironment: r || o || c || a || d || f || t
+    hasModuleScripts: u,
+    isModuleBundler: a,
+    isAMD: d,
+    isBundlerEnvironment: n || o || c || u || a || d || t
   };
 };
-class F {
+class N {
+  defaultConfig;
+  pluginInit;
+  pluginId;
+  mergedConfig = null;
+  userConfigData = null;
+  /** Public data storage for plugin state */
+  data = {};
   // Create a new plugin instance
-  constructor(e, t, r) {
-    u(this, "defaultConfig");
-    u(this, "pluginInit");
-    u(this, "pluginId");
-    u(this, "mergedConfig", null);
-    u(this, "userConfigData", null);
-    /** Public data storage for plugin state */
-    u(this, "data", {});
-    // Gets information about the current JavaScript environment
-    u(this, "getEnvironmentInfo", () => V());
-    typeof e == "string" ? (this.pluginId = e, this.pluginInit = t, this.defaultConfig = r || {}) : (this.pluginId = e.id, this.pluginInit = e.init, this.defaultConfig = e.defaultConfig || {});
+  constructor(e, t, n) {
+    typeof e == "string" ? (this.pluginId = e, this.pluginInit = t, this.defaultConfig = n || {}) : (this.pluginId = e.id, this.pluginInit = e.init, this.defaultConfig = e.defaultConfig || {});
   }
   // Initialize plugin configuration by merging default and user settings
   initializeConfig(e) {
     const t = this.defaultConfig, o = e.getConfig()[this.pluginId] || {};
-    this.userConfigData = o, this.mergedConfig = _(t, o, {
-      arrayMerge: (c, a) => a,
+    this.userConfigData = o, this.mergedConfig = O(t, o, {
+      arrayMerge: (c, u) => u,
       clone: !0
     });
   }
@@ -150,6 +145,8 @@ class F {
   get userConfig() {
     return this.userConfigData || {};
   }
+  // Gets information about the current JavaScript environment
+  getEnvironmentInfo = () => z();
   // Initialize the plugin
   init(e) {
     if (this.initializeConfig(e), this.pluginInit)
@@ -159,158 +156,156 @@ class F {
   createInterface(e = {}) {
     return {
       id: this.pluginId,
-      init: (r) => this.init(r),
+      init: (n) => this.init(n),
       getConfig: () => this.getCurrentConfig(),
       getData: () => this.getData(),
       ...e
     };
   }
 }
-const B = (n) => {
+const _ = (r) => {
   const e = document.querySelector(
-    `script[src$="${n}.js"], script[src$="${n}.min.js"], script[src$="${n}.mjs"]`
+    `script[src$="${r}.js"], script[src$="${r}.min.js"], script[src$="${r}.mjs"]`
   );
-  if (e != null && e.src) {
-    const t = e.getAttribute("src") || "", r = t.lastIndexOf("/");
-    if (r !== -1)
-      return t.substring(0, r + 1);
+  if (e?.src) {
+    const t = e.getAttribute("src") || "", n = t.lastIndexOf("/");
+    if (n !== -1)
+      return t.substring(0, n + 1);
   }
   try {
     if (typeof import.meta < "u" && import.meta.url)
       return import.meta.url.slice(0, import.meta.url.lastIndexOf("/") + 1);
   } catch {
   }
-  return `plugin/${n}/`;
-}, I = "data-css-id", R = (n, e) => new Promise((t, r) => {
+  return `plugin/${r}/`;
+}, A = "data-css-id", V = (r, e) => new Promise((t, n) => {
   const o = document.createElement("link");
-  o.rel = "stylesheet", o.href = e, o.setAttribute(I, n);
+  o.rel = "stylesheet", o.href = e, o.setAttribute(A, r);
   const c = setTimeout(() => {
-    o.parentNode && o.parentNode.removeChild(o), r(new Error(`[${n}] Timeout loading CSS from: ${e}`));
+    o.parentNode && o.parentNode.removeChild(o), n(new Error(`[${r}] Timeout loading CSS from: ${e}`));
   }, 5e3);
   o.onload = () => {
     clearTimeout(c), t();
   }, o.onerror = () => {
-    clearTimeout(c), o.parentNode && o.parentNode.removeChild(o), r(new Error(`[${n}] Failed to load CSS from: ${e}`));
+    clearTimeout(c), o.parentNode && o.parentNode.removeChild(o), n(new Error(`[${r}] Failed to load CSS from: ${e}`));
   }, document.head.appendChild(o);
-}), C = (n) => document.querySelectorAll(`[${I}="${n}"]`).length > 0, k = (n) => new Promise((e) => {
+}), v = (r) => document.querySelectorAll(`[${A}="${r}"]`).length > 0, F = (r) => new Promise((e) => {
   if (t())
     return e(!0);
   setTimeout(() => {
     e(t());
   }, 50);
   function t() {
-    if (C(n)) return !0;
+    if (v(r)) return !0;
     try {
-      return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${n}`).trim() !== "";
+      return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${r}`).trim() !== "";
     } catch {
       return !1;
     }
   }
-}), A = async (n) => {
-  const { id: e, cssautoload: t = !0, csspath: r = "", debug: o = !1 } = n;
-  if (t === !1 || r === !1) return;
-  if (C(e) && !(typeof r == "string" && r.trim() !== "")) {
+}), M = async (r) => {
+  const { id: e, cssautoload: t = !0, csspath: n = "", debug: o = !1 } = r;
+  if (t === !1 || n === !1) return;
+  if (v(e) && !(typeof n == "string" && n.trim() !== "")) {
     o && console.log(`[${e}] CSS is already loaded, skipping`);
     return;
   }
-  C(e) && typeof r == "string" && r.trim() !== "" && o && console.log(`[${e}] CSS is already loaded, also loading user-specified path: ${r}`);
+  v(e) && typeof n == "string" && n.trim() !== "" && o && console.log(`[${e}] CSS is already loaded, also loading user-specified path: ${n}`);
   const c = [];
-  typeof r == "string" && r.trim() !== "" && c.push(r);
-  const a = B(e);
-  if (a) {
-    const f = `${a}${e}.css`;
-    c.push(f);
+  typeof n == "string" && n.trim() !== "" && c.push(n);
+  const u = _(e);
+  if (u) {
+    const d = `${u}${e}.css`;
+    c.push(d);
   }
-  const d = `plugin/${e}/${e}.css`;
-  c.push(d);
-  for (const f of c)
+  const a = `plugin/${e}/${e}.css`;
+  c.push(a);
+  for (const d of c)
     try {
-      await R(e, f);
+      await V(e, d);
       let p = "CSS";
-      r && f === r ? p = "user-specified CSS" : a && f === `${a}${e}.css` ? p = "CSS (auto-detected from script location)" : p = "CSS (standard fallback)", o && console.log(`[${e}] ${p} loaded successfully from: ${f}`);
+      n && d === n ? p = "user-specified CSS" : u && d === `${u}${e}.css` ? p = "CSS (auto-detected from script location)" : p = "CSS (standard fallback)", o && console.log(`[${e}] ${p} loaded successfully from: ${d}`);
       return;
     } catch {
-      o && console.log(`[${e}] Failed to load CSS from: ${f}`);
+      o && console.log(`[${e}] Failed to load CSS from: ${d}`);
     }
   console.warn(`[${e}] Could not load CSS from any location`);
 };
-async function U(n, e) {
-  if ("getEnvironmentInfo" in n && e) {
-    const t = n, r = t.getEnvironmentInfo();
-    if (await k(t.pluginId) && !(typeof e.csspath == "string" && e.csspath.trim() !== "")) {
+async function B(r, e) {
+  if ("getEnvironmentInfo" in r && e) {
+    const t = r, n = t.getEnvironmentInfo();
+    if (await F(t.pluginId) && !(typeof e.csspath == "string" && e.csspath.trim() !== "")) {
       e.debug && console.log(`[${t.pluginId}] CSS is already imported, skipping`);
       return;
     }
-    if ("cssautoload" in t.userConfig ? !!e.cssautoload : !r.isBundlerEnvironment)
-      return A({
+    if ("cssautoload" in t.userConfig ? !!e.cssautoload : !n.isBundlerEnvironment)
+      return M({
         id: t.pluginId,
         cssautoload: !0,
         csspath: e.csspath,
         debug: e.debug
       });
-    r.isBundlerEnvironment && console.warn(
+    n.isBundlerEnvironment && console.warn(
       `[${t.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`
     );
     return;
   }
-  return A(n);
+  return M(r);
 }
-class H {
-  constructor() {
-    // Flag to enable/disable all debugging output
-    u(this, "debugMode", !1);
-    // Label to prefix all debug messages with
-    u(this, "label", "DEBUG");
-    // Tracks the current depth of console groups for proper formatting
-    u(this, "groupDepth", 0);
-    // Creates a new console group and tracks the group depth. 
-    // Groups will always display the label prefix in their header.
-    u(this, "group", (...e) => {
-      this.debugLog("group", ...e), this.groupDepth++;
-    });
-    // Creates a new collapsed console group and tracks the group depth.
-    u(this, "groupCollapsed", (...e) => {
-      this.debugLog("groupCollapsed", ...e), this.groupDepth++;
-    });
-    // Ends the current console group and updates the group depth tracker.
-    u(this, "groupEnd", () => {
-      this.groupDepth > 0 && (this.groupDepth--, this.debugLog("groupEnd"));
-    });
-    // Formats and logs an error message with the debug label. 
-    // Error messages are always shown, even when debug mode is disabled.
-    u(this, "error", (...e) => {
-      const t = this.debugMode;
-      this.debugMode = !0, this.formatAndLog(console.error, e), this.debugMode = t;
-    });
-    // Displays a table in the console with the pluginDebug label.
-    // Special implementation for console.table to handle tabular data properly.
-    // @param messageOrData - Either a message string or the tabular data
-    // @param propertiesOrData - Either property names or tabular data (if first param was message)
-    // @param optionalProperties - Optional property names (if first param was message)
-    u(this, "table", (e, t, r) => {
-      if (this.debugMode)
-        try {
-          typeof e == "string" && t !== void 0 && typeof t != "string" ? (this.groupDepth === 0 ? console.log(`[${this.label}]: ${e}`) : console.log(e), r ? console.table(t, r) : console.table(t)) : (this.groupDepth === 0 && console.log(`[${this.label}]: Table data`), typeof t == "object" && Array.isArray(t) ? console.table(e, t) : console.table(e));
-        } catch (o) {
-          console.error(`[${this.label}]: Error showing table:`, o), console.log(`[${this.label}]: Raw data:`, e);
-        }
-    });
-    // Helper method that formats and logs messages with the pluginDebug label.
-    // @param logMethod - The console method to use for logging
-    // @param args - Arguments to pass to the console method
-    u(this, "formatAndLog", (e, t) => {
-      if (this.debugMode)
-        try {
-          this.groupDepth > 0 ? e.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? e.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : e.call(console, `[${this.label}]:`, ...t);
-        } catch (r) {
-          console.error(`[${this.label}]: Error in logging:`, r), console.log(`[${this.label}]: Original log data:`, ...t);
-        }
-    });
-  }
+class R {
+  // Flag to enable/disable all debugging output
+  debugMode = !1;
+  // Label to prefix all debug messages with
+  label = "DEBUG";
+  // Tracks the current depth of console groups for proper formatting
+  groupDepth = 0;
   // Initializes the debug utility with custom settings.
   initialize(e, t = "DEBUG") {
     this.debugMode = e, this.label = t;
   }
+  // Creates a new console group and tracks the group depth. 
+  // Groups will always display the label prefix in their header.
+  group = (...e) => {
+    this.debugLog("group", ...e), this.groupDepth++;
+  };
+  // Creates a new collapsed console group and tracks the group depth.
+  groupCollapsed = (...e) => {
+    this.debugLog("groupCollapsed", ...e), this.groupDepth++;
+  };
+  // Ends the current console group and updates the group depth tracker.
+  groupEnd = () => {
+    this.groupDepth > 0 && (this.groupDepth--, this.debugLog("groupEnd"));
+  };
+  // Formats and logs an error message with the debug label. 
+  // Error messages are always shown, even when debug mode is disabled.
+  error = (...e) => {
+    const t = this.debugMode;
+    this.debugMode = !0, this.formatAndLog(console.error, e), this.debugMode = t;
+  };
+  // Displays a table in the console with the pluginDebug label.
+  // Special implementation for console.table to handle tabular data properly.
+  // @param messageOrData - Either a message string or the tabular data
+  // @param propertiesOrData - Either property names or tabular data (if first param was message)
+  // @param optionalProperties - Optional property names (if first param was message)
+  table = (e, t, n) => {
+    if (this.debugMode)
+      try {
+        typeof e == "string" && t !== void 0 && typeof t != "string" ? (this.groupDepth === 0 ? console.log(`[${this.label}]: ${e}`) : console.log(e), n ? console.table(t, n) : console.table(t)) : (this.groupDepth === 0 && console.log(`[${this.label}]: Table data`), typeof t == "object" && Array.isArray(t) ? console.table(e, t) : console.table(e));
+      } catch (o) {
+        console.error(`[${this.label}]: Error showing table:`, o), console.log(`[${this.label}]: Raw data:`, e);
+      }
+  };
+  // Helper method that formats and logs messages with the pluginDebug label.
+  // @param logMethod - The console method to use for logging
+  // @param args - Arguments to pass to the console method
+  formatAndLog = (e, t) => {
+    if (this.debugMode)
+      try {
+        this.groupDepth > 0 ? e.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? e.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : e.call(console, `[${this.label}]:`, ...t);
+      } catch (n) {
+        console.error(`[${this.label}]: Error in logging:`, n), console.log(`[${this.label}]: Original log data:`, ...t);
+      }
+  };
   // Core method that handles calling console methods with proper formatting.
   // - Adds label prefix to messages outside of groups
   // - Skips label prefix for messages inside groups to avoid redundancy
@@ -319,9 +314,9 @@ class H {
   // @param methodName - Name of the console method to call
   // @param args - Arguments to pass to the console method
   debugLog(e, ...t) {
-    const r = console[e];
-    if (!this.debugMode && e !== "error" || typeof r != "function") return;
-    const o = r;
+    const n = console[e];
+    if (!this.debugMode && e !== "error" || typeof n != "function") return;
+    const o = n;
     if (e === "group" || e === "groupCollapsed") {
       t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
       return;
@@ -341,102 +336,102 @@ class H {
     this.groupDepth > 0 ? o.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? o.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : o.call(console, `[${this.label}]:`, ...t);
   }
 }
-const q = (n) => new Proxy(n, {
+const k = (r) => new Proxy(r, {
   get: (e, t) => {
     if (t in e)
       return e[t];
-    const r = t.toString();
-    if (typeof console[r] == "function")
+    const n = t.toString();
+    if (typeof console[n] == "function")
       return (...o) => {
-        e.debugLog(r, ...o);
+        e.debugLog(n, ...o);
       };
   }
-}), m = q(new H()), W = (n) => {
+}), h = k(new R()), U = (r) => {
   let [e, t] = [0, 0];
-  n.on("slidechanged", (r) => {
-    const { indexh: o, indexv: c, previousSlide: a, currentSlide: d } = r;
-    o !== e && n.dispatchEvent({
+  r.on("slidechanged", (n) => {
+    const { indexh: o, indexv: c, previousSlide: u, currentSlide: a } = n;
+    o !== e && r.dispatchEvent({
       type: "slidechanged-h",
-      data: { previousSlide: a, currentSlide: d, indexh: o, indexv: c }
-    }), c !== t && o === e && n.dispatchEvent({
+      data: { previousSlide: u, currentSlide: a, indexh: o, indexv: c }
+    }), c !== t && o === e && r.dispatchEvent({
       type: "slidechanged-v",
-      data: { previousSlide: a, currentSlide: d, indexh: o, indexv: c }
+      data: { previousSlide: u, currentSlide: a, indexh: o, indexv: c }
     }), [e, t] = [o, c];
   });
-}, G = W, K = (n) => {
-  const e = n.getViewportElement();
+}, H = U, q = (r) => {
+  const e = r.getViewportElement();
   if (!e)
     return console.warn("[verticator]: Could not find viewport element"), () => {
     };
   const t = () => e.classList.contains("reveal-scroll");
-  let r = t(), o = !0;
+  let n = t(), o = !0;
   const c = new MutationObserver(() => {
     if (!o) return;
-    const a = t();
-    if (a !== r) {
-      const d = n.getCurrentSlide(), f = n.getIndices(), p = f.h, b = f.v, S = a ? "scrollmode-enter" : "scrollmode-exit";
-      n.dispatchEvent({
-        type: S,
+    const u = t();
+    if (u !== n) {
+      const a = r.getCurrentSlide(), d = r.getIndices(), p = d.h, m = d.v, y = u ? "scrollmode-enter" : "scrollmode-exit";
+      r.dispatchEvent({
+        type: y,
         data: {
-          currentSlide: d,
+          currentSlide: a,
           previousSlide: null,
           indexh: p,
-          indexv: b
+          indexv: m
           // We can add stuff here if needed. Plugin-authors, just ask!
         }
-      }), r = a;
+      }), n = u;
     }
   });
   return c.observe(e, { attributes: !0, attributeFilter: ["class"] }), () => {
     o = !1, c.disconnect();
   };
-}, E = (n) => n instanceof HTMLElement && n.tagName === "SECTION", Y = (n) => E(n) ? Array.from(n.children).some(
+}, C = (r) => r instanceof HTMLElement && r.tagName === "SECTION", W = (r) => C(r) ? Array.from(r.children).some(
   (e) => e instanceof HTMLElement && e.tagName === "SECTION"
-) : !1, J = (n) => E(n) ? n.parentElement instanceof HTMLElement && n.parentElement.tagName === "SECTION" : !1, Q = (n) => E(n) ? J(n) ? "vertical" : Y(n) ? "stack" : "horizontal" : "invalid", X = {
+) : !1, G = (r) => C(r) ? r.parentElement instanceof HTMLElement && r.parentElement.tagName === "SECTION" : !1, K = (r) => C(r) ? G(r) ? "vertical" : W(r) ? "stack" : "horizontal" : "invalid", Y = {
   demoOption: "default value",
   cssautoload: !0,
   csspath: "",
   debug: !1
 };
-class $ {
+class E {
+  deck;
+  options;
+  currentSlide = null;
   constructor(e, t) {
-    u(this, "deck");
-    u(this, "options");
-    u(this, "currentSlide", null);
-    this.deck = e, this.options = t, m.log("Demo plugin initialized with options:", t);
+    this.deck = e, this.options = t, h.log("Demo plugin initialized with options:", t);
   }
   // Example method to demonstrate functionality
   initialize() {
-    m.log("Demo plugin initialized successfully");
+    h.log("Demo plugin initialized successfully");
     const e = document.createElement("div");
-    e.className = "demo-plugin-indicator", e.textContent = "Demo Plugin Active", document.body.appendChild(e), m.log("Indicator element added"), G(this.deck), K(this.deck), this.deck.on("slidechanged-h", (t) => {
-      const r = t;
-      if (r.currentSlide !== this.currentSlide) {
-        m.log("Moved horizontally", r);
-        const o = Q(r.currentSlide);
-        m.log("Slide type:", o), this.currentSlide = r.currentSlide;
+    e.className = "demo-plugin-indicator", e.textContent = "Demo Plugin Active", document.body.appendChild(e), h.log("Indicator element added"), H(this.deck), q(this.deck), this.deck.on("slidechanged-h", (t) => {
+      const n = t;
+      if (n.currentSlide !== this.currentSlide) {
+        h.log("Moved horizontally", n);
+        const o = K(n.currentSlide);
+        h.log("Slide type:", o), this.currentSlide = n.currentSlide;
       }
     }), this.deck.on("slidechanged-v", (t) => {
-      const r = t;
-      r.currentSlide !== this.currentSlide && (m.log("Moved vertically", r), this.currentSlide = r.currentSlide);
+      const n = t;
+      n.currentSlide !== this.currentSlide && (h.log("Moved vertically", n), this.currentSlide = n.currentSlide);
     }), this.deck.on("scrollmode-enter", (t) => {
-      const r = t;
-      m.log("Scroll mode enter", r);
+      const n = t;
+      h.log("Scroll mode enter", n);
     }), this.deck.on("scrollmode-exit", (t) => {
-      const r = t;
-      m.log("Scroll mode exit", r);
+      const n = t;
+      h.log("Scroll mode exit", n);
     });
   }
   static create(e, t) {
-    const r = new $(e, t);
-    return r.initialize(), r;
+    const n = new E(e, t);
+    return n.initialize(), n;
   }
 }
-const Z = async (n, e, t) => {
-  m.initialize(t.debug, "demo-plugin");
-  const r = n.getEnvironmentInfo();
-  m.log("Environment:", r), await U(n, t), await $.create(e, t);
-}, te = () => new F("demo-plugin", Z, X).createInterface();
+const J = async (r, e, t) => {
+  h.initialize(t.debug, "demo-plugin");
+  const n = r.getEnvironmentInfo();
+  h.log("Environment:", n), await B(r, t), await E.create(e, t);
+}, Q = () => new N("demo-plugin", J, Y).createInterface();
 export {
-  te as default
+  Q as default
 };
