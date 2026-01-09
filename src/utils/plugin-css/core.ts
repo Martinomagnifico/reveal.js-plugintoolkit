@@ -94,7 +94,7 @@ export async function pluginCSS<TConfig extends object>(
 
 		const shouldAutoloadCSS = cssAutoloadExplicitlySet
 			? !!config.cssautoload
-			: !env.isBundlerEnvironment;
+			: !env.isDevelopment;
 
 		if (shouldAutoloadCSS) {
 			// Call original pluginCSS
@@ -106,7 +106,7 @@ export async function pluginCSS<TConfig extends object>(
 			});
 		}
 
-		if (env.isBundlerEnvironment) {
+		if (env.isDevelopment) {
 			// Show warning about manual import
 			console.warn(
 				`[${plugin.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`,

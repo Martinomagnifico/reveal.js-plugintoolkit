@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.2] - 2026-01-09
+### Changed
+- Simplified environment detection logic in plugin-css
+  - Removed complex bundler detection checks (Vite, Webpack, AMD, module scripts, etc.)
+  - Now relies solely on HMR presence (`module.hot` or `import.meta.hot`) to determine development mode
+  - Fixes issue where CSS imports failed in `vite preview` and static file serving
+
+### Fixed  
+- CSS now correctly loads in all serving environments (dev, preview, and static)
+
 
 ## [1.0.1] - 2025-12-19
 ### Changed

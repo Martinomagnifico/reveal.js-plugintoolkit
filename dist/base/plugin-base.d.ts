@@ -21,16 +21,7 @@ export declare class PluginBase<TConfig extends object = Record<string, never>> 
     getCurrentConfig(): TConfig;
     getData(): Record<string, unknown> | undefined;
     get userConfig(): Partial<TConfig>;
-    getEnvironmentInfo: () => {
-        isDevServer: boolean;
-        isWebpackHMR: boolean;
-        isVite: boolean;
-        isVitePreview: boolean;
-        hasModuleScripts: boolean;
-        isModuleBundler: boolean;
-        isAMD: boolean;
-        isBundlerEnvironment: boolean;
-    };
+    getEnvironmentInfo: () => import('../types').EnvironmentInfo;
     init(deck: RevealInstance): void | Promise<void>;
     createInterface(additionalExports?: Record<string, unknown>): Record<string, unknown>;
 }

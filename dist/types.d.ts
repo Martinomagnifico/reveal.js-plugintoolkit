@@ -11,3 +11,10 @@ export interface RevealSlideEvent {
     defaultPrevented: boolean;
     eventPhase: number;
 }
+export type EnvironmentInfo = {
+    isDevelopment: boolean;
+    hasHMR: boolean;
+    isViteDev: boolean;
+    hasWindow: boolean;
+    hasDocument: boolean;
+};

@@ -1,77 +1,40 @@
-// First, let's create a clean environment detection function that avoids TypeScript errors
+import type { EnvironmentInfo } from '../types';
 
-export const detectEnvironment = () => {
-    // Basic environment checks
+let cachedEnv: EnvironmentInfo | null = null;
+
+export const detectEnvironment = (): EnvironmentInfo => {
+    if (cachedEnv) return cachedEnv;
+    
     const hasWindow = typeof window !== 'undefined';
     const hasDocument = typeof document !== 'undefined';
-    
-    // Check for development server (localhost)
-    const isDevServer = hasWindow && 
-                      typeof location !== 'undefined' && 
-                      /localhost|127\.0\.0\.1/.test(location.hostname);
-    
-    // Check for various bundler environments, using try/catch to avoid TypeScript errors
-    
-    // Webpack HMR check
-    let isWebpackHMR = false;
-    try {
-        // Use Function constructor to avoid TypeScript errors
-        isWebpackHMR = new Function('return typeof module !== "undefined" && !!module.hot')();
-    } catch (e) {
-        // Not webpack HMR
-    }
-    
-    // Vite check
-    let isVite = false;
-    try {
-        isVite = new Function('return typeof import.meta !== "undefined" && typeof import.meta.env !== "undefined" && import.meta.env.DEV === true')();
-    } catch (e) {
-        // Not Vite
-    }
-    
-    // Vite preview detection
-    const isVitePreview = hasWindow && 
-                        typeof navigator !== 'undefined' && 
-                        /vite|localhost|127\.0\.0\.1/.test(location.origin) && 
-                        /AppleWebKit|Chrome|Vite/.test(navigator.userAgent);
-    
-    // Check for script type="module"
-    const hasModuleScripts = hasDocument && 
-                           !!document.querySelector('script[type="module"]');
-    
-    // Module bundler check
-    let isModuleBundler = false;
-    try {
-        isModuleBundler = new Function('return typeof process !== "undefined" && process.env && (process.env.ROLLUP_WATCH === "true" || process.env.NODE_ENV === "development")')();
-    } catch (e) {
-        // Not a module bundler
-    }
-    
-    // AMD/RequireJS check
-    let isAMD = false;
-    try {
-        isAMD = new Function('return typeof define === "function" && !!define.amd')();
-    } catch (e) {
-        // Not AMD
-    }
-    
-    // Is this a bundler environment?
-    const isBundlerEnvironment = isWebpackHMR || 
-                              isVite || 
-                              isVitePreview || 
-                              hasModuleScripts || 
-                              isModuleBundler || 
-                              isAMD || 
-                              isDevServer;
 
-    return {
-        isDevServer,
-        isWebpackHMR,
-        isVite,
-        isVitePreview,
-        hasModuleScripts,
-        isModuleBundler,
-        isAMD,
-        isBundlerEnvironment
+    // Check for HMR
+    let hasHMR = false;
+    try {
+        const webpackHMR = new Function('return typeof module !== "undefined" && !!module.hot')();
+        const viteHMR = new Function('return typeof import.meta !== "undefined" && !!import.meta.hot')();
+        hasHMR = webpackHMR || viteHMR;
+    } catch (e) {
+        // No HMR available
+    }
+    
+    // Check if we're explicitly in Vite dev mode (not preview, not prod)
+    let isViteDev = false;
+    try {
+        isViteDev = new Function('return typeof import.meta !== "undefined" && import.meta.env?.DEV === true')();
+    } catch (e) {
+        // Not in Vite dev mode
+    }
+    
+    const isDevelopment = hasHMR || isViteDev;
+    
+    cachedEnv = {
+        isDevelopment,
+        hasHMR,
+        isViteDev,
+        hasWindow,
+        hasDocument
     };
+    
+    return cachedEnv;
 };
