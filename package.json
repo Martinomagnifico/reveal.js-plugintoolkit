@@ -1,6 +1,6 @@
 {
   "name": "reveal.js-plugintoolkit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Toolkit for building Reveal.js plugins",
   "main": "dist/plugintoolkit.js",
   "module": "dist/plugintoolkit.mjs",
@@ -29,6 +29,9 @@
     "build:demo": "cd demo && vite build",
     "preview": "cd demo && vite preview",
     "prepublishOnly": "npm run build"
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
   },
   "dependencies": {
     "deepmerge": "^4.3.1"

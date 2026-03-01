@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.3] - 2026-03-01
+### Changed
+- Update dependencies
+
 ## [1.0.2] - 2026-01-09
 ### Changed
 - Simplified environment detection logic in plugin-css
