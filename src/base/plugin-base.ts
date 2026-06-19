@@ -1,8 +1,10 @@
-import type { Api as RevealApi } from 'reveal.js';
+import type { RevealApi } from 'reveal.js';
+export type RevealInstance = RevealApi;
+
 import deepmerge from 'deepmerge';
 import { detectEnvironment } from './environment';
 
-export type RevealInstance = RevealApi;
+
 
 
 // Options interface for advanced plugin configuration
@@ -11,7 +13,7 @@ interface PluginOptions<TConfig extends object> {
     /** Unique identifier for the plugin */
     id: string;
     /** Plugin initialization function */
-    init?: (plugin: PluginBase<TConfig>, deck: RevealInstance, config: TConfig) => void | Promise<void>;
+    init?: (plugin: PluginBase<TConfig>, deck: RevealInstance, config: TConfig) => void | Promise<void>;  // Changed from Reveal.Api
     /** Default configuration object */
     defaultConfig?: TConfig;
 }

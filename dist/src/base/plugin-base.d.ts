@@ -1,4 +1,4 @@
-import { Api as RevealApi } from 'reveal.js';
+import { RevealApi } from 'reveal.js';
 export type RevealInstance = RevealApi;
 interface PluginOptions<TConfig extends object> {
     /** Unique identifier for the plugin */

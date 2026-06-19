@@ -1,6 +1,17 @@
 /**
  * Find the plugin script path
  */
+const getImportMeta = () => {
+  try {
+    return new Function('return import.meta')();
+  } catch {
+    return {};
+  }
+};
+
+const meta = getImportMeta();
+
+
 export const findPluginScriptPath = (pluginId: string): string => {
 	// Try to find the script tag with this plugin's filename
 	const scriptElement = document.querySelector(
@@ -18,13 +29,14 @@ export const findPluginScriptPath = (pluginId: string): string => {
 	
 	// Fallback to import.meta.url if available (for ES modules)
 	try {
-		if (typeof import.meta !== 'undefined' && import.meta.url) {
-			return import.meta.url.slice(0, import.meta.url.lastIndexOf('/') + 1);
+		if (meta && meta.url) {
+			return meta.url.slice(0, meta.url.lastIndexOf('/') + 1);
 		}
 	} catch (e) {
 		// import.meta.url not available
 	}
 	
-	// Default fallback
-	return `plugin/${pluginId}/`;
+	// Default fallback - use Reveal.js v5 path
+	// The CSS loader will try v4 path as secondary fallback
+	return `dist/plugin/${pluginId}/`;
 };

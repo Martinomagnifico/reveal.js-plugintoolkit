@@ -1,5 +1,22 @@
 # Changelog
 
+
+## [1.0.6] - 2026-06-19
+### Changed
+- Update dependencies
+
+
+## [1.0.5] - 2026-04-01
+### Changed
+- Make sure that import.meta is not used in UMD
+
+
+## [1.0.4] - 2026-04-01
+### Changed
+- Detection of Reveal v5 dist/plugin folder first
+- Update dependencies
+
+
 ## [1.0.3] - 2026-03-01
 ### Changed
 - Update dependencies

@@ -1,4 +1,5 @@
-import type { Api } from 'reveal.js';
+import type { RevealApi } from 'reveal.js';
+export type RevealInstance = RevealApi;
 import type { RevealSlideEvent } from "../../types";
 
 /**
@@ -7,7 +8,7 @@ import type { RevealSlideEvent } from "../../types";
  * @fires slidechanged-h When horizontal slide index changes
  * @fires slidechanged-v When vertical slide index changes within same horizontal stack
  */
-export const addDirectionEvents = (deck: Api): void => {
+export const addDirectionEvents = (deck: RevealInstance): void => {
 	let [prevH, prevV] = [0, 0];
 	deck.on("slidechanged", (event: unknown) => {
 		const { indexh, indexv, previousSlide, currentSlide } = event as RevealSlideEvent;
@@ -38,7 +39,7 @@ export const addMoreDirectionEvents = addDirectionEvents;
  * @fires scrollmode-exit When exiting scroll mode
  * @returns A cleanup function to disconnect the observer
  */
-export const addScrollModeEvents = (deck: Api): (() => void) => {
+export const addScrollModeEvents = (deck: RevealInstance): (() => void) => {
 
 	const viewportElement = deck.getViewportElement();
 	

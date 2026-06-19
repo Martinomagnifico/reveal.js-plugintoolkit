@@ -34,9 +34,11 @@ const pluginCSS_original = async (options: PluginCssOptions): Promise<void> => {
 		paths.push(autoPath);
 	}
 
-	// 3. Standard fallback paths
-	const standardPath = `plugin/${id}/${id}.css`;
-	paths.push(standardPath);
+	// 3. Standard fallback paths - support both Reveal.js v4 and v5
+	const standardPathV5 = `dist/plugin/${id}/${id}.css`;  // Reveal.js v5
+	const standardPathV4 = `plugin/${id}/${id}.css`;       // Reveal.js v4
+	paths.push(standardPathV5);
+	paths.push(standardPathV4);
 
 	// Try each path in order
 	for (const path of paths) {
@@ -50,8 +52,10 @@ const pluginCSS_original = async (options: PluginCssOptions): Promise<void> => {
 				pathType = "user-specified CSS";
 			} else if (scriptPath && path === `${scriptPath}${id}.css`) {
 				pathType = "CSS (auto-detected from script location)";
-			} else {
-				pathType = "CSS (standard fallback)";
+			} else if (path === standardPathV5) {
+				pathType = "CSS (standard fallback v5)";
+			} else if (path === standardPathV4) {
+				pathType = "CSS (standard fallback v4)";
 			}
 
 			debug && console.log(`[${id}] ${pathType} loaded successfully from: ${path}`);
