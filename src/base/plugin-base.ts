@@ -91,7 +91,7 @@ export class PluginBase<TConfig extends object = Record<string, never>> {
     // Gets information about the current JavaScript environment
 
     public getEnvironmentInfo = () => {
-        return detectEnvironment();
+        return detectEnvironment(this.pluginId);
     };
 
 

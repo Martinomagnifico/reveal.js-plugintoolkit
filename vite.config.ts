@@ -14,6 +14,12 @@ export default defineConfig({
 			fileName: (format) => `${pluginName}.${format === 'es' ? 'mjs' : 'js'}`
 		},
 		rollupOptions: {
+			// `import.meta` is referenced on purpose, and the UMD build is meant to
+			// have it replaced with `{}` — `document.currentScript` takes over there.
+			// See the comment on `selfUrl` in src/utils/plugin-css/path-finder.ts.
+			checks: {
+				emptyImportMeta: false,
+			},
 			external: ["reveal.js", "deepmerge"],
 			output: {
 				globals: {
@@ -24,5 +30,7 @@ export default defineConfig({
 		},
 		outDir: "dist",
 	},
+	// Declarations keep their src/ prefix, so they land at dist/src/index.d.ts.
+	// package.json "types" points there.
 	plugins: [dts()],
 });

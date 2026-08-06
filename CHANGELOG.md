@@ -1,6 +1,20 @@
 # Changelog
 
 
+## [1.0.7] - 2026-08-06
+### Fixed
+- Environment detection no longer goes through `new Function(...)`. A function body is always parsed in non-module goal, so `Function("return import.meta")` threw a `SyntaxError` at parse time in every environment, not just in UMD. As a result `isDevelopment` was permanently `false`, CSS autoloading never switched itself off in bundler environments, and the "import the CSS manually" warning was unreachable.
+- `import.meta` is now referenced directly so each output format can handle it: the ESM build keeps `import.meta.url`, the UMD build has it replaced with `{}` and falls back to `document.currentScript`.
+- Each environment probe sits in its own `try` block, so a failing probe can no longer discard the result of another.
+- Removing the last `Function()` call also makes detection work under a Content Security Policy without `unsafe-eval`.
+
+### Changed
+- CSS autoloading is now decided by whether the plugin was loaded as a file of its own, not by HMR sniffing. Loading via `<script src>`, via `<script type="module">import</script>` and inside an application bundle are all told apart without bundler-specific globals.
+- `EnvironmentInfo` gained `isBundled`, and `detectEnvironment` takes an optional plugin id to fill it in.
+- The "CSS autoloading is disabled" warning is only shown when the toolkit made that call itself, not when `cssautoload` was explicitly set to `false`.
+- `types` in package.json now points at `dist/src/index.d.ts`, which is where the declarations are actually emitted. It pointed at `dist/index.d.ts`, so consumers got no types at all.
+
+
 ## [1.0.6] - 2026-06-19
 ### Changed
 - Update dependencies

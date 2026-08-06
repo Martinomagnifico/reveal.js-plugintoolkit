@@ -16,6 +16,8 @@ export type EnvironmentInfo = {
     isDevelopment: boolean;
     hasHMR: boolean;
     isViteDev: boolean;
+    /** True when the plugin is part of an application bundle rather than a file of its own. */
+    isBundled: boolean;
     hasWindow: boolean;
     hasDocument: boolean;
 };

@@ -1,4 +1,5 @@
 export type { PluginCssOptions } from './types';
-export { findPluginScriptPath } from './path-finder';
+export type { PluginScriptSource } from './path-finder';
+export { findPluginScriptPath, findPluginScriptSource, isPluginBundled } from './path-finder';
 export { linkAndLoad, isCssLoaded, isCssImported } from './loader';
 export { pluginCSS } from './core';

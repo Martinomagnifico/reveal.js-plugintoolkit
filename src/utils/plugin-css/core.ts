@@ -96,9 +96,12 @@ export async function pluginCSS<TConfig extends object>(
 
 		const cssAutoloadExplicitlySet = "cssautoload" in plugin.userConfig;
 
+		// Autoload resolves a path relative to the plugin's own file. Once the
+		// plugin is part of an application bundle there is no such file, so there
+		// is nothing to resolve against and the CSS has to be imported by hand.
 		const shouldAutoloadCSS = cssAutoloadExplicitlySet
 			? !!config.cssautoload
-			: !env.isDevelopment;
+			: !env.isBundled;
 
 		if (shouldAutoloadCSS) {
 			// Call original pluginCSS
@@ -110,7 +113,9 @@ export async function pluginCSS<TConfig extends object>(
 			});
 		}
 
-		if (env.isDevelopment) {
+		// Only worth saying when we made the call ourselves. Someone who set
+		// cssautoload to false meant it.
+		if (!cssAutoloadExplicitlySet && env.isBundled) {
 			// Show warning about manual import
 			console.warn(
 				`[${plugin.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`,

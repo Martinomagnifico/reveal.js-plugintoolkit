@@ -14,6 +14,12 @@ export default defineConfig({
       }
     },
     rollupOptions: {
+      // The toolkit references `import.meta` on purpose, and expects the UMD build
+      // to replace it with `{}` — `document.currentScript` takes over there. Any
+      // plugin bundling the toolkit into a UMD build wants this same line.
+      checks: {
+        emptyImportMeta: false,
+      },
       external: ['reveal.js'],
       output: {
         globals: {

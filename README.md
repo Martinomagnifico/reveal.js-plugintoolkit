@@ -179,7 +179,24 @@ await pluginCSS(plugin, config);
 
 ```
 
-where config is still optional. The enhanced version of pluginCSS also detects if the environment uses script(type="module") or is in a bundler environment, where dynamic linking of CSS might give errors. Dynamic linking is then skipped, because `import` is the way to style your plugin in that case. If that import is also omitted, a console warning will show that. 
+where config is still optional. The enhanced version of pluginCSS also detects whether your plugin was loaded as a file of its own, or was bundled into an application. It does that by looking for the plugin's own script tag, and failing that by looking at the file this toolkit is running inside of (`import.meta.url` in the ESM build, `document.currentScript` in the UMD build).
+
+Loading through `<script src="myplugin.js">` and through `<script type="module">import MyPlugin from './myplugin.mjs'</script>` both leave a resolvable path, so the CSS is linked in as usual. Once the plugin is part of an application bundle there is no such path, so dynamic linking is skipped and `import` is the way to style your plugin. If that import is also omitted, a console warning will show that.
+
+#### A note on the `EMPTY_IMPORT_META` build warning
+
+Building a UMD bundle of your plugin will print `[EMPTY_IMPORT_META] import.meta may not be a valid syntax with the umd output format`. That is expected: the toolkit reads `import.meta.url` in the ESM build and lets the bundler swap `import.meta` for `{}` in the UMD build, where `document.currentScript` takes over instead. Nothing breaks. To silence it, add this to your own Vite config:
+
+```typescript
+build: {
+    rollupOptions: {
+        checks: {
+            emptyImportMeta: false,
+        },
+        // your other options...
+    },
+},
+```
 
 To be able to test if the CSS is successfully loaded in any way like `import`, your plugin will need to add a variable to the root, where `pluginid` should be the actual plugin id of your plugin:
 
@@ -192,9 +209,9 @@ To be able to test if the CSS is successfully loaded in any way like `import`, y
 
 ### Interface for the end user
 
-If the user is in a module environment, the CSS will *NOT* be loaded automatically and a warning will be visible in the console where the user is encouraged to use `import`. 
+If the user bundles your plugin into an application, the CSS will *NOT* be loaded automatically and a warning will be visible in the console where the user is encouraged to use `import`. 
 
-If the user is in a non-bundler environment, the CSS *NOT* be loaded automatically, but the user has a choice of the path:
+If the user loads your plugin as a file of its own, the CSS *WILL* be loaded automatically, but the user has a choice of the path:
 
 ```javascript
 Reveal.initialize({
