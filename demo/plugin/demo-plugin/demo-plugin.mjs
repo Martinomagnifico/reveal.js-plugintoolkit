@@ -5,10 +5,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		enumerable: !(s = n(i, d)) || s.enumerable
 	});
 	return e;
-}, c = /* @__PURE__ */ ((n, r, a) => (a = n == null ? {} : e(i(n)), s(r || !n || !n.__esModule ? t(a, "default", {
+}, c = /* @__PURE__ */ ((n, r, o) => (o = n == null ? {} : e(i(n)), s(r || !n || !n.__esModule || !a.call(n, "default") ? t(o, "default", {
 	value: n,
 	enumerable: !0
-}) : a, n)))((/* @__PURE__ */ o(((e, t) => {
+}) : o, n)))((/* @__PURE__ */ o(((e, t) => {
 	var n = function(e) {
 		return r(e) && !i(e);
 	};
@@ -62,7 +62,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		return n.isMergeableObject(e) && f(e).forEach(function(t) {
 			r[t] = c(e[t], n);
 		}), f(t).forEach(function(i) {
-			m(e, i) || (p(e, i) && n.isMergeableObject(t[i]) ? r[i] = u(i, n)(e[i], t[i], n) : r[i] = c(t[i], n));
+			m(e, i) || (r[i] = p(e, i) && n.isMergeableObject(t[i]) ? u(i, n)(e[i], t[i], n) : c(t[i], n));
 		}), r;
 	}
 	function g(e, t, r) {
@@ -91,7 +91,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 }, f = (e) => {
 	let t = e.split(/[?#]/)[0];
 	return t.slice(t.lastIndexOf("/") + 1);
-}, p = (e, t) => l.some((n) => e === `${t}${n}`), m = (e) => {
+}, p = (e, t) => l.some((n) => e === `${t}${n}`), m = [
+	/\/@fs\//,
+	/\/@id\//,
+	/\/\.vite\/deps\//,
+	/[?&][vt]=/
+], h = (e) => m.some((t) => t.test(e)), g = (e) => {
 	if (typeof document < "u") {
 		let t = l.map((t) => `script[src$="${e}${t}"]`).join(", "), n = document.querySelector(t)?.getAttribute("src");
 		if (n) return {
@@ -99,18 +104,18 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			isBundled: !1
 		};
 	}
-	return u && p(f(u), e) ? {
+	return u && !h(u) && p(f(u), e) ? {
 		directory: d(u),
 		isBundled: !1
 	} : {
 		directory: "",
 		isBundled: !0
 	};
-}, h = (e) => m(e).isBundled, g = (e) => {
-	let { directory: t } = m(e);
+}, _ = (e) => g(e).isBundled, v = (e) => {
+	let { directory: t } = g(e);
 	return t || `dist/plugin/${e}/`;
-}, _ = /* @__PURE__ */ new Map(), v = (e = "") => {
-	let t = _.get(e);
+}, y = /* @__PURE__ */ new Map(), b = (e = "") => {
+	let t = y.get(e);
 	if (t) return t;
 	let n = typeof window < "u", r = typeof document < "u", i = import.meta, a = !1;
 	try {
@@ -124,7 +129,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	try {
 		c = i?.env?.DEV === !0;
 	} catch {}
-	let l = s || c, u = e !== "" && h(e), d = {
+	let l = s || c, u = e !== "" && _(e), d = {
 		isDevelopment: l,
 		hasHMR: s,
 		isViteDev: c,
@@ -132,8 +137,8 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		hasWindow: n,
 		hasDocument: r
 	};
-	return _.set(e, d), d;
-}, y = class {
+	return y.set(e, d), d;
+}, x = class {
 	defaultConfig;
 	pluginInit;
 	pluginId;
@@ -160,7 +165,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	get userConfig() {
 		return this.userConfigData || {};
 	}
-	getEnvironmentInfo = () => v(this.pluginId);
+	getEnvironmentInfo = () => b(this.pluginId);
 	init(e) {
 		if (this.initializeConfig(e), this.pluginInit) return this.pluginInit(this, e, this.getCurrentConfig());
 	}
@@ -173,9 +178,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			...e
 		};
 	}
-}, b = "data-css-id", x = (e, t) => new Promise((n, r) => {
+}, S = "data-css-id", C = (e, t) => new Promise((n, r) => {
 	let i = document.createElement("link");
-	i.rel = "stylesheet", i.href = t, i.setAttribute(b, e);
+	i.rel = "stylesheet", i.href = t, i.setAttribute(S, e);
 	let a = setTimeout(() => {
 		i.parentNode && i.parentNode.removeChild(i), r(/* @__PURE__ */ Error(`[${e}] Timeout loading CSS from: ${t}`));
 	}, 5e3);
@@ -184,30 +189,40 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	}, i.onerror = () => {
 		clearTimeout(a), i.parentNode && i.parentNode.removeChild(i), r(/* @__PURE__ */ Error(`[${e}] Failed to load CSS from: ${t}`));
 	}, document.head.appendChild(i);
-}), S = (e) => document.querySelectorAll(`[${b}="${e}"]`).length > 0, C = (e) => new Promise((t) => {
-	if (n()) return t(!0);
-	setTimeout(() => {
-		t(n());
-	}, 50);
-	function n() {
-		if (S(e)) return !0;
-		try {
-			return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${e}`).trim() !== "";
-		} catch {
-			return !1;
-		}
+}), w = (e) => document.querySelectorAll(`[${S}="${e}"]`).length > 0, T = 1e4, E = (e) => Promise.resolve(O(e)), D = (e) => new Promise((t) => {
+	if (O(e)) return t(!0);
+	if (typeof MutationObserver > "u") return t(!1);
+	let n = !1, r = (e) => {
+		n || (n = !0, i.disconnect(), clearTimeout(o), window.removeEventListener("load", a), t(e));
+	}, i = new MutationObserver(() => {
+		O(e) && r(!0);
+	});
+	i.observe(document.documentElement, {
+		childList: !0,
+		subtree: !0,
+		attributeFilter: ["href", "rel"]
+	});
+	let a = () => requestAnimationFrame(() => r(O(e)));
+	document.readyState === "complete" ? a() : window.addEventListener("load", a, { once: !0 });
+	let o = setTimeout(() => r(O(e)), T);
+}), O = (e) => {
+	if (w(e)) return !0;
+	try {
+		return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${e}`).trim() !== "";
+	} catch {
+		return !1;
 	}
-}), w = async (e) => {
+}, k = async (e) => {
 	let { id: t, cssautoload: n = !0, csspath: r = "", debug: i = !1 } = e;
 	if (n === !1 || r === !1) return;
-	if (S(t) && !(typeof r == "string" && r.trim() !== "")) {
+	if (w(t) && (typeof r != "string" || r.trim() === "")) {
 		i && console.log(`[${t}] CSS is already loaded, skipping`);
 		return;
 	}
-	S(t) && typeof r == "string" && r.trim() !== "" && i && console.log(`[${t}] CSS is already loaded, also loading user-specified path: ${r}`);
+	w(t) && typeof r == "string" && r.trim() !== "" && i && console.log(`[${t}] CSS is already loaded, also loading user-specified path: ${r}`);
 	let a = [];
 	typeof r == "string" && r.trim() !== "" && a.push(r);
-	let o = g(t);
+	let o = v(t);
 	if (o) {
 		let e = `${o}${t}.css`;
 		a.push(e);
@@ -215,35 +230,36 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	let s = `dist/plugin/${t}/${t}.css`, c = `plugin/${t}/${t}.css`;
 	a.push(s), a.push(c);
 	for (let e of a) try {
-		await x(t, e);
+		await C(t, e);
 		let n = "CSS";
 		r && e === r ? n = "user-specified CSS" : o && e === `${o}${t}.css` ? n = "CSS (auto-detected from script location)" : e === s ? n = "CSS (standard fallback v5)" : e === c && (n = "CSS (standard fallback v4)"), i && console.log(`[${t}] ${n} loaded successfully from: ${e}`);
 		return;
 	} catch {
 		i && console.log(`[${t}] Failed to load CSS from: ${e}`);
 	}
-	console.warn(`[${t}] Could not load CSS from any location`);
+	typeof r == "string" && r.trim() !== "" ? console.warn(`[${t}] Could not load CSS from: ${r}`) : i && console.log(`[${t}] Could not autoload CSS from any location`);
 };
-async function T(e, t) {
+async function A(e, t) {
 	if ("getEnvironmentInfo" in e && t) {
-		let n = e, r = n.getEnvironmentInfo();
-		if (await C(n.pluginId) && !(typeof t.csspath == "string" && t.csspath.trim() !== "")) {
+		let n = e, r = n.getEnvironmentInfo(), i = "cssautoload" in n.userConfig, a = i ? !!t.cssautoload : !r.isBundled;
+		if (await E(n.pluginId) && (typeof t.csspath != "string" || t.csspath.trim() === "")) {
 			t.debug && console.log(`[${n.pluginId}] CSS is already imported, skipping`);
 			return;
 		}
-		let i = "cssautoload" in n.userConfig;
-		if (i ? t.cssautoload : !r.isBundled) return w({
+		if (a) return k({
 			id: n.pluginId,
 			cssautoload: !0,
 			csspath: t.csspath,
 			debug: t.debug
 		});
-		!i && r.isBundled && console.warn(`[${n.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`);
+		!i && r.isBundled && D(n.pluginId).then((e) => {
+			e || console.warn(`[${n.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`);
+		});
 		return;
 	}
-	return w(e);
+	return k(e);
 }
-var E = ((e) => new Proxy(e, { get: (e, t) => {
+var j = ((e) => new Proxy(e, { get: (e, t) => {
 	if (t in e) return e[t];
 	let n = t.toString();
 	if (typeof console[n] == "function") return (...t) => {
@@ -301,7 +317,7 @@ var E = ((e) => new Proxy(e, { get: (e, t) => {
 		}
 		this.groupDepth > 0 ? r.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? r.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : r.call(console, `[${this.label}]:`, ...t);
 	}
-}()), D = (e) => {
+}()), M = (e) => {
 	let [t, n] = [0, 0];
 	e.on("slidechanged", (r) => {
 		let { indexh: i, indexv: a, previousSlide: o, currentSlide: s } = r;
@@ -323,7 +339,7 @@ var E = ((e) => new Proxy(e, { get: (e, t) => {
 			}
 		}), [t, n] = [i, a];
 	});
-}, O = (e) => {
+}, N = (e) => {
 	let t = e.getViewportElement();
 	if (!t) return console.warn("[verticator]: Could not find viewport element"), () => {};
 	let n = () => t.classList.contains("reveal-scroll"), r = n(), i = !0, a = new MutationObserver(() => {
@@ -348,47 +364,47 @@ var E = ((e) => new Proxy(e, { get: (e, t) => {
 	}), () => {
 		i = !1, a.disconnect();
 	};
-}, k = (e) => e instanceof HTMLElement && e.tagName === "SECTION", A = (e) => k(e) ? Array.from(e.children).some((e) => e instanceof HTMLElement && e.tagName === "SECTION") : !1, j = (e) => k(e) ? e.parentElement instanceof HTMLElement && e.parentElement.tagName === "SECTION" : !1, M = (e) => k(e) ? j(e) ? "vertical" : A(e) ? "stack" : "horizontal" : "invalid", N = {
+}, P = (e) => e instanceof HTMLElement && e.tagName === "SECTION", F = (e) => P(e) ? Array.from(e.children).some((e) => e instanceof HTMLElement && e.tagName === "SECTION") : !1, I = (e) => P(e) ? e.parentElement instanceof HTMLElement && e.parentElement.tagName === "SECTION" : !1, L = (e) => P(e) ? I(e) ? "vertical" : F(e) ? "stack" : "horizontal" : "invalid", R = {
 	demoOption: "default value",
 	cssautoload: !0,
 	csspath: "",
 	debug: !1
-}, P = class e {
+}, z = class e {
 	deck;
 	options;
 	currentSlide = null;
 	constructor(e, t) {
-		this.deck = e, this.options = t, E.log("Demo plugin initialized with options:", t);
+		this.deck = e, this.options = t, j.log("Demo plugin initialized with options:", t);
 	}
 	initialize() {
-		E.log("Demo plugin initialized successfully");
+		j.log("Demo plugin initialized successfully");
 		let e = document.createElement("div");
-		e.className = "demo-plugin-indicator", e.textContent = "Demo Plugin Active", document.body.appendChild(e), E.log("Indicator element added"), D(this.deck), O(this.deck), this.deck.on("slidechanged-h", (e) => {
+		e.className = "demo-plugin-indicator", e.textContent = "Demo Plugin Active", document.body.appendChild(e), j.log("Indicator element added"), M(this.deck), N(this.deck), this.deck.on("slidechanged-h", (e) => {
 			let t = e;
 			if (t.currentSlide !== this.currentSlide) {
-				E.log("Moved horizontally", t);
-				let e = M(t.currentSlide);
-				E.log("Slide type:", e), this.currentSlide = t.currentSlide;
+				j.log("Moved horizontally", t);
+				let e = L(t.currentSlide);
+				j.log("Slide type:", e), this.currentSlide = t.currentSlide;
 			}
 		}), this.deck.on("slidechanged-v", (e) => {
 			let t = e;
-			t.currentSlide !== this.currentSlide && (E.log("Moved vertically", t), this.currentSlide = t.currentSlide);
+			t.currentSlide !== this.currentSlide && (j.log("Moved vertically", t), this.currentSlide = t.currentSlide);
 		}), this.deck.on("scrollmode-enter", (e) => {
 			let t = e;
-			E.log("Scroll mode enter", t);
+			j.log("Scroll mode enter", t);
 		}), this.deck.on("scrollmode-exit", (e) => {
 			let t = e;
-			E.log("Scroll mode exit", t);
+			j.log("Scroll mode exit", t);
 		});
 	}
 	static create(t, n) {
 		let r = new e(t, n);
 		return r.initialize(), r;
 	}
-}, F = async (e, t, n) => {
-	E.initialize(n.debug, "demo-plugin");
+}, B = async (e, t, n) => {
+	j.initialize(n.debug, "demo-plugin");
 	let r = e.getEnvironmentInfo();
-	E.log("Environment:", r), await T(e, n), await P.create(t, n);
-}, I = () => new y("demo-plugin", F, N).createInterface();
+	j.log("Environment:", r), await A(e, n), await z.create(t, n);
+}, V = () => new x("demo-plugin", B, R).createInterface();
 //#endregion
-export { I as default };
+export { V as default };

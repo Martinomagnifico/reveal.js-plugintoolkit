@@ -1,7 +1,7 @@
 import type { PluginCssOptions } from "./types";
 import type { PluginBase } from "../../base/plugin-base";
 import { findPluginScriptPath } from "./path-finder";
-import { linkAndLoad, isCssLoaded, isCssImported } from "./loader";
+import { linkAndLoad, isCssLoaded, isCssImported, whenCssImported } from "./loader";
 
 // Keep original function as internal
 const pluginCSS_original = async (options: PluginCssOptions): Promise<void> => {
@@ -66,8 +66,13 @@ const pluginCSS_original = async (options: PluginCssOptions): Promise<void> => {
 		}
 	}
 
-	// If we get here, all paths failed
-	console.warn(`[${id}] Could not load CSS from any location`);
+	// If we get here, all paths failed. Only a warning when the author named a path and it did not work.
+	const userSpecifiedPath = typeof csspath === "string" && csspath.trim() !== "";
+	if (userSpecifiedPath) {
+		console.warn(`[${id}] Could not load CSS from: ${csspath}`);
+	} else {
+		debug && console.log(`[${id}] Could not autoload CSS from any location`);
+	}
 };
 
 export async function pluginCSS<TConfig extends object>(
@@ -85,15 +90,6 @@ export async function pluginCSS<TConfig extends object>(
 		// Let's add some debugging here
 		const env = plugin.getEnvironmentInfo();
 
-		// Check for existing CSS first
-		const cssAlreadyImported = await isCssImported(plugin.pluginId);
-
-		if ( cssAlreadyImported && !(typeof config.csspath === "string" && config.csspath.trim() !== "") ) {
-			config.debug &&
-				console.log(`[${plugin.pluginId}] CSS is already imported, skipping`);
-			return;
-		}
-
 		const cssAutoloadExplicitlySet = "cssautoload" in plugin.userConfig;
 
 		// Autoload resolves a path relative to the plugin's own file. Once the
@@ -102,6 +98,16 @@ export async function pluginCSS<TConfig extends object>(
 		const shouldAutoloadCSS = cssAutoloadExplicitlySet
 			? !!config.cssautoload
 			: !env.isBundled;
+
+		// Answered from the page as it stands. A plugin is awaited by Reveal
+		// before the deck is ready, so this must not wait for anything.
+		const cssAlreadyImported = await isCssImported(plugin.pluginId);
+
+		if ( cssAlreadyImported && !(typeof config.csspath === "string" && config.csspath.trim() !== "") ) {
+			config.debug &&
+				console.log(`[${plugin.pluginId}] CSS is already imported, skipping`);
+			return;
+		}
 
 		if (shouldAutoloadCSS) {
 			// Call original pluginCSS
@@ -113,13 +119,15 @@ export async function pluginCSS<TConfig extends object>(
 			});
 		}
 
-		// Only worth saying when we made the call ourselves. Someone who set
-		// cssautoload to false meant it.
+		// Only worth saying when we made the call ourselves. Someone who set cssautoload to false meant it.
 		if (!cssAutoloadExplicitlySet && env.isBundled) {
-			// Show warning about manual import
-			console.warn(
-				`[${plugin.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`,
-			);
+			// Deliberately not awaited: the deck should be running long before this settles.
+			void whenCssImported(plugin.pluginId).then((imported) => {
+				if (imported) return;
+				console.warn(
+					`[${plugin.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`,
+				);
+			});
 		}
 		return;
 	}

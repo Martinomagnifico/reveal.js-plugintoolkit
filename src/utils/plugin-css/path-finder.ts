@@ -9,17 +9,8 @@ const SCRIPT_SUFFIXES = ['.js', '.min.js', '.mjs'] as const;
 /**
  * URL of the file this toolkit code is running inside of, captured while the
  * module is evaluating.
- *
- * `import.meta.url` cannot be reached through `new Function('return import.meta')`:
- * the function body is always parsed in non-module goal, so the constructor throws
- * a SyntaxError at parse time, in every environment. It has to be referenced
- * directly so each output format can deal with it:
- *
- * - ESM output keeps `import.meta.url` as written.
- * - Non-ESM output (UMD) has the bundler replace `import.meta` with `{}`, so the
- *   url is undefined there and `document.currentScript` stands in. That is only
- *   readable while the script is evaluating, hence the module level capture.
- */
+*/
+
 const selfUrl: string = (() => {
 	const meta = import.meta as { url?: string } | undefined;
 	if (typeof meta?.url === 'string' && meta.url !== '') return meta.url;
@@ -45,6 +36,25 @@ const fileNameOf = (url: string): string => {
 const isPluginFileName = (fileName: string, pluginId: string): boolean =>
 	SCRIPT_SUFFIXES.some((suffix) => fileName === `${pluginId}${suffix}`);
 
+/**
+ * URL patterns that indicate a file is being served by a dev server.
+*/
+
+const DEV_SERVER_URL_PATTERNS: readonly RegExp[] = [
+	// Vite's filesystem escape hatch, for anything outside the project root.
+	/\/@fs\//,
+	// Vite's resolved-id prefix for virtual and bare module ids.
+	/\/@id\//,
+	// A pre-bundled dependency. Named after the dependency, not the plugin, so
+	// the file name check misses it, but it is worth being explicit.
+	/\/\.vite\/deps\//,
+	// Cache-busting queries a dev server appends to a module it is watching.
+	/[?&][vt]=/,
+];
+
+const isDevServerUrl = (url: string): boolean =>
+	DEV_SERVER_URL_PATTERNS.some((pattern) => pattern.test(url));
+
 export type PluginScriptSource = {
 	/** Directory the plugin's own file lives in, trailing slash included. Empty when unknown. */
 	directory: string;
@@ -53,8 +63,7 @@ export type PluginScriptSource = {
 };
 
 /**
- * Work out where the plugin was loaded from, and whether it was loaded as a
- * discrete file at all.
+ * Work out where the plugin was loaded from, and whether it was loaded as a file at all.
  */
 export const findPluginScriptSource = (pluginId: string): PluginScriptSource => {
 	// 1. A script tag naming this plugin: loaded as a classic script.
@@ -71,15 +80,12 @@ export const findPluginScriptSource = (pluginId: string): PluginScriptSource => 
 		}
 	}
 
-	// 2. Our own file, when it is named after the plugin. A discrete ES module
-	//    import (`import Plugin from './plugin.mjs'`) leaves no script tag behind,
-	//    so this is the only signal for that way of loading.
-	if (selfUrl && isPluginFileName(fileNameOf(selfUrl), pluginId)) {
+	// 2. Our own file, when it is named after the plugin.
+	if (selfUrl && !isDevServerUrl(selfUrl) && isPluginFileName(fileNameOf(selfUrl), pluginId)) {
 		return { directory: directoryOf(selfUrl), isBundled: false };
 	}
 
-	// 3. Neither: the plugin was rolled into an application bundle, whose file is
-	//    named after the application and carries no CSS we can guess the path of.
+	// 3. Neither: the plugin was rolled into an application bundle, whose file is named after the application and has no CSS we can guess the path of.
 	return { directory: '', isBundled: true };
 };
 

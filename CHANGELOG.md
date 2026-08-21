@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.8] - 2026-08-21
+### Changed
+- Using an observer instead of waiting to check for the load of CSS through the (--cssimported-*) marker. 
+- Warning in console only if you (the user) has set an own path.
 
 ## [1.0.7] - 2026-08-06
 ### Fixed

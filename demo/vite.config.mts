@@ -1,11 +1,11 @@
-// demo/vite.config.js
+// demo/vite.config.mts
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/js/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/js/index.ts'),
       name: 'RevealDemoPlugin',
       formats: ['es', 'umd'],
       fileName: (format) => {

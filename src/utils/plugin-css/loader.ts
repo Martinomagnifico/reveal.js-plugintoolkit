@@ -52,38 +52,90 @@ export const isCssLoaded = (pluginId: string): boolean => {
 	return existingLinks.length > 0;
 };
 
-// Checks if CSS has been imported either via link tag or direct import. It includes the isCssLoaded check. 
+/**
+ * Backstop for `whenCssImported`, in case a document somehow never fires `load`.
+ * Long on purpose: nothing is waiting on the answer, so the only cost of being
+ * generous is an advisory arriving late.
+*/
+const CSS_WAIT_CAP_MS = 10000;
 
-export const isCssImported = (pluginId: string): Promise<boolean> => {
+// Checks if CSS has been imported either via link tag or direct import. It includes the isCssLoaded check.
+
+/**
+ * Whether the application has already brought this plugin's CSS in, via a link
+ * tag we wrote or the `--cssimported-<id>` marker the stylesheet declares.
+*/
+
+export const isCssImported = (pluginId: string): Promise<boolean> =>
+	Promise.resolve(checkCssImported(pluginId));
+
+/**
+ * The same question, but held open until the page has finished settling.
+*/
+
+export const whenCssImported = (pluginId: string): Promise<boolean> => {
 	return new Promise((resolve) => {
 
-		if (checkCssLoaded()) {
+		if (checkCssImported(pluginId)) {
 			return resolve(true);
 		}
-		
-		// Delay helps with dev mode
-		setTimeout(() => {
-			resolve(checkCssLoaded());
-		}, 50);
-		
-		function checkCssLoaded() {
-			// Check for link tag first
-			const hasLinkTag = isCssLoaded(pluginId);
-			if (hasLinkTag) return true;
-			 
-			// Get style of root
-			try {
-				const rootStyle = window.getComputedStyle(document.documentElement);
-				
-				// Check for the CSS var
-				const customProp = rootStyle.getPropertyValue(`--cssimported-${pluginId}`);
-				
-				// Also not empty
-				return customProp.trim() !== '';
 
-			} catch (e) {
-				return false;
-			}
+		if (typeof MutationObserver === 'undefined') {
+			return resolve(false);
 		}
+
+		let settled = false;
+
+		const finish = (result: boolean) => {
+			if (settled) return;
+			settled = true;
+			observer.disconnect();
+			clearTimeout(capTimer);
+			window.removeEventListener('load', onLoaded);
+			resolve(result);
+		};
+
+		const recheck = () => {
+			if (checkCssImported(pluginId)) finish(true);
+		};
+
+		// A stylesheet can be appended anywhere.
+		const observer = new MutationObserver(recheck);
+		observer.observe(document.documentElement, {
+			childList: true,
+			subtree: true,
+			attributeFilter: ['href', 'rel']
+		});
+
+		// `load` waits for stylesheets.
+		const onLoaded = () => requestAnimationFrame(() => finish(checkCssImported(pluginId)));
+
+		if (document.readyState === 'complete') {
+			onLoaded();
+		} else {
+			window.addEventListener('load', onLoaded, { once: true });
+		}
+
+		const capTimer = setTimeout(() => finish(checkCssImported(pluginId)), CSS_WAIT_CAP_MS);
 	});
+};
+
+const checkCssImported = (pluginId: string): boolean => {
+	// Check for link tag first
+	const hasLinkTag = isCssLoaded(pluginId);
+	if (hasLinkTag) return true;
+
+	// Get style of root
+	try {
+		const rootStyle = window.getComputedStyle(document.documentElement);
+
+		// Check for the CSS var
+		const customProp = rootStyle.getPropertyValue(`--cssimported-${pluginId}`);
+
+		// Also not empty
+		return customProp.trim() !== '';
+
+	} catch (e) {
+		return false;
+	}
 };

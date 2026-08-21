@@ -1,7 +1,7 @@
 // Export core functionality
 export { PluginBase } from './base/plugin-base';
 export { pluginCSS } from './utils/plugin-css';
-export { isCssImported } from './utils/plugin-css/loader';
+export { isCssImported, whenCssImported } from './utils/plugin-css/loader';
 export { pluginDebug } from './utils/plugin-debug';
 
 export * as pluginTools from './utils/plugin-tools'; // All of the tools
