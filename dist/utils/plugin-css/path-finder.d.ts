@@ -8,8 +8,7 @@ export type PluginScriptSource = {
     isBundled: boolean;
 };
 /**
- * Work out where the plugin was loaded from, and whether it was loaded as a
- * discrete file at all.
+ * Work out where the plugin was loaded from, and whether it was loaded as a file at all.
  */
 export declare const findPluginScriptSource: (pluginId: string) => PluginScriptSource;
 /**
