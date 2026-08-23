@@ -249,3 +249,21 @@ const createDebugProxy = (debugInstance: PluginDebug): DebugWithConsoleMethods =
 	}) as DebugWithConsoleMethods;
 
 export const pluginDebug = createDebugProxy(new PluginDebug());
+
+
+/**
+ * Print a notice to the console once per page, however often it is called.
+ *
+ * Deliberately `console.warn` and not `pluginDebug.warn`, which is silent unless
+ * debugging is switched on: an advisory has to reach the people who never switch
+ * it on. Keyed by plugin and message, so two different notices from the same
+ * plugin both get through.
+ */
+const warned = new Set<string>();
+
+export const warnOnce = (pluginId: string, message: string): void => {
+	const key = `${pluginId}::${message}`;
+	if (warned.has(key)) return;
+	warned.add(key);
+	console.warn(`[${pluginId}] ${message}`);
+};

@@ -13,11 +13,21 @@ export interface RevealSlideEvent {
 }
 
 export type EnvironmentInfo = {
-    isDevelopment: boolean;
-    hasHMR: boolean;
-    isViteDev: boolean;
-    /** True when the plugin is part of an application bundle rather than a file of its own. */
-    isBundled: boolean;
+    /**
+     * True when the plugin's own file has a URL, so a stylesheet path can be
+     * derived from it rather than guessed at. False inside an application bundle
+     * and on a dev server, both of which own the CSS pipeline themselves.
+     */
+    hasResolvableSource: boolean;
     hasWindow: boolean;
     hasDocument: boolean;
+
+    /** @deprecated The inverse of `hasResolvableSource`, under a name that states a conclusion rather than the test. */
+    isBundled: boolean;
+    /** @deprecated Nothing in the toolkit reads this. Kept so 1.0.x callers still compile. */
+    isDevelopment: boolean;
+    /** @deprecated Nothing in the toolkit reads this. Kept so 1.0.x callers still compile. */
+    hasHMR: boolean;
+    /** @deprecated Nothing in the toolkit reads this. Kept so 1.0.x callers still compile. */
+    isViteDev: boolean;
 };

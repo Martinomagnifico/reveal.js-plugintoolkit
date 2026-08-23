@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.1.0] - 2026-08-23
+
+- CSS loading is one decision now, taken from three inputs: whether the stylesheet is already on the page, what the author asked for, and whether the plugin's own file has a URL to resolve a path against. The environment flags no longer take part in it.
+
+### Fixed
+- A `csspath` that fails is always reported.
+- A `console.warn` when no more options to get the path
+- A stylesheet sitting **beside** the plugin script is now found.
+- The options-object form (`pluginCSS({ id, … })`) consults the `--cssimported-<id>` marker like everything else.
+
+### Added
+- `pluginCSS` returns `{ status, path? }` — `present`, `loaded`, `skipped`, `advised` or `failed`.
+  A plugin that reads colours or sizes back off the page can wait for the stylesheet instead of
+  racing it.
+- `cssautoload` accepts `'auto'`, which is exactly the same as leaving it out: decide for me.
+  `true` still forces the standard paths to be tried even where nothing can be derived.
+- `whenThemeApplied(timeout)` and `isThemeApplied()`. Every Reveal theme declares `--r-main-color`
+  and `reveal.css` does not, so this is proof a theme has been *applied* rather than requested —
+  for plugins that read theme colours at startup.
+- `warnOnce(pluginId, message)` for advisories that must reach people who never switch `debug` on.
+- Shared helpers that were being copied between plugins, and had already started to drift:
+  `isJSON` and `toJSONString` (`configTools`), `copyDataAttributes` and `createNode` (`domTools`),
+  `sanitizeText` (`textTools`).
+- `checkCssImported(pluginId)` is exported: the same marker test the toolkit uses, answered
+  immediately rather than waited on.
+- `"sideEffects": false`, so a bundler drops the helpers a plugin does not use.
+
+### Changed
+- `isBundled` is now `hasResolvableSource`, inverted — the name states the test rather than a
+  conclusion. A dev server has no resolvable source either, without being a bundle.
+  `findPluginSource` returns `{ directory: string | null }`.
+- `EnvironmentInfo.isDevelopment`, `.hasHMR` and `.isViteDev` are deprecated. Nothing in the
+  toolkit reads them; they were proxies for "can a path be resolved", and being poor proxies for
+  it is what kept this area moving between 1.0.0 and 1.0.8.
+- The bundler advisory names the import that would fix it, rather than saying "import the CSS
+  manually" without saying from where.
+
+### Deprecated, still working
+`isPluginBundled`, `findPluginScriptSource` and `findPluginScriptPath` are kept for 1.0.x callers.
+
 ## [1.0.8] - 2026-08-21
 ### Changed
 - Using an observer instead of waiting to check for the load of CSS through the (--cssimported-*) marker. 

@@ -12,3 +12,9 @@ export {
 	getStack,
 	getSectionType
 } from './section-tools';
+
+export { isJSON, toJSONString } from './config-tools';
+
+export { copyDataAttributes, createNode } from './dom-tools';
+
+export { sanitizeText } from './text-tools';

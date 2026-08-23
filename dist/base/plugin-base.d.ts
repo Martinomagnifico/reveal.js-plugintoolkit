@@ -21,7 +21,7 @@ export declare class PluginBase<TConfig extends object = Record<string, never>> 
     getCurrentConfig(): TConfig;
     getData(): Record<string, unknown> | undefined;
     get userConfig(): Partial<TConfig>;
-    getEnvironmentInfo: () => import('../types').EnvironmentInfo;
+    getEnvironmentInfo: () => import('..').EnvironmentInfo;
     init(deck: RevealInstance): void | Promise<void>;
     createInterface(additionalExports?: Record<string, unknown>): Record<string, unknown>;
 }

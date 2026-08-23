@@ -20,4 +20,5 @@ declare class PluginDebug {
     debugLog(methodName: keyof Console, ...args: unknown[]): void;
 }
 export declare const pluginDebug: DebugWithConsoleMethods;
+export declare const warnOnce: (pluginId: string, message: string) => void;
 export {};
