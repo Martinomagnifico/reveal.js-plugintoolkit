@@ -1,6 +1,5 @@
-import type { Api } from 'reveal.js';
 import type { Config } from './config';
-import type { RevealSlideEvent } from '../../../src/types';
+import type { RevealInstance, RevealSlideEvent } from '../../../src/types';
 import { pluginDebug } from '../../../src';
 
 // Importing the plugin tools (contains also the direction events and section tools). It is not used here because the functions below are added.
@@ -13,11 +12,11 @@ import { eventTools } from '../../../src';
 import { sectionTools } from '../../../src';
 
 export class DemoPlugin {
-    private readonly deck: Api;
+    private readonly deck: RevealInstance;
     private readonly options: Config;
     private currentSlide: HTMLElement | null = null;
 
-    constructor(deck: Api, options: Config) {
+    constructor(deck: RevealInstance, options: Config) {
         this.deck = deck;
         this.options = options;
         pluginDebug.log('Demo plugin initialized with options:', options);
@@ -41,13 +40,13 @@ export class DemoPlugin {
         eventTools.addScrollModeEvents(this.deck);
 
         this.deck.on("slidechanged-h", (event: unknown) => {
-        const e = event as RevealSlideEvent;
-        if (e.currentSlide !== this.currentSlide) {
-            pluginDebug.log("Moved horizontally", e);
-            const slideType = sectionTools.getSectionType(e.currentSlide);
-            pluginDebug.log("Slide type:", slideType);
-            this.currentSlide = e.currentSlide;
-        }
+            const e = event as RevealSlideEvent;
+            if (e.currentSlide !== this.currentSlide) {
+                pluginDebug.log("Moved horizontally", e);
+                const slideType = sectionTools.getSectionType(e.currentSlide);
+                pluginDebug.log("Slide type:", slideType);
+                this.currentSlide = e.currentSlide;
+            }
         });
 
         this.deck.on("slidechanged-v", (event: unknown) => {
@@ -68,14 +67,12 @@ export class DemoPlugin {
             pluginDebug.log("Scroll mode exit", e);
         });
 
-
-
-
     }
-    
-    static create(deck: Api, options: Config): DemoPlugin {
+
+    static create(deck: RevealInstance, options: Config): DemoPlugin {
         const instance = new DemoPlugin(deck, options);
         instance.initialize();
         return instance;
     }
+
 }

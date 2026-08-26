@@ -1,6 +1,6 @@
 {
   "name": "reveal.js-plugintoolkit",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "sideEffects": false,
   "description": "Toolkit for building Reveal.js plugins",
   "main": "dist/plugintoolkit.js",
@@ -9,7 +9,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "author": {
     "name": "Martijn De Jongh (Martino)",
@@ -29,7 +30,9 @@
     "build": "vite build",
     "build:demo": "npm run build && cd demo && vite build",
     "preview": "npm run build && cd demo && serve -s .",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && node test/event-tools.test.mjs",
+    "test:events": "node test/event-tools.test.mjs"
   },
   "peerDependencies": {
     "reveal.js": ">=4.0.0"
@@ -38,7 +41,6 @@
     "deepmerge": "^4.3.1"
   },
   "devDependencies": {
-    "@types/reveal.js": "^5.2.2",
     "@typescript/typescript6": "^6.0.2",
     "serve": "^14.2.6",
     "typescript": "^7.0.2",

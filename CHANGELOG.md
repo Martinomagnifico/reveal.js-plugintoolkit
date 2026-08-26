@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.2] - 2026-08-24
+
+### Fixed
+- The once-per-deck guards added in 1.1.1 did not work across plugins, which is the case they existed for. Plugins bundle the toolkit rather than sharing one instance. The mark now goes on the deck itself under a `Symbol.for` key, which every copy in the page resolves to the same symbol.
+
+## [1.1.1] - 2026-08-24
+
+### Changed
+- `RevealInstance` is a structural interface in `src/types.ts` rather than an alias for a reveal.js type: `Api` is from `@types/reveal.js` (4.x, 5.x) and `RevealApi` from reveal.js 6's own typings, so importing either pins the toolkit to one generation and breaks types for the others. `@types/reveal.js` is no longer a devDependency.
+- A cleanup from `addScrollModeEvents` is inert unless it came from the call that installed the observer, so if one plugin shuts down, then the events stay up for the rest.
+
+### Added
+- `PluginInit`, and `RevealSlideEvent` from the package root.
+- `test/event-tools.test.mjs`, run by `npm test`.
+
+### Fixed
+- `addDirectionEvents` and `addScrollModeEvents` installed a dispatcher per caller, so if two plugins asked for the same deck-wide events, then every one fired twice. They now install once per deck. `addDirectionEvents` still returns `void`: nothing stops wanting these, and they survive `destroy()`.
+- The missing-viewport warning now says said `[plugintoolkit]`.
+
 ## [1.1.0] - 2026-08-23
 
 - CSS loading is one decision now, taken from three inputs: whether the stylesheet is already on the page, what the author asked for, and whether the plugin's own file has a URL to resolve a path against. The environment flags no longer take part in it.
@@ -11,31 +30,18 @@
 - The options-object form (`pluginCSS({ id, … })`) consults the `--cssimported-<id>` marker like everything else.
 
 ### Added
-- `pluginCSS` returns `{ status, path? }` — `present`, `loaded`, `skipped`, `advised` or `failed`.
-  A plugin that reads colours or sizes back off the page can wait for the stylesheet instead of
-  racing it.
-- `cssautoload` accepts `'auto'`, which is exactly the same as leaving it out: decide for me.
-  `true` still forces the standard paths to be tried even where nothing can be derived.
-- `whenThemeApplied(timeout)` and `isThemeApplied()`. Every Reveal theme declares `--r-main-color`
-  and `reveal.css` does not, so this is proof a theme has been *applied* rather than requested —
-  for plugins that read theme colours at startup.
+- `pluginCSS` returns `{ status, path? }` — `present`, `loaded`, `skipped`, `advised` or `failed`. A plugin that reads colours or sizes back off the page can wait for the stylesheet instead of racing it.
+- `cssautoload` accepts `'auto'`, which is exactly the same as leaving it out: decide for me. `true` still forces the standard paths to be tried even where nothing can be derived.
+- `whenThemeApplied(timeout)` and `isThemeApplied()`. Every Reveal theme declares `--r-main-color` and `reveal.css` does not, so this is proof a theme has been *applied* rather than requested — for plugins that read theme colours at startup.
 - `warnOnce(pluginId, message)` for advisories that must reach people who never switch `debug` on.
-- Shared helpers that were being copied between plugins, and had already started to drift:
-  `isJSON` and `toJSONString` (`configTools`), `copyDataAttributes` and `createNode` (`domTools`),
-  `sanitizeText` (`textTools`).
-- `checkCssImported(pluginId)` is exported: the same marker test the toolkit uses, answered
-  immediately rather than waited on.
+- Shared helpers that were being copied between plugins, and had already started to drift: `isJSON` and `toJSONString` (`configTools`), `copyDataAttributes` and `createNode` (`domTools`), `sanitizeText` (`textTools`).
+- `checkCssImported(pluginId)` is exported: the same marker test the toolkit uses, answered immediately rather than waited on.
 - `"sideEffects": false`, so a bundler drops the helpers a plugin does not use.
 
 ### Changed
-- `isBundled` is now `hasResolvableSource`, inverted — the name states the test rather than a
-  conclusion. A dev server has no resolvable source either, without being a bundle.
-  `findPluginSource` returns `{ directory: string | null }`.
-- `EnvironmentInfo.isDevelopment`, `.hasHMR` and `.isViteDev` are deprecated. Nothing in the
-  toolkit reads them; they were proxies for "can a path be resolved", and being poor proxies for
-  it is what kept this area moving between 1.0.0 and 1.0.8.
-- The bundler advisory names the import that would fix it, rather than saying "import the CSS
-  manually" without saying from where.
+- `isBundled` is now `hasResolvableSource`, inverted — the name states the test rather than a conclusion. A dev server has no resolvable source either, without being a bundle. `findPluginSource` returns `{ directory: string | null }`.
+- `EnvironmentInfo.isDevelopment`, `.hasHMR` and `.isViteDev` are deprecated. Nothing in the toolkit reads them; they were proxies for "can a path be resolved", and being poor proxies for it is what kept this area moving between 1.0.0 and 1.0.8.
+- The bundler advisory names the import that would fix it, rather than saying "import the CSS manually" without saying from where.
 
 ### Deprecated, still working
 `isPluginBundled`, `findPluginScriptSource` and `findPluginScriptPath` are kept for 1.0.x callers.
