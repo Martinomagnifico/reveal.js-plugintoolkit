@@ -109,39 +109,39 @@ var t = Object.defineProperty, n = (e, n) => {
 	}, i.onerror = () => {
 		clearTimeout(a), i.parentNode && i.parentNode.removeChild(i), r(/* @__PURE__ */ Error(`[${e}] Failed to load CSS from: ${t}`));
 	}, document.head.appendChild(i);
-}), _ = (e) => document.querySelectorAll(`[${h}="${e}"]`).length > 0, ee = 1e4, v = (e) => Promise.resolve(b(e)), y = (e) => new Promise((t) => {
-	if (b(e)) return t(!0);
+}), _ = (e) => document.querySelectorAll(`[${h}="${e}"]`).length > 0, v = 1e4, y = (e) => Promise.resolve(x(e)), b = (e) => new Promise((t) => {
+	if (x(e)) return t(!0);
 	if (typeof MutationObserver > "u") return t(!1);
 	let n = !1, r = (e) => {
 		n || (n = !0, i.disconnect(), clearTimeout(o), window.removeEventListener("load", a), t(e));
 	}, i = new MutationObserver(() => {
-		b(e) && r(!0);
+		x(e) && r(!0);
 	});
 	i.observe(document.documentElement, {
 		childList: !0,
 		subtree: !0,
 		attributeFilter: ["href", "rel"]
 	});
-	let a = () => requestAnimationFrame(() => r(b(e)));
+	let a = () => requestAnimationFrame(() => r(x(e)));
 	document.readyState === "complete" ? a() : window.addEventListener("load", a, { once: !0 });
-	let o = setTimeout(() => r(b(e)), ee);
-}), b = (e) => {
+	let o = setTimeout(() => r(x(e)), v);
+}), x = (e) => {
 	if (_(e)) return !0;
 	try {
 		return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${e}`).trim() !== "";
 	} catch {
 		return !1;
 	}
-}, x = "--r-main-color", S = () => {
+}, S = "--r-main-color", C = () => {
 	if (typeof document > "u" || typeof window > "u") return !1;
 	try {
-		return getComputedStyle(document.documentElement).getPropertyValue(x).trim() !== "";
+		return getComputedStyle(document.documentElement).getPropertyValue(S).trim() !== "";
 	} catch {
 		return !1;
 	}
-}, C = (e = 1e3) => S() ? Promise.resolve(!0) : new Promise((t) => {
+}, w = (e = 1e3) => C() ? Promise.resolve(!0) : new Promise((t) => {
 	let n = Date.now() + e, r = () => {
-		if (S()) {
+		if (C()) {
 			t(!0);
 			return;
 		}
@@ -152,7 +152,7 @@ var t = Object.defineProperty, n = (e, n) => {
 		setTimeout(r, 16);
 	};
 	r();
-}), w = () => S(), T = ((e) => new Proxy(e, { get: (e, t) => {
+}), T = () => C(), E = ((e) => new Proxy(e, { get: (e, t) => {
 	if (t in e) return e[t];
 	let n = t.toString();
 	if (typeof console[n] == "function") return (...t) => {
@@ -210,16 +210,16 @@ var t = Object.defineProperty, n = (e, n) => {
 		}
 		this.groupDepth > 0 ? r.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? r.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : r.call(console, `[${this.label}]:`, ...t);
 	}
-}()), E = /* @__PURE__ */ new Set(), D = (e, t) => {
+}()), D = /* @__PURE__ */ new Set(), O = (e, t) => {
 	let n = `${e}::${t}`;
-	E.has(n) || (E.add(n), console.warn(`[${e}] ${t}`));
-}, O = (e) => [`dist/plugin/${e}/${e}.css`, `plugin/${e}/${e}.css`], k = (e) => typeof e == "string" && e.trim() !== "", A = async (e, t) => {
+	D.has(n) || (D.add(n), console.warn(`[${e}] ${t}`));
+}, ee = (e) => [`dist/plugin/${e}/${e}.css`, `plugin/${e}/${e}.css`], k = (e) => typeof e == "string" && e.trim() !== "", A = async (e, t) => {
 	let { cssautoload: n, csspath: r, debug: i = !1 } = t;
 	if (n === !1 || r === !1) return i && console.log(`[${e}] CSS loading is switched off`), { status: "skipped" };
 	if (k(r)) {
-		let t = r.trim();
+		let t = r.trim(), n = x(e), a = n && !!document.querySelector(`[data-css-id="${e}"]`);
 		try {
-			return await g(e, t), i && console.log(`[${e}] CSS loaded from: ${t}`), {
+			return await g(e, t), i && console.log(`[${e}] CSS loaded from: ${t}`), n && O(e, `Loaded CSS from ${t}, but a stylesheet for this plugin was already on the page (${a ? "a tagged <link>" : "an import or inline <style>"}) — csspath adds one, it cannot remove one. Both are live and the cascade decides. Remove the other import or <link>, or drop csspath.`), {
 				status: "loaded",
 				path: t
 			};
@@ -230,10 +230,10 @@ var t = Object.defineProperty, n = (e, n) => {
 			};
 		}
 	}
-	if (b(e)) return i && console.log(`[${e}] CSS is already imported, skipping`), { status: "present" };
+	if (x(e)) return i && console.log(`[${e}] CSS is already imported, skipping`), { status: "present" };
 	let { directory: a } = u(e);
 	if (a !== null || n === !0) {
-		let t = [...a === null ? [] : [`${a}${e}.css`], ...O(e)].filter((e, t, n) => n.indexOf(e) === t);
+		let t = [...a === null ? [] : [`${a}${e}.css`], ...ee(e)].filter((e, t, n) => n.indexOf(e) === t);
 		for (let n of t) try {
 			return await g(e, n), i && console.log(`[${e}] CSS loaded from: ${n}`), {
 				status: "loaded",
@@ -244,8 +244,8 @@ var t = Object.defineProperty, n = (e, n) => {
 		}
 		return console.warn(`[${e}] Could not load CSS. Tried: ${t.join(", ")}. Import the stylesheet yourself, or set csspath to where it is.`), { status: "failed" };
 	}
-	return y(e).then((t) => {
-		t || D(e, `CSS could not be autoloaded here, because the plugin is part of a bundle. Import it once in your own code: import 'reveal.js-${e}/${e}.css'`);
+	return b(e).then((t) => {
+		t || O(e, `CSS could not be autoloaded here, because the plugin is part of a bundle. Import it once in your own code: import 'reveal.js-${e}/${e}.css'`);
 	}), { status: "advised" };
 };
 async function j(e, t) {
@@ -384,4 +384,4 @@ var M = /* @__PURE__ */ n({
 	toJSONString: () => Y
 });
 //#endregion
-export { m as PluginBase, b as checkCssImported, q as configTools, X as domTools, M as eventTools, u as findPluginSource, d as hasResolvableSource, v as isCssImported, w as isThemeApplied, j as pluginCSS, T as pluginDebug, ne as pluginTools, z as sectionTools, te as textTools, D as warnOnce, y as whenCssImported, C as whenThemeApplied };
+export { m as PluginBase, x as checkCssImported, q as configTools, X as domTools, M as eventTools, u as findPluginSource, d as hasResolvableSource, y as isCssImported, T as isThemeApplied, j as pluginCSS, E as pluginDebug, ne as pluginTools, z as sectionTools, te as textTools, O as warnOnce, b as whenCssImported, w as whenThemeApplied };

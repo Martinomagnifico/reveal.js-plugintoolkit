@@ -17,7 +17,8 @@ import type { PluginCssOptions, PluginCssResult, PluginCssSettings } from "./typ
  * Two rules keep it predictable. An explicit `csspath` is an instruction, not a
  * candidate: it is loaded on its own and its failure is never masked by a
  * fallback that happens to work. And silence is only for success — every route
- * that ends without CSS says so, whether or not `debug` is on.
+ * that ends without CSS says so, whether or not `debug` is on, as does the one
+ * route that ends with more CSS than the author asked for.
  */
 
 const STANDARD_PATHS = (id: string): string[] => [
@@ -45,9 +46,31 @@ const resolveCss = async (
 	//    answer, not a reason to quietly fall back to the plugin's defaults.
 	if (isExplicitPath(csspath)) {
 		const path = csspath.trim();
+
+		// Read before the link lands, not after. `checkCssImported` answers to
+		// either a link we wrote or the marker, and loading is about to add the
+		// first while the author's own file may carry the second — so a reading
+		// taken afterwards is true either way and says nothing.
+		const alreadyPresent = checkCssImported(id);
+		const asLink = alreadyPresent && !!document.querySelector(`[data-css-id="${id}"]`);
+
 		try {
 			await linkAndLoad(id, path);
 			debug && console.log(`[${id}] CSS loaded from: ${path}`);
+
+			// A path names one stylesheet to use; it cannot unname another. Where
+			// CSS is already present the instruction cannot be carried out, and
+			// the deck still looks styled — so without this, nothing reports it.
+			if (alreadyPresent) {
+				warnOnce(
+					id,
+					`Loaded CSS from ${path}, but a stylesheet for this plugin was already ` +
+						`on the page (${asLink ? "a tagged <link>" : "an import or inline <style>"}) — ` +
+						`csspath adds one, it cannot remove one. Both are live and the cascade ` +
+						`decides. Remove the other import or <link>, or drop csspath.`
+				);
+			}
+
 			return { status: "loaded", path };
 		} catch {
 			console.warn(`[${id}] Could not load CSS from: ${path}`);

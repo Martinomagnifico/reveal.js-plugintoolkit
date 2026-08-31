@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.3] - 2026-08-31
+
+### Fixed
+- A `csspath` that loads while a stylesheet for the plugin is already on the page now adds a warning to the console. `csspath` adds a stylesheet, but it cannot take one away. The deck still looks styled, so nothing reported this before. It is a bundler case. A plugin's own `import` of its stylesheet is invisible to the toolkit. A dev server then shows the plugin's defaults on top of the author's file (a build shows only the author's). The warning says what it found: a tagged `<link>`, or an import.
+
 ## [1.1.2] - 2026-08-24
 
 ### Fixed
