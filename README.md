@@ -310,13 +310,11 @@ eventTools.addScrollModeEvents(deck);
 
 ### The theme's colours (`themeTools`)
 
-A deck can give a slide a background that goes against the theme, and Reveal marks that slide as light or dark. A theme does not keep its inverted text colour in a variable, though — it just sets it — so there is nothing to read. This measures the theme instead, and keeps the answer on the deck.
+A deck can have a slide a background that contrasts the theme, and Reveal will then set a .has-dark-background or .has-light-background class on the reveal element and the section itself. The theme CSS knows how to handle colors then, but a plugin that needs styling outside the styles does not know *how* that is handled, what colors are used. The themeTools take care of that. It measures the colors of the themes and keeps those colors as variables on the viewport element.
 
-- `addThemeColor(deck)`: Keeps `--c-theme-color` and `--c-theme-heading-color` on the viewport in step with the slide being shown, and puts the class `c-theme-inverted` there while the background goes against the theme. Returns what it measured. The viewport rather than the deck, so a plugin that fixes an overlay to the page sees it too.
+- `addThemeColor(deck)`: Keeps `--c-theme-color` and `--c-theme-heading-color` on the viewport in step with the slide being shown, and puts the class `c-theme-inverted` there if the background contrasts the theme.
 
-Body text and headings are measured separately, because a theme colours them differently: moon's heading is `#eee8d5` against `#93a1a1` body text, and dracula's is `#bd93f9` against `#f8f8f2`. On an inverted slide the bundled themes flatten both to one colour, and the measuring reports whatever the theme actually does.
-
-Links are not measured. No bundled theme changes a link on an inverted background, and `--r-link-color-dark` is a darker shade for the rolling-link effect rather than a colour for one, so `--r-link-color` is already the answer.
+Body text and headings are measured separately, because a theme colours them differently: The heading in the “moon” template is `#eee8d5` compared to `#93a1a1` for body text, and “dracula” is `#bd93f9` for headings and `#f8f8f2` for bodycopy. On an inverted slide the bundled themes flatten both to one colour, and the measuring reports whatever the theme actually does.
 
 Any plugin may call it. The first call on a deck measures and installs, later calls get the same colours back, so several plugins can ask without measuring the theme more than once.
 
