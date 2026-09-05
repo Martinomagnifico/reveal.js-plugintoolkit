@@ -155,21 +155,8 @@ The CSS filename is expected to be the same as the JS filename, and the followin
 - script-path/myplugin.css (same location as the JS)
 - plugin/myplugin/myplugin.css (like other Reveal plugins)
 
-### Usage (will be removed in the future)
 
-```typescript
-import { pluginCSS } from 'reveal.js-plugintoolkit';
-
-// Inside your plugin initialization function
-await pluginCSS({
-    id: 'my-plugin',  // The id of your plugin
-    cssautoload: config.cssautoload, // Optional: Enable/disable loading
-    csspath: config.csspath, // Optional: User-specified path (default empty)
-    debug: config.debug // Optional: Enable debug logging (default false)
-});
-```
-
-### Usage, enhanced
+### Usage
 
 ```typescript
 import { pluginCSS } from 'reveal.js-plugintoolkit';
