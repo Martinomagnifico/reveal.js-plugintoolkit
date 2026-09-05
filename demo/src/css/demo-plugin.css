@@ -10,8 +10,9 @@
 	position: fixed;
 	bottom: 10px;
 	left: 10px;
-	background: green;
-	color: white;
+	/* Follows the slide it is drawn over. addThemeColor keeps this in step. */
+	background: var(--c-theme-color, green);
+	color: var(--r-background-color, white);
 	padding: 5px 10px;
 	border-radius: 3px;
 	z-index: 1000;

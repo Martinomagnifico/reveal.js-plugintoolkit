@@ -78,4 +78,7 @@ export interface RevealInstance {
 	getIndices(slide?: HTMLElement): { h: number; v: number; f?: number };
 
 	getViewportElement(): HTMLElement | null;
+
+	/** The deck's own element, the one that carries `has-light-background` and `has-dark-background`. Present in all supported versions. */
+	getRevealElement(): HTMLElement | null;
 }

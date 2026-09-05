@@ -321,6 +321,42 @@ eventTools.addScrollModeEvents(deck);
 
 ```
 
+### The theme's colours (`themeTools`)
+
+A deck can give a slide a background that goes against the theme, and Reveal marks that slide as light or dark. A theme does not keep its inverted text colour in a variable, though — it just sets it — so there is nothing to read. This measures the theme instead, and keeps the answer on the deck.
+
+- `addThemeColor(deck)`: Keeps `--c-theme-color` and `--c-theme-heading-color` on the viewport in step with the slide being shown, and puts the class `c-theme-inverted` there while the background goes against the theme. Returns what it measured. The viewport rather than the deck, so a plugin that fixes an overlay to the page sees it too.
+
+Body text and headings are measured separately, because a theme colours them differently: moon's heading is `#eee8d5` against `#93a1a1` body text, and dracula's is `#bd93f9` against `#f8f8f2`. On an inverted slide the bundled themes flatten both to one colour, and the measuring reports whatever the theme actually does.
+
+Links are not measured. No bundled theme changes a link on an inverted background, and `--r-link-color-dark` is a darker shade for the rolling-link effect rather than a colour for one, so `--r-link-color` is already the answer.
+
+Any plugin may call it. The first call on a deck measures and installs, later calls get the same colours back, so several plugins can ask without measuring the theme more than once.
+
+```javascript
+import { themeTools } from 'reveal.js-plugintoolkit';
+
+themeTools.addThemeColor(deck);
+```
+
+Then a plugin needing colors on an element outside of the slides can follow the deck instead of hardcoding a colour:
+
+```css
+.my-plugin-thing {
+    color: var(--c-theme-color, currentColor);
+}
+
+.my-plugin-accent {
+    color: var(--c-theme-heading-color, currentColor);
+}
+
+.c-theme-inverted .my-plugin-thing {
+    color: var(--my-plugin-color-inverted, var(--c-theme-color, currentColor));
+}
+```
+
+The class is there so a deck can style that case without having to know whether its own theme is the light one or the dark one.
+
 ### Some section functions (`sectionTools`)
 
 - `isSection`: Check if the current slide is a section.
@@ -356,4 +392,4 @@ import { pluginTools } from 'reveal.js-plugintoolkit'
 
 ## License
 
-MIT licensed | Copyright © 2025 Martijn De Jongh (Martino)
+MIT licensed | Copyright © 2026 Martijn De Jongh (Martino)

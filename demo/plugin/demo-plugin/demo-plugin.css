@@ -1,2 +1,2 @@
-:root{--r-background-color:#051525;--r-heading-text-transform:none;--r-heading1-size:2.7em;--r-main-font-size:36px;--cssimported-demoplugin:true}.demo-plugin-indicator{color:#fff;z-index:1000;font-family:var(--r-heading-font), sans-serif;background:green;border-radius:3px;padding:5px 10px;position:fixed;bottom:10px;left:10px}
+:root{--r-background-color:#051525;--r-heading-text-transform:none;--r-heading1-size:2.7em;--r-main-font-size:36px;--cssimported-demoplugin:true}.demo-plugin-indicator{background:var(--c-theme-color,green);color:var(--r-background-color,white);z-index:1000;font-family:var(--r-heading-font), sans-serif;border-radius:3px;padding:5px 10px;position:fixed;bottom:10px;left:10px}
 /*$vite$:1*/

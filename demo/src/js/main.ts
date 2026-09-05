@@ -11,6 +11,9 @@ import { eventTools } from '../../../src';
 // Importing the section tools
 import { sectionTools } from '../../../src';
 
+// Importing the theme tools
+import { themeTools } from '../../../src';
+
 export class DemoPlugin {
     private readonly deck: RevealInstance;
     private readonly options: Config;
@@ -38,6 +41,11 @@ export class DemoPlugin {
 
         eventTools.addMoreDirectionEvents(this.deck);
         eventTools.addScrollModeEvents(this.deck);
+
+        // Keeps --c-theme-color on the deck, so the indicator below follows the slide it is drawn over.
+        void themeTools.addThemeColor(this.deck).then((colors) => {
+            pluginDebug.log("Theme colors:", colors);
+        });
 
         this.deck.on("slidechanged-h", (event: unknown) => {
             const e = event as RevealSlideEvent;

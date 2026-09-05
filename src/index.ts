@@ -14,6 +14,7 @@ export * as sectionTools from './utils/plugin-tools/section-tools';
 export * as configTools from './utils/plugin-tools/config-tools';
 export * as domTools from './utils/plugin-tools/dom-tools';
 export * as textTools from './utils/plugin-tools/text-tools';
+export * as themeTools from './utils/plugin-tools/theme-tools';
 
 // Export types
 export type { RevealInstance } from './types';
@@ -25,4 +26,5 @@ export type {
 	PluginCssStatus
 } from './utils/plugin-css/types';
 export type { PluginSource } from './utils/plugin-css/path-finder';
+export type { ThemeColors, ThemeColorPair, ThemeColorOptions } from './utils/plugin-tools/theme-tools';
 export type { EnvironmentInfo, RevealSlideEvent } from './types';

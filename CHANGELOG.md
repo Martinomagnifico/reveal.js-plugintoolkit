@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0] - 2026-09-04
+
+### Added
+- `themeTools.addThemeColor(deck)`. It keeps `--c-theme-color` and `--c-theme-heading-color`  (based on the text/title color inside the slides) on the viewport, and adds the class `c-theme-inverted` there if a slide’s background contrasts the theme. Any plugin that styles elements outside of the `.slides` element can now use those colors.
+- The measuring happens once per deck. Any plugin may call it, and later calls get the same colours back.
+- `RevealInstance` gained `getRevealElement()`.
+
 ## [1.1.3] - 2026-08-31
 
 ### Fixed
