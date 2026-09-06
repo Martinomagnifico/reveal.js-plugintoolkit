@@ -342,6 +342,16 @@ Then a plugin needing colors on an element outside of the slides can follow the 
 
 The class is there so a deck can style that case without having to know whether its own theme is the light one or the dark one.
 
+A slide can come by a contrasting background in three ways:
+
+| How the slide gets its background | What Reveal marks |
+| --- | --- |
+| Its own `data-background-*` | the class on the Reveal element |
+| The stack it sits in | the class on the stack `<section>` only, not on the deck |
+| Either of those, in scroll view | the class on the viewport |
+
+The themeTools handles them all.
+
 ### Some section functions (`sectionTools`)
 
 - `isSection`: Check if the current slide is a section.

@@ -20,9 +20,11 @@ export interface ThemeColorOptions {
     timeout?: number;
 }
 /**
- * Keep `--c-theme-color` on the Reveal element in step with the slide being shown.
+ * Keep `--c-theme-color` and `--c-theme-heading-color` on the viewport matched to the slide being shown.
  *
- * A deck can give a slide a background that goes against the theme, and Reveal marks that slide as light or dark. This publishes the text colour that belongs with it, so a plugin drawing over the slides — a bar, a set of bullets, a button — can follow the deck instead of hardcoding a colour.
+ * A deck can give a slide a background that contrasts the theme. This publishes the text and heading colours that belong with it, so a plugin that puts a bar, a set of bullets or a button over the slides can follow the deck instead of hardcoding a colour.
+ *
+ * All three of the ways a slide can come by such a background are covered: its own, one it takes from the stack around it, and either of those in scroll view.
  *
  * Any plugin may call it. The first call on a deck measures the theme and installs the observer; later calls get the same colours back without measuring again, however many plugins ask and whichever of them loads first.
  *

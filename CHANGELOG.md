@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1] - 2026-09-06
+
+### Added
+- `themeTools.addThemeColor` now covers now also checks if a stack has a contrasting background (compared to a slide only). 
+- Navigating can change the background without changing any class on the deck, so `slidechanged` is listened to as well.
+
 ## [1.2.0] - 2026-09-04
 
 ### Added

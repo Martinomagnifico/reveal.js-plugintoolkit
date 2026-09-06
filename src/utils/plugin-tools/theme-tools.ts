@@ -8,15 +8,21 @@ const THEME_COLOR_MARK = Symbol.for("reveal.js-plugintoolkit.themeColor");
 const LIGHT_CLASS = "has-light-background";
 const DARK_CLASS = "has-dark-background";
 
-/** Published on the viewport, for any plugin or any deck's own CSS to read. The viewport rather than the Reveal element, because a plugin that draws a fixed overlay puts it on the body, outside the deck, and would not inherit from there. */
+/** Published on the viewport, for any plugin or any deck's own CSS to read. The viewport rather than the Reveal element, because a plugin that fixes an overlay to the page puts it on the body, outside the deck, and would not inherit from there. */
 const THEME_COLOR_VAR = "--c-theme-color";
 const THEME_HEADING_VAR = "--c-theme-heading-color";
 
 /** What gets measured. A theme gives headings a colour of their own — moon's is #eee8d5 against #93a1a1 body — so one reading cannot answer for both. Links are not here: no bundled theme changes a link on an inverted background, and `--r-link-color-dark` is a darker shade for the rolling-link effect rather than a colour for one. */
 const MEASURED = { text: "section", heading: "h1" } as const;
 
-/** Put beside the variable while the slide's background goes against the theme. Reveal's own two classes say whether a background is light or dark, which is not the same question: a light slide in a light deck is not inverted. */
+/** Put beside the variable while the slide's background contrasts the theme. Reveal's own two classes say whether a background is light or dark, which is not the same question: a light slide in a light deck is not inverted. */
 const INVERTED_CLASS = "c-theme-inverted";
+
+/** On the viewport while the deck is in scroll view, which is where Reveal puts the background class in that view. */
+const SCROLL_CLASS = "reveal-scroll";
+
+/** Reveal's class for a section that holds vertical slides. */
+const STACK_CLASS = "stack";
 
 /** One element's colour, on an ordinary slide and on an inverted one. */
 export interface ThemeColorPair {
@@ -93,13 +99,45 @@ const measure = (revealElement: HTMLElement): ThemeColors | null => {
 	};
 };
 
-/** Write whichever of the two colours matches the background the deck is showing right now, and say which of the two it is. Reveal marks the deck; the answer goes on the viewport, which is an ancestor of both the deck and anything a plugin fixes to the page. */
-const apply = (revealElement: HTMLElement, host: HTMLElement, colors: ThemeColors): void => {
-	const inverted =
-		colors.theme === "dark"
-			? revealElement.classList.contains(LIGHT_CLASS)
-			: revealElement.classList.contains(DARK_CLASS);
+const has = (element: HTMLElement | null, className: string): boolean =>
+	element?.classList.contains(className) ?? false;
 
+/**
+ * Whether the slide on screen has a light or a dark background, or `null` if it has neither and the theme's own background is showing.
+ *
+ * Three places have to be asked, because Reveal reports the three cases differently. In ordinary view it copies the class onto the Reveal element, in scroll view onto the viewport, and for a slide that takes its background from the stack around it, onto neither.
+ */
+const backgroundContrast = (
+	deck: RevealInstance,
+	revealElement: HTMLElement,
+	viewport: HTMLElement | null
+): "light" | "dark" | null => {
+	const host = has(viewport, SCROLL_CLASS) ? viewport : revealElement;
+	if (has(host, LIGHT_CLASS)) return "light";
+	if (has(host, DARK_CLASS)) return "dark";
+
+	// A vertical slide takes the background of the stack it sits in, and Reveal marks the stack itself rather than the deck, so neither element above mentions it.
+	const parent = deck.getCurrentSlide?.()?.parentElement ?? null;
+	if (parent && has(parent, STACK_CLASS)) {
+		if (has(parent, LIGHT_CLASS)) return "light";
+		if (has(parent, DARK_CLASS)) return "dark";
+	}
+
+	return null;
+};
+
+/** Whether the background now on screen contrasts the theme. A light slide in a light deck is not inverted, so the theme's own direction decides which of Reveal's two classes counts. */
+const isInverted = (
+	deck: RevealInstance,
+	revealElement: HTMLElement,
+	colors: ThemeColors
+): boolean => {
+	const contrast = backgroundContrast(deck, revealElement, deck.getViewportElement());
+	return colors.theme === "dark" ? contrast === "light" : contrast === "dark";
+};
+
+/** Write whichever of the two colours matches, and mark the case. The answer goes on the viewport, which is an ancestor of both the deck and anything a plugin fixes to the page. */
+const write = (host: HTMLElement, colors: ThemeColors, inverted: boolean): void => {
 	const pick = (pair: ThemeColorPair): string => (inverted ? pair.inverse : pair.regular);
 
 	host.style.setProperty(THEME_COLOR_VAR, pick(colors.text));
@@ -123,19 +161,38 @@ const install = async (
 	const colors = measure(revealElement);
 	if (!colors) return null;
 
-	apply(revealElement, host, colors);
+	let applied = isInverted(deck, revealElement, colors);
+	write(host, colors, applied);
 
-	// An observer rather than `slidechanged`: Reveal works out the background and adds the class after the event has been dispatched, so a listener reads the classes of the slide you just left.
-	const observer = new MutationObserver(() => apply(revealElement, host, colors));
+	// Marking the host is itself a class change, and the host is one of the elements being watched, so a run that would change nothing stops here instead of writing the same values again.
+	const update = (): void => {
+		const inverted = isInverted(deck, revealElement, colors);
+		if (inverted === applied) return;
+		applied = inverted;
+		write(host, colors, inverted);
+	};
+
+	// An observer rather than only `slidechanged`: Reveal works out the background and adds the class after the event has been dispatched, so a listener on its own reads the classes of the slide you just left.
+	const observer = new MutationObserver(update);
 	observer.observe(revealElement, { attributes: true, attributeFilter: ["class"] });
+
+	// In scroll view the class goes on the viewport instead, and the viewport also gains and loses the scroll-view class itself when the deck changes size.
+	if (host !== revealElement) {
+		observer.observe(host, { attributes: true, attributeFilter: ["class"] });
+	}
+
+	// A move between two stacks changes which background is shown without changing any class on the deck, so nothing above would report it.
+	deck.on("slidechanged", update);
 
 	return colors;
 };
 
 /**
- * Keep `--c-theme-color` on the Reveal element in step with the slide being shown.
+ * Keep `--c-theme-color` and `--c-theme-heading-color` on the viewport matched to the slide being shown.
  *
- * A deck can give a slide a background that goes against the theme, and Reveal marks that slide as light or dark. This publishes the text colour that belongs with it, so a plugin drawing over the slides — a bar, a set of bullets, a button — can follow the deck instead of hardcoding a colour.
+ * A deck can give a slide a background that contrasts the theme. This publishes the text and heading colours that belong with it, so a plugin that puts a bar, a set of bullets or a button over the slides can follow the deck instead of hardcoding a colour.
+ *
+ * All three of the ways a slide can come by such a background are covered: its own, one it takes from the stack around it, and either of those in scroll view.
  *
  * Any plugin may call it. The first call on a deck measures the theme and installs the observer; later calls get the same colours back without measuring again, however many plugins ask and whichever of them loads first.
  *

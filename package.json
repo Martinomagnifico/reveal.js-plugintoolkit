@@ -1,6 +1,6 @@
 {
   "name": "reveal.js-plugintoolkit",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "sideEffects": false,
   "description": "Toolkit for building Reveal.js plugins",
   "main": "dist/plugintoolkit.js",

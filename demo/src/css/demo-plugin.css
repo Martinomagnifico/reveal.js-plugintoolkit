@@ -6,15 +6,24 @@
 	--cssimported-demoplugin: true;
 }
 
+/* The panel is filled with the slide's text colour, which addThemeColor keeps up
+   to date, so its own text has to be the colour behind that text: the slide's
+   background. */
 .demo-plugin-indicator {
 	position: fixed;
 	bottom: 10px;
 	left: 10px;
-	/* Follows the slide it is drawn over. addThemeColor keeps this in step. */
 	background: var(--c-theme-color, green);
-	color: var(--r-background-color, white);
+	color: var(--demo-slide-background, #051525);
 	padding: 5px 10px;
 	border-radius: 3px;
 	z-index: 1000;
 	font-family: var(--r-heading-font), sans-serif;
+}
+
+/* A slide that contrasts the theme fills the panel with the other text colour,
+   so the text on it has to change as well. The value matches the
+   data-background-color the third slide sets. */
+.c-theme-inverted {
+	--demo-slide-background: #fff;
 }

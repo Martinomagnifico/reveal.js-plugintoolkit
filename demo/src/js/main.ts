@@ -42,7 +42,7 @@ export class DemoPlugin {
         eventTools.addMoreDirectionEvents(this.deck);
         eventTools.addScrollModeEvents(this.deck);
 
-        // Keeps --c-theme-color on the deck, so the indicator below follows the slide it is drawn over.
+        // Keeps --c-theme-color on the deck, so the indicator below follows the slide on screen.
         void themeTools.addThemeColor(this.deck).then((colors) => {
             pluginDebug.log("Theme colors:", colors);
         });

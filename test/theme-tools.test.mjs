@@ -52,6 +52,10 @@ const PAGE = `<!doctype html>
     <section><h2>Ordinary</h2></section>
     <section data-background-color="#ffffff"><h2>Light background</h2></section>
     <section><h2>Ordinary again</h2></section>
+    <section data-background-color="#ffffff">
+      <section><h2>Stack child A</h2></section>
+      <section><h2>Stack child B</h2></section>
+    </section>
   </div></div>
   <script type="importmap">{"imports":{"deepmerge":"./deepmerge.mjs"}}</script>
   <script type="module">
@@ -195,6 +199,39 @@ const SUITE = `(async () => {
   await at(2);
   check('back to ordinary: the regular text colour', a.text.regular, colorVar());
   check('back to ordinary: no longer marked', false, inverted());
+
+  // ---- a background that belongs to the stack, not the slide -----------------
+  // Reveal marks the stack section and leaves the deck unmarked, so reading only
+  // the Reveal element misses this slide entirely.
+  R.slide(3, 0); await wait(500);
+  const stack = R.getCurrentSlide().parentElement;
+  check('the stack itself is what Reveal marks', true,
+        stack.classList.contains('stack') && stack.classList.contains('has-light-background'));
+  check('the deck is left unmarked for a stack background', false,
+        R.getRevealElement().classList.contains('has-light-background'));
+  check('stack background: marked inverted anyway', true, inverted());
+  check('stack background: the other text colour', a.text.inverse, colorVar());
+  check('stack background: the other heading colour', a.heading.inverse, headingVar());
+
+  R.slide(3, 1); await wait(500);
+  check('second slide in the same stack: still inverted', true, inverted());
+
+  await at(0);
+  check('leaving the stack: back to the regular colour', a.text.regular, colorVar());
+
+  // ---- scroll view -----------------------------------------------------------
+  // In scroll view Reveal copies the class onto the viewport instead of the deck.
+  // Driving real scroll view needs layout, so the two elements are set the way
+  // Reveal sets them and the reading is what gets checked.
+  vp.classList.add('reveal-scroll', 'has-light-background');
+  await wait(120);
+  check('scroll view: the viewport is read', a.text.inverse, colorVar());
+
+  vp.classList.remove('has-light-background');
+  await wait(120);
+  check('scroll view: and followed back', a.text.regular, colorVar());
+  vp.classList.remove('reveal-scroll');
+  await wait(120);
 
   return JSON.stringify(results);
 })().catch(e => JSON.stringify([{ name: 'suite threw: ' + (e && e.message || e),
