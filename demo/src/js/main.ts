@@ -14,6 +14,9 @@ import { sectionTools } from '../../../src';
 // Importing the theme tools
 import { themeTools } from '../../../src';
 
+// Importing the position and state tools
+import { positionTools, stateTools } from '../../../src';
+
 export class DemoPlugin {
     private readonly deck: RevealInstance;
     private readonly options: Config;
@@ -34,8 +37,13 @@ export class DemoPlugin {
         indicator.className = 'demo-plugin-indicator';
         indicator.textContent = 'Demo Plugin Active';
         
-        document.body.appendChild(indicator);
+        // An anchor at the bottom edge of what the reader sees: fixed on a deck that has the page to itself, sticky inside an embedded deck, and in place in scroll view either way. The CSS places the indicator inside it.
+        const anchor = positionTools.addAnchor(this.deck, { edge: 'bottom', className: 'demo-plugin-anchor', zIndex: 1000 });
+        anchor?.appendChild(indicator);
         pluginDebug.log('Indicator element added');
+
+        // Reveal's scroll view does not apply data-state, so the no-indicator slide would not hide it there without this.
+        stateTools.addSlideStates(this.deck);
 
         // Using some of the functions from pluginTools:
 

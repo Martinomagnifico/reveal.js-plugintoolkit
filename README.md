@@ -352,6 +352,135 @@ A slide can come by a contrasting background in three ways:
 
 The themeTools handles them all.
 
+### Slide states in scroll view (`stateTools`)
+
+A slide can have a `data-state`. In the regular view Reveal puts it on the viewport as a class, together with the state of the stack a vertical slide sits in, and fires an event named after it. That is how a deck, or a plugin, hides or shows something for one slide only (like in Simplemenu):
+
+```html
+<section data-state="no-menu">...</section>
+```
+
+```css
+.no-menu .my-plugin-bar {
+    visibility: hidden;
+}
+```
+
+Reveal's scroll view does neither of these. The slide on screen can have a state, and nothing on the page gets the class, so anything that is superimposed on the slides stays as it is. The stateTools fill that in. 
+
+- `addSlideStates(deck)`: In scroll view, keeps the states of the slide on screen on the viewport, and fires an event named after each state that was not on the previous slide. The regular view is left to Reveal.
+
+```javascript
+import { stateTools } from 'reveal.js-plugintoolkit';
+
+stateTools.addSlideStates(deck);
+```
+
+Call it from a plugin's `init`. Scroll view takes stacks apart, so the helper reads each stack's state before that happens and copies it onto the stack's vertical slides, as `data-toolkit-stack-state`. Called once the deck is already in scroll view, slides still get their own states, and stack states follow after the deck has left scroll view once.
+
+Like Reveal, it puts the classes on the viewport: the body for a deck that has the page to itself, the deck itself when embedded, so two decks on one page keep their states apart. And like the other tools, any plugin may call it: the first call on a deck installs, later calls do nothing.
+
+The classes are what most decks and plugins need: they cascade, so hiding or showing something is plain CSS. The events are there so that code written against Reveal's own state events keeps working in scroll view:
+
+```javascript
+deck.on('chart-slide', () => startChartAnimation());
+```
+
+A slide with several states, `no-controls no-menu no-progress` say, fires one event for each when it arrives, and none while the reader stays on it or moves to a slide that shares the state. An event that nothing listens to costs nothing. Reveal fires them in the regular view in the same way, without an option to turn them off. There is no event when a state goes away; listen to `slidechanged` and look at the viewport's classes for that.
+
+In the regular view Reveal fires a state's event before `slidechanged`. In scroll view it comes after, because that is the event that reports the new slide.
+
+In the future we may remove addSlideStates if it is no longer needed.
+
+### Elements that stay on screen (`positionTools`)
+
+A plugin that puts something over the slides, a menubar, a button, a logo, has to keep it at an edge of what the reader sees. Where that edge is depends on the deck:
+
+- A deck that has the page to itself: the window. `position: fixed` works.
+- An embedded deck: the deck's own box. `fixed` pins to the window instead, so the element ends up outside the deck.
+- Scroll view, on an embedded deck: the deck itself scrolls, so an element that is simply placed in it scrolls away with the slides.
+
+On top of that, Reveal adds sticky elements of its own in scroll view, and other plugins add theirs, in an order nobody controls.
+
+- `addAnchor(deck, options)`: Adds a zero-height anchor to the deck that holds one edge, top or bottom, of what the reader sees, and returns it. Put the plugin's element inside.
+
+```javascript
+import { positionTools } from 'reveal.js-plugintoolkit';
+
+const anchor = positionTools.addAnchor(deck, { edge: 'top', className: 'my-plugin-anchor' });
+anchor.appendChild(myButton);
+```
+
+Then place the element against the anchor in the plugin's own CSS, with logical properties so that it follows the direction:
+
+```css
+.my-plugin-anchor > .my-plugin-button {
+    position: absolute;
+    top: 20px;
+    inset-inline-end: 20px;
+}
+```
+
+For a bottom anchor use `bottom` instead of `top`, and `inset-inline: 0` for a bar across the whole edge.
+
+The anchor has no height, so `height: 100%` inside it is nothing. For an element that fills what the reader sees from top to bottom, like a side menu, the anchor has `--toolkit-anchor-height`: that height in pixels, the window's or the embedded deck's, and updated when it changes, fullscreen included.
+
+```css
+.my-menu-anchor > .my-menu {
+    position: absolute;
+    top: 0;
+    inset-inline-start: -280px;
+    width: 280px;
+    height: var(--toolkit-anchor-height);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    visibility: hidden;
+    transition: inset-inline-start 0.3s, visibility 0s 0.3s;
+}
+
+.my-menu-anchor > .my-menu.open {
+    inset-inline-start: 0;
+    visibility: visible;
+    transition: inset-inline-start 0.3s;
+}
+```
+
+A menu like that also needs:
+
+- **`data-prevent-swipe` on the menu.** The anchor is inside the deck, and Reveal turns a swipe anywhere in the deck into a slide change.
+- **A `zIndex` above Reveal's own elements**, to cover them: the controls are at 11 and the slide number at 31. Reveal's overlays sit at 99 and up. The anchor's `z-index` is what counts, not the menu's.
+- **A slide-in on a logical property**, like `inset-inline-start` above. `translate` does not turn around in a right-to-left deck, and `:dir(rtl)` does not see Reveal's `rtl` option, which sets `direction` and no `dir` attribute.
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `edge` | `'top'` | `'top'` or `'bottom'`. |
+| `zIndex` | `2` | The anchor's `z-index`. |
+| `className` | | Classes for the anchor. |
+| `print` | `'hide'` | `'keep'` leaves the anchor in Reveal's print view, where neither fixed nor sticky follows the pages. |
+
+The anchor is fixed to the window on a deck that has the page to itself, and sticky, held at both edges, on an embedded deck. That leaves it exactly one place to be, wherever in the deck it ends up and however many anchors other plugins add. It follows Reveal's `rtl` option, also when `configure()` changes it, so `start` and `end` inside it follow the slides; without the option, it follows the page's own direction.
+
+The styles are written on the anchor itself. No stylesheet is added to the page, so two plugins with different versions of the toolkit cannot style each other's anchors, and a Content Security Policy that blocks inline styles in markup does not block these. A deck's stylesheet can still override one with `!important`.
+
+To hide the element on some slides, select through the viewport, where Reveal puts a slide's `data-state`: `.no-menu .my-plugin-anchor { visibility: hidden; }`. In scroll view that needs the [stateTools](#slide-states-in-scroll-view-statetools).
+
+Every call adds a new anchor. Call it from a plugin's `init` or later.
+
+### A note on scroll view and elements inside slides
+
+When Reveal's scroll view switches off, Reveal does not move the slides back: it rebuilds them from a copy of their HTML that it took when scroll view switched on. Every element inside `.slides` is then a new element. Attributes and classes are in the copy, but event listeners and references a plugin kept are not.
+
+So a plugin that reacts to something inside the slides should listen on the deck's element and match at the moment of the event, rather than add a listener to each element:
+
+```javascript
+deck.getRevealElement().addEventListener('click', (event) => {
+    const button = event.target.closest('.my-plugin-button');
+    if (button) { /* ... */ }
+});
+```
+
+And look elements up when it needs them, rather than once at the start. Elements outside `.slides`, such as an anchor from `positionTools`, are not rebuilt.
+
 ### Some section functions (`sectionTools`)
 
 - `isSection`: Check if the current slide is a section.

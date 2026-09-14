@@ -20,4 +20,9 @@ export { copyDataAttributes, createNode } from './dom-tools';
 export { sanitizeText } from './text-tools';
 
 export { addThemeColor } from './theme-tools';
+
+export { addSlideStates } from './state-tools';
+
+export { addAnchor } from './position-tools';
 export type { ThemeColors, ThemeColorPair, ThemeColorOptions } from './theme-tools';
+export type { AnchorEdge, AnchorOptions } from './position-tools';

@@ -1,15 +1,22 @@
 # Changelog
 
+## [1.2.2] - 2026-09-14
+
+### Added
+- `stateTools.addSlideStates(deck)`: slide states in scroll view.
+- `positionTools.addAnchor(deck, options)`: anchors for elements that stay on screen.
+- `--toolkit-anchor-height` on every anchor, for elements with an other height.
+
 ## [1.2.1] - 2026-09-06
 
 ### Added
-- `themeTools.addThemeColor` now covers now also checks if a stack has a contrasting background (compared to a slide only). 
+- `themeTools.addThemeColor` now also checks if a stack has a contrasting background (compared to a slide only). 
 - Navigating can change the background without changing any class on the deck, so `slidechanged` is listened to as well.
 
 ## [1.2.0] - 2026-09-04
 
 ### Added
-- `themeTools.addThemeColor(deck)`. It keeps `--c-theme-color` and `--c-theme-heading-color`  (based on the text/title color inside the slides) on the viewport, and adds the class `c-theme-inverted` there if a slide’s background contrasts the theme. Any plugin that styles elements outside of the `.slides` element can now use those colors.
+- `themeTools.addThemeColor(deck)`. It keeps `--c-theme-color` and `--c-theme-heading-color` (based on the text/title color inside the slides) on the viewport, and adds the class `c-theme-inverted` there if a slide’s background contrasts the theme. Any plugin that styles elements outside of the `.slides` element can now use those colors.
 - The measuring happens once per deck. Any plugin may call it, and later calls get the same colours back.
 - `RevealInstance` gained `getRevealElement()`.
 

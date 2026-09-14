@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reveal.js Demo Plugin</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <!-- The stylesheets and the script have to be the same Reveal version: scroll view is laid out by Reveal 5's and 6's stylesheet, which 4.x does not have. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/theme/black.css">
 </head>
 <body>
     <div class="reveal">
@@ -13,10 +14,11 @@
             <section>
                 <h1>Demo Plugin</h1>
                 <p>This demonstrates the Reveal.js Plugin Toolkit</p>
+                <p><small>Try scroll view: add <code>?view=scroll</code> to the address, or make the window narrower.</small></p>
             </section>
             <section>
                 <h2>Second Slide</h2>
-                <p>Check the bottom left corner for the plugin indicator</p>
+                <p>Check the bottom left corner for the plugin indicator. It sits in an anchor from <code>positionTools.addAnchor</code>, so it stays there in scroll view too.</p>
             </section>
             <section data-background-color="#fff">
                 <h2>A slide the other way round</h2>
@@ -26,15 +28,29 @@
                 <p>While a slide like this is showing, the deck also has the class
                     <code>c-theme-inverted</code>.</p>
             </section>
+            <section data-state="no-indicator">
+                <h2>No indicator here</h2>
+                <p>This slide has <code>data-state="no-indicator"</code>, and the plugin's CSS hides the indicator for it. Reveal applies the state in the regular view; <code>stateTools.addSlideStates</code> does it in scroll view.</p>
+            </section>
+            <section>
+                <section>
+                    <h2>A stack</h2>
+                    <p>Scroll view takes stacks apart into pages of their own.</p>
+                    <p>The indicator is back too.</p>
+                </section>
+                <section>
+                    <h2>Stack, second slide</h2>
+                </section>
+            </section>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@6.0.2/dist/reveal.js"></script>
     <script src="./plugin/demo-plugin/demo-plugin.js"></script>
     <script>
-        // Initialize Reveal.js
         Reveal.initialize({
-			plugins: [ RevealDemoPlugin ],
+            hash: true,
+            plugins: [ RevealDemoPlugin ],
             'demo-plugin': {
                 debug: true,
                 demoOption: 'custom value'

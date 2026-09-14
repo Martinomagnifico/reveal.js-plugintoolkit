@@ -152,7 +152,7 @@ var t = Object.defineProperty, n = (e, n) => {
 		setTimeout(r, 16);
 	};
 	r();
-}), y = () => _(), b = ((e) => new Proxy(e, { get: (e, t) => {
+}), oe = () => _(), se = ((e) => new Proxy(e, { get: (e, t) => {
 	if (t in e) return e[t];
 	let n = t.toString();
 	if (typeof console[n] == "function") return (...t) => {
@@ -210,16 +210,16 @@ var t = Object.defineProperty, n = (e, n) => {
 		}
 		this.groupDepth > 0 ? r.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? r.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : r.call(console, `[${this.label}]:`, ...t);
 	}
-}()), x = /* @__PURE__ */ new Set(), S = (e, t) => {
+}()), ce = /* @__PURE__ */ new Set(), y = (e, t) => {
 	let n = `${e}::${t}`;
-	x.has(n) || (x.add(n), console.warn(`[${e}] ${t}`));
-}, C = (e) => [`dist/plugin/${e}/${e}.css`, `plugin/${e}/${e}.css`], w = (e) => typeof e == "string" && e.trim() !== "", T = async (e, t) => {
+	ce.has(n) || (ce.add(n), console.warn(`[${e}] ${t}`));
+}, le = (e) => [`dist/plugin/${e}/${e}.css`, `plugin/${e}/${e}.css`], ue = (e) => typeof e == "string" && e.trim() !== "", b = async (e, t) => {
 	let { cssautoload: n, csspath: r, debug: i = !1 } = t;
 	if (n === !1 || r === !1) return i && console.log(`[${e}] CSS loading is switched off`), { status: "skipped" };
-	if (w(r)) {
+	if (ue(r)) {
 		let t = r.trim(), n = g(e), a = n && !!document.querySelector(`[data-css-id="${e}"]`);
 		try {
-			return await m(e, t), i && console.log(`[${e}] CSS loaded from: ${t}`), n && S(e, `Loaded CSS from ${t}, but a stylesheet for this plugin was already on the page (${a ? "a tagged <link>" : "an import or inline <style>"}) — csspath adds one, it cannot remove one. Both are live and the cascade decides. Remove the other import or <link>, or drop csspath.`), {
+			return await m(e, t), i && console.log(`[${e}] CSS loaded from: ${t}`), n && y(e, `Loaded CSS from ${t}, but a stylesheet for this plugin was already on the page (${a ? "a tagged <link>" : "an import or inline <style>"}) — csspath adds one, it cannot remove one. Both are live and the cascade decides. Remove the other import or <link>, or drop csspath.`), {
 				status: "loaded",
 				path: t
 			};
@@ -233,7 +233,7 @@ var t = Object.defineProperty, n = (e, n) => {
 	if (g(e)) return i && console.log(`[${e}] CSS is already imported, skipping`), { status: "present" };
 	let { directory: a } = u(e);
 	if (a !== null || n === !0) {
-		let t = [...a === null ? [] : [`${a}${e}.css`], ...C(e)].filter((e, t, n) => n.indexOf(e) === t);
+		let t = [...a === null ? [] : [`${a}${e}.css`], ...le(e)].filter((e, t, n) => n.indexOf(e) === t);
 		for (let n of t) try {
 			return await m(e, n), i && console.log(`[${e}] CSS loaded from: ${n}`), {
 				status: "loaded",
@@ -245,19 +245,19 @@ var t = Object.defineProperty, n = (e, n) => {
 		return console.warn(`[${e}] Could not load CSS. Tried: ${t.join(", ")}. Import the stylesheet yourself, or set csspath to where it is.`), { status: "failed" };
 	}
 	return h(e).then((t) => {
-		t || S(e, `CSS could not be autoloaded here, because the plugin is part of a bundle. Import it once in your own code: import 'reveal.js-${e}/${e}.css'`);
+		t || y(e, `CSS could not be autoloaded here, because the plugin is part of a bundle. Import it once in your own code: import 'reveal.js-${e}/${e}.css'`);
 	}), { status: "advised" };
 };
-async function E(e, t) {
+async function de(e, t) {
 	if ("getEnvironmentInfo" in e && t) {
 		let n = e, r = n.userConfig, i = "cssautoload" in r && r.cssautoload !== "auto" ? t.cssautoload : void 0;
-		return T(n.pluginId, {
+		return b(n.pluginId, {
 			...t,
 			cssautoload: i
 		});
 	}
 	let { id: n, cssautoload: r, csspath: i, debug: a } = e;
-	return T(n, {
+	return b(n, {
 		cssautoload: r === "auto" ? void 0 : r,
 		csspath: i,
 		debug: a
@@ -265,19 +265,19 @@ async function E(e, t) {
 }
 //#endregion
 //#region src/utils/plugin-tools/event-tools.ts
-var oe = /* @__PURE__ */ n({
-	addDirectionEvents: () => A,
-	addMoreDirectionEvents: () => j,
-	addScrollModeEvents: () => M
-}), D = Symbol.for("reveal.js-plugintoolkit.directionEvents"), O = Symbol.for("reveal.js-plugintoolkit.scrollModeEvents"), k = (e, t, n) => {
+var fe = /* @__PURE__ */ n({
+	addDirectionEvents: () => w,
+	addMoreDirectionEvents: () => T,
+	addScrollModeEvents: () => E
+}), x = Symbol.for("reveal.js-plugintoolkit.directionEvents"), S = Symbol.for("reveal.js-plugintoolkit.scrollModeEvents"), C = (e, t, n) => {
 	Object.defineProperty(e, t, {
 		value: n,
 		configurable: !0,
 		enumerable: !1,
 		writable: !1
 	});
-}, A = (e) => {
-	if (e[D]) return;
+}, w = (e) => {
+	if (e[x]) return;
 	let [t, n] = [0, 0];
 	e.on("slidechanged", (r) => {
 		let { indexh: i, indexv: a, previousSlide: o, currentSlide: s } = r;
@@ -298,9 +298,9 @@ var oe = /* @__PURE__ */ n({
 				indexv: a
 			}
 		}), [t, n] = [i, a];
-	}), k(e, D, !0);
-}, j = A, M = (e) => {
-	if (e[O]) return () => {};
+	}), C(e, x, !0);
+}, T = w, E = (e) => {
+	if (e[S]) return () => {};
 	let t = e.getViewportElement();
 	if (!t) return console.warn("[plugintoolkit]: Could not find viewport element"), () => {};
 	let n = () => t.classList.contains("reveal-scroll"), r = n(), i = new MutationObserver(() => {
@@ -323,72 +323,72 @@ var oe = /* @__PURE__ */ n({
 		attributeFilter: ["class"]
 	});
 	let a = () => {
-		i.disconnect(), delete e[O];
+		i.disconnect(), delete e[S];
 	};
-	return k(e, O, a), a;
-}, se = /* @__PURE__ */ n({
-	SectionType: () => ce,
-	getSectionType: () => R,
-	getStack: () => L,
-	isHorizontal: () => I,
-	isSection: () => N,
-	isStack: () => P,
-	isVertical: () => F
-}), ce = /* @__PURE__ */ function(e) {
+	return C(e, S, a), a;
+}, pe = /* @__PURE__ */ n({
+	SectionType: () => me,
+	getSectionType: () => M,
+	getStack: () => j,
+	isHorizontal: () => A,
+	isSection: () => D,
+	isStack: () => O,
+	isVertical: () => k
+}), me = /* @__PURE__ */ function(e) {
 	return e.HORIZONTAL = "horizontal", e.STACK = "stack", e.VERTICAL = "vertical", e.INVALID = "invalid", e;
-}({}), N = (e) => e instanceof HTMLElement && e.tagName === "SECTION", P = (e) => N(e) ? Array.from(e.children).some((e) => e instanceof HTMLElement && e.tagName === "SECTION") : !1, F = (e) => N(e) ? e.parentElement instanceof HTMLElement && e.parentElement.tagName === "SECTION" : !1, I = (e) => N(e) && !F(e) && !P(e), L = (e) => {
-	if (!N(e)) return null;
-	if (F(e)) {
+}({}), D = (e) => e instanceof HTMLElement && e.tagName === "SECTION", O = (e) => D(e) ? Array.from(e.children).some((e) => e instanceof HTMLElement && e.tagName === "SECTION") : !1, k = (e) => D(e) ? e.parentElement instanceof HTMLElement && e.parentElement.tagName === "SECTION" : !1, A = (e) => D(e) && !k(e) && !O(e), j = (e) => {
+	if (!D(e)) return null;
+	if (k(e)) {
 		let t = e.parentElement;
-		if (t instanceof HTMLElement && P(t)) return t;
+		if (t instanceof HTMLElement && O(t)) return t;
 	}
 	return null;
-}, R = (e) => N(e) ? F(e) ? "vertical" : P(e) ? "stack" : "horizontal" : "invalid", z = /* @__PURE__ */ n({
-	isJSON: () => B,
-	toJSONString: () => V
-}), B = (e) => {
+}, M = (e) => D(e) ? k(e) ? "vertical" : O(e) ? "stack" : "horizontal" : "invalid", he = /* @__PURE__ */ n({
+	isJSON: () => N,
+	toJSONString: () => P
+}), N = (e) => {
 	try {
 		return JSON.parse(e) && !!e;
 	} catch {
 		return !1;
 	}
-}, V = (e) => {
+}, P = (e) => {
 	if (e == null) return "";
 	let t = e;
-	if (typeof t == "string" && (t = t.replace(/[“”]/g, "\"").replace(/[‘’]/g, "'")), B(e)) return e;
+	if (typeof t == "string" && (t = t.replace(/[“”]/g, "\"").replace(/[‘’]/g, "'")), N(e)) return e;
 	if (typeof e == "object") return JSON.stringify(e, null, 2);
 	if (typeof e == "string") {
 		let t = e.trim().replace(/'/g, "\"");
 		return t.charAt(0) === "{" ? t : `{${t}}`;
 	}
 	return "";
-}, H = /* @__PURE__ */ n({
-	copyDataAttributes: () => U,
-	createNode: () => W
-}), U = (e, t, n) => {
+}, ge = /* @__PURE__ */ n({
+	copyDataAttributes: () => F,
+	createNode: () => I
+}), F = (e, t, n) => {
 	for (let r of Array.from(e.attributes)) r.nodeName.startsWith("data") && (!n || r.nodeName !== n) && t.setAttribute(r.nodeName, r.nodeValue || "");
-}, W = (e) => document.createRange().createContextualFragment(e).firstElementChild, le = /* @__PURE__ */ n({ sanitizeText: () => G }), G = (e) => e.toLowerCase().replace(/\s+/g, "").replace(/[^\p{L}\p{N}-]/gu, ""), ue = /* @__PURE__ */ n({ addThemeColor: () => $ }), K = Symbol.for("reveal.js-plugintoolkit.themeColor"), q = "has-light-background", J = "has-dark-background", de = "--c-theme-color", fe = "--c-theme-heading-color", pe = {
+}, I = (e) => document.createRange().createContextualFragment(e).firstElementChild, _e = /* @__PURE__ */ n({ sanitizeText: () => L }), L = (e) => e.toLowerCase().replace(/\s+/g, "").replace(/[^\p{L}\p{N}-]/gu, ""), ve = /* @__PURE__ */ n({ addThemeColor: () => W }), R = Symbol.for("reveal.js-plugintoolkit.themeColor"), z = "has-light-background", B = "has-dark-background", ye = "--c-theme-color", be = "--c-theme-heading-color", xe = {
 	text: "section",
 	heading: "h1"
-}, me = "c-theme-inverted", he = "reveal-scroll", ge = "stack", Y = (e, t, n) => {
+}, Se = "c-theme-inverted", Ce = "reveal-scroll", we = "stack", Te = (e, t, n) => {
 	Object.defineProperty(e, t, {
 		value: n,
 		configurable: !0,
 		enumerable: !1,
 		writable: !1
 	});
-}, _e = (e) => {
+}, Ee = (e) => {
 	let t = e.getElementsByClassName("slides")[0];
 	if (!t) return null;
-	let n = document.createElement("section"), r = document.createElement(pe.heading);
+	let n = document.createElement("section"), r = document.createElement(xe.heading);
 	n.appendChild(r), t.appendChild(n);
 	let i = () => ({
 		text: getComputedStyle(n).getPropertyValue("color"),
 		heading: getComputedStyle(r).getPropertyValue("color")
 	}), a = i();
-	n.classList.add(q);
+	n.classList.add(z);
 	let o = i(), s = "dark";
-	return o.text === a.text && o.heading === a.heading && (s = "light", n.classList.remove(q), n.classList.add(J), o = i()), n.remove(), {
+	return o.text === a.text && o.heading === a.heading && (s = "light", n.classList.remove(z), n.classList.add(B), o = i()), n.remove(), {
 		theme: s,
 		text: {
 			regular: a.text,
@@ -399,34 +399,34 @@ var oe = /* @__PURE__ */ n({
 			inverse: o.heading
 		}
 	};
-}, X = (e, t) => e?.classList.contains(t) ?? !1, ve = (e, t, n) => {
-	let r = X(n, he) ? n : t;
-	if (X(r, q)) return "light";
-	if (X(r, J)) return "dark";
+}, V = (e, t) => e?.classList.contains(t) ?? !1, De = (e, t, n) => {
+	let r = V(n, Ce) ? n : t;
+	if (V(r, z)) return "light";
+	if (V(r, B)) return "dark";
 	let i = e.getCurrentSlide?.()?.parentElement ?? null;
-	if (i && X(i, ge)) {
-		if (X(i, q)) return "light";
-		if (X(i, J)) return "dark";
+	if (i && V(i, we)) {
+		if (V(i, z)) return "light";
+		if (V(i, B)) return "dark";
 	}
 	return null;
-}, Z = (e, t, n) => {
-	let r = ve(e, t, e.getViewportElement());
+}, H = (e, t, n) => {
+	let r = De(e, t, e.getViewportElement());
 	return n.theme === "dark" ? r === "light" : r === "dark";
-}, Q = (e, t, n) => {
+}, U = (e, t, n) => {
 	let r = (e) => n ? e.inverse : e.regular;
-	e.style.setProperty(de, r(t.text)), e.style.setProperty(fe, r(t.heading)), e.classList.toggle(me, n);
-}, ye = async (e, { timeout: t = 1e3 }) => {
+	e.style.setProperty(ye, r(t.text)), e.style.setProperty(be, r(t.heading)), e.classList.toggle(Se, n);
+}, Oe = async (e, { timeout: t = 1e3 }) => {
 	let n = e.getRevealElement();
 	if (!n) return null;
 	let r = e.getViewportElement() ?? n;
 	await v(t);
-	let i = _e(n);
+	let i = Ee(n);
 	if (!i) return null;
-	let a = Z(e, n, i);
-	Q(r, i, a);
+	let a = H(e, n, i);
+	U(r, i, a);
 	let o = () => {
-		let t = Z(e, n, i);
-		t !== a && (a = t, Q(r, i, t));
+		let t = H(e, n, i);
+		t !== a && (a = t, U(r, i, t));
 	}, s = new MutationObserver(o);
 	return s.observe(n, {
 		attributes: !0,
@@ -435,27 +435,105 @@ var oe = /* @__PURE__ */ n({
 		attributes: !0,
 		attributeFilter: ["class"]
 	}), e.on("slidechanged", o), i;
-}, $ = (e, t = {}) => {
-	let n = e[K];
+}, W = (e, t = {}) => {
+	let n = e[R];
 	if (n) return n;
-	let r = ye(e, t);
-	return Y(e, K, r), r;
-}, be = /* @__PURE__ */ n({
-	addDirectionEvents: () => A,
-	addMoreDirectionEvents: () => j,
-	addScrollModeEvents: () => M,
-	addThemeColor: () => $,
-	copyDataAttributes: () => U,
-	createNode: () => W,
-	getSectionType: () => R,
-	getStack: () => L,
-	isHorizontal: () => I,
-	isJSON: () => B,
-	isSection: () => N,
-	isStack: () => P,
-	isVertical: () => F,
-	sanitizeText: () => G,
-	toJSONString: () => V
+	let r = Oe(e, t);
+	return Te(e, R, r), r;
+}, ke = /* @__PURE__ */ n({ addSlideStates: () => Fe }), G = Symbol.for("reveal.js-plugintoolkit.slideStates"), Ae = "reveal-scroll", K = "data-toolkit-stack-state", je = (e, t, n) => {
+	Object.defineProperty(e, t, {
+		value: n,
+		configurable: !0,
+		enumerable: !1,
+		writable: !1
+	});
+}, q = (e) => (e ?? "").split(" ").filter(Boolean), J = (e) => Array.from(new Set(e)), Me = (e) => e.classList.contains(Ae), Y = (e) => {
+	if (e.querySelector(".scroll-page")) return !1;
+	for (let t of Array.from(e.querySelectorAll(".slides > section"))) {
+		let e = t.querySelectorAll(":scope > section");
+		if (!e.length) continue;
+		let n = t.getAttribute("data-state");
+		for (let t of Array.from(e)) n ? t.setAttribute(K, n) : t.removeAttribute(K);
+	}
+	return !0;
+}, X = (e) => {
+	if (!e) return [];
+	let t = e.parentElement;
+	return J([...t?.tagName === "SECTION" ? q(t.getAttribute("data-state")) : q(e.getAttribute(K)), ...q(e.getAttribute("data-state"))]);
+}, Z = (e, t, n, { dispatch: r }) => {
+	let i = X(n);
+	for (let e of t.applied) i.includes(e) || t.host.classList.remove(e);
+	for (let n of i) t.host.classList.add(n), r && !t.applied.includes(n) && e.dispatchEvent({ type: n });
+	t.applied = i;
+}, Ne = (e) => {
+	e.warned || e.stacksRead || e.revealElement.querySelector(".scroll-page section[data-index-v]:not([data-index-v=\"0\"])") && (e.warned = !0, console.warn("[plugintoolkit]: addSlideStates was called after the deck had already switched to scroll view, so the states of stacks are unknown until it leaves scroll view once. Slides still get their own states. Call it from a plugin's init to avoid this."));
+}, Pe = (e) => {
+	let t = e.getRevealElement();
+	if (!t) return null;
+	let n = e.getViewportElement() ?? t, r = Me(n), i = {
+		revealElement: t,
+		host: n,
+		inScrollView: r,
+		applied: [],
+		regularStates: r ? [] : X(e.getCurrentSlide()),
+		switching: !1,
+		stacksRead: Y(t),
+		warned: !1
+	};
+	r && (Ne(i), Z(e, i, e.getCurrentSlide(), { dispatch: !1 }));
+	let a = () => {
+		let r = Me(n);
+		r !== i.inScrollView && (i.inScrollView = r, r ? (Ne(i), i.applied = J([...i.applied, ...i.regularStates]), i.switching = !0, queueMicrotask(() => {
+			i.switching = !1;
+		}), Z(e, i, e.getCurrentSlide(), { dispatch: !1 })) : (Z(e, i, e.getCurrentSlide(), { dispatch: !1 }), i.applied = [], i.regularStates = X(e.getCurrentSlide()), i.stacksRead = Y(t) || i.stacksRead));
+	};
+	return new MutationObserver(a).observe(n, {
+		attributes: !0,
+		attributeFilter: ["class"]
+	}), e.on("ready", () => {
+		a(), i.inScrollView ? Z(e, i, e.getCurrentSlide(), { dispatch: !1 }) : (i.regularStates = X(e.getCurrentSlide()), i.stacksRead = Y(t) || i.stacksRead);
+	}), e.on("slidechanged", (t) => {
+		a();
+		let { currentSlide: n } = t, r = n ?? e.getCurrentSlide();
+		i.inScrollView ? Z(e, i, r, { dispatch: !i.switching }) : i.regularStates = X(r);
+	}), i;
+}, Fe = (e) => {
+	if (e[G]) return;
+	let t = Pe(e);
+	t && je(e, G, t);
+}, Ie = /* @__PURE__ */ n({ addAnchor: () => $ }), Le = "data-toolkit-anchor", Re = "--toolkit-anchor-height", Q = (e) => e.getConfig(), ze = (e) => Q(e).view === "print" || /print-pdf/i.test(window.location.search) || document.documentElement.classList.contains("print-pdf"), Be = (e, t, n, r, i) => {
+	let { style: a } = t, o = r === "top";
+	a.setProperty("display", i.print !== "keep" && ze(e) ? "none" : "block"), a.setProperty("height", "0"), a.setProperty("margin", "0"), a.setProperty("padding", "0"), a.setProperty("z-index", String(i.zIndex ?? 2)), n ? (a.setProperty("position", "sticky"), a.setProperty("inset-inline", "auto"), a.setProperty("top", o ? "0" : "100%"), a.setProperty("bottom", o ? "100%" : "0")) : (a.setProperty("position", "fixed"), a.setProperty("inset-inline", "0"), a.setProperty("top", o ? "0" : "auto"), a.setProperty("bottom", o ? "auto" : "0")), Q(e).rtl ? a.setProperty("direction", "rtl") : a.removeProperty("direction");
+}, $ = (e, t = {}) => {
+	let n = e.getRevealElement();
+	if (!n) return null;
+	let r = t.edge === "bottom" ? "bottom" : "top", i = e.getViewportElement() ?? document.body, a = i === n, o = document.createElement("div");
+	o.setAttribute(Le, r), t.className && (o.className = t.className);
+	let s = () => Be(e, o, a, r, t);
+	s(), n.appendChild(o), new MutationObserver(s).observe(n, {
+		attributes: !0,
+		attributeFilter: ["class"]
+	}), e.on("ready", s);
+	let c = () => o.style.setProperty(Re, `${i.clientHeight}px`);
+	return c(), new ResizeObserver(c).observe(i), o;
+}, Ve = /* @__PURE__ */ n({
+	addAnchor: () => $,
+	addDirectionEvents: () => w,
+	addMoreDirectionEvents: () => T,
+	addScrollModeEvents: () => E,
+	addSlideStates: () => Fe,
+	addThemeColor: () => W,
+	copyDataAttributes: () => F,
+	createNode: () => I,
+	getSectionType: () => M,
+	getStack: () => j,
+	isHorizontal: () => A,
+	isJSON: () => N,
+	isSection: () => D,
+	isStack: () => O,
+	isVertical: () => k,
+	sanitizeText: () => L,
+	toJSONString: () => P
 });
 //#endregion
-export { te as PluginBase, g as checkCssImported, z as configTools, H as domTools, oe as eventTools, u as findPluginSource, d as hasResolvableSource, ie as isCssImported, y as isThemeApplied, E as pluginCSS, b as pluginDebug, be as pluginTools, se as sectionTools, le as textTools, ue as themeTools, S as warnOnce, h as whenCssImported, v as whenThemeApplied };
+export { te as PluginBase, g as checkCssImported, he as configTools, ge as domTools, fe as eventTools, u as findPluginSource, d as hasResolvableSource, ie as isCssImported, oe as isThemeApplied, de as pluginCSS, se as pluginDebug, Ve as pluginTools, Ie as positionTools, pe as sectionTools, ke as stateTools, _e as textTools, ve as themeTools, y as warnOnce, h as whenCssImported, v as whenThemeApplied };
