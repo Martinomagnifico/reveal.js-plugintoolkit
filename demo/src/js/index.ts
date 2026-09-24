@@ -16,18 +16,30 @@ const init = async (plugin: PluginBase<Config>, deck: RevealInstance, config: Co
     // Enable debug mode if needed
     pluginDebug.initialize(config.debug, 'demo-plugin');
 
-    // Just give some optional info about the environment
-    const env = plugin.getEnvironmentInfo();
-    pluginDebug.log('Environment:', env);
+    // Everything this plugin says while starting up, under one heading. The group
+    // is held back and written out when it ends, so the `await` below cannot let
+    // another plugin's logging fall inside it.
+    //
+    // `finally`, so a throw on the way up cannot leave the group open and indent
+    // everything logged afterwards.
+    pluginDebug.group('Starting up');
 
-    // Handle CSS loading with a single line - this includes environment detection and will automatically check if CSS is already imported
-    await pluginCSS(plugin, config);
+    try {
+        // Just give some optional info about the environment
+        const env = plugin.getEnvironmentInfo();
+        pluginDebug.log('Environment:', env);
+
+        // Handle CSS loading with a single line - this includes environment detection and will automatically check if CSS is already imported
+        await pluginCSS(plugin, config);
 
 
-    // Initialize the plugin and wait for it to complete
-    // This will block Reveal.js initialization until DemoPlugin is fully ready
-    await DemoPlugin.create(deck, config);
-    
+        // Initialize the plugin and wait for it to complete
+        // This will block Reveal.js initialization until DemoPlugin is fully ready
+        await DemoPlugin.create(deck, config);
+    } finally {
+        pluginDebug.groupEnd();
+    }
+
     // Now we can return, and Reveal will continue initialization
 }
 

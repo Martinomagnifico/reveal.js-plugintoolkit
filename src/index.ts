@@ -4,7 +4,7 @@ export { pluginCSS } from './utils/plugin-css';
 export { isCssImported, checkCssImported, whenCssImported } from './utils/plugin-css/loader';
 export { whenThemeApplied, isThemeApplied } from './utils/plugin-css/theme';
 export { hasResolvableSource, findPluginSource } from './utils/plugin-css/path-finder';
-export { pluginDebug, warnOnce } from './utils/plugin-debug';
+export { pluginDebug, createPluginDebug, warnOnce } from './utils/plugin-debug';
 
 export * as pluginTools from './utils/plugin-tools'; // All of the tools
 
@@ -21,6 +21,7 @@ export * as positionTools from './utils/plugin-tools/position-tools';
 // Export types
 export type { RevealInstance } from './types';
 export type { PluginInit } from './base/plugin-base';
+export type { DebugWithConsoleMethods } from './utils/plugin-debug';
 export type {
 	PluginCssOptions,
 	PluginCssResult,

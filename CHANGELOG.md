@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.4] - 2026-09-23
+
+### Added
+- `createPluginDebug()`: a debug channel for separate (plugin instance) use, with its own label, group depth and buffer.
+- The `DebugWithConsoleMethods` type, so a plugin can hold on to a channel.
+
+## [1.2.3] - 2026-09-23
+
+### Changed
+- `pluginDebug` keeps a group's lines/messages and outputs them together, so another plugin (like logging during an `await`) can no longer get inside it.
+
 ## [1.2.2] - 2026-09-14
 
 ### Added

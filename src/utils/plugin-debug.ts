@@ -14,7 +14,7 @@ type ConsoleMethods = {
 };
 
 // Combined type that includes both the Debug class methods and all console methods. This allows TypeScript to recognize dynamically added console methods.
-type DebugWithConsoleMethods = PluginDebug & ConsoleMethods;
+export type DebugWithConsoleMethods = PluginDebug & ConsoleMethods;
 
 
 // Debug utility class that provides enhanced console logging capabilities. 
@@ -23,6 +23,9 @@ type DebugWithConsoleMethods = PluginDebug & ConsoleMethods;
 // - Custom label prefixing for messages, 
 // - Dynamic access to all console methods, 
 // - Smart handling of console groups
+
+/** What `emit` can be asked to call: a console method by name, or the function itself. */
+type ConsoleTarget = keyof Console | ((...args: unknown[]) => void);
 
 class PluginDebug {
 	// Flag to enable/disable all debugging output
@@ -34,6 +37,36 @@ class PluginDebug {
 	// Tracks the current depth of console groups for proper formatting
 	groupDepth = 0;
 
+	/**
+	 * Lines held back while a group is open.
+	 *
+	 * `console.group` is one stack shared by the whole page, so a group left open
+	 * across an `await` catches whatever anyone else logs in the meantime — a
+	 * second deck starting up, or another plugin entirely, ends up filed inside
+	 * it. Holding the lines and writing them out in one burst at `groupEnd`
+	 * means the group is never open while anything else can log, so nothing
+	 * foreign can fall into it.
+	 */
+	private pending: Array<[ConsoleTarget, unknown[]]> | null = null;
+
+	/** Every console call goes through here, so it can be buffered or written. */
+	private emit(target: ConsoleTarget, args: unknown[]): void {
+		if (this.pending) {
+			this.pending.push([target, args]);
+			return;
+		}
+		const method = typeof target === 'function' ? target : console[target];
+		if (typeof method === 'function') (method as (...a: unknown[]) => void).call(console, ...args);
+	}
+
+	/** Write the held lines out together, group header and all. */
+	private flush(): void {
+		const entries = this.pending;
+		this.pending = null;
+		if (!entries) return;
+		for (const [target, args] of entries) this.emit(target, args);
+	}
+
 	// Initializes the debug utility with custom settings.
 	initialize(isDebug: boolean, label = "DEBUG"): void {
 		this.debugMode = isDebug;
@@ -44,12 +77,14 @@ class PluginDebug {
 	// Groups will always display the label prefix in their header.
 
 	group = (...args: unknown[]): void => {
+		if (this.debugMode && this.groupDepth === 0 && !this.pending) this.pending = [];
 		this.debugLog('group', ...args);
 		this.groupDepth++;
 	};
 
 	// Creates a new collapsed console group and tracks the group depth.
 	groupCollapsed = (...args: unknown[]): void => {
+		if (this.debugMode && this.groupDepth === 0 && !this.pending) this.pending = [];
 		this.debugLog('groupCollapsed', ...args);
 		this.groupDepth++;
 	};
@@ -59,6 +94,7 @@ class PluginDebug {
 		if (this.groupDepth > 0) {
 			this.groupDepth--;
 			this.debugLog('groupEnd');
+			if (this.groupDepth === 0) this.flush();
 		}
 	};
 
@@ -98,33 +134,33 @@ class PluginDebug {
 			if (typeof messageOrData === 'string' && propertiesOrData !== undefined && typeof propertiesOrData !== 'string') {
 				// First parameter is a message, second is the data
 				if (this.groupDepth === 0) {
-					console.log(`[${this.label}]: ${messageOrData}`);
+					this.emit('log', [`[${this.label}]: ${messageOrData}`]);
 				} else {
-					console.log(messageOrData);
+					this.emit('log', [messageOrData]);
 				}
 				
 				// Display the table with the data
 				if (optionalProperties) {
-					console.table(propertiesOrData, optionalProperties as string[]);
+					this.emit('table', [propertiesOrData, optionalProperties as string[]]);
 				} else {
-					console.table(propertiesOrData);
+					this.emit('table', [propertiesOrData]);
 				}
 			} else {
 				// First parameter is the data
 				if (this.groupDepth === 0) {
-					console.log(`[${this.label}]: Table data`);
+					this.emit('log', [`[${this.label}]: Table data`]);
 				}
 				
 				// Display the table
 				if (typeof propertiesOrData === 'object' && Array.isArray(propertiesOrData)) {
-					console.table(messageOrData, propertiesOrData);
+					this.emit('table', [messageOrData, propertiesOrData]);
 				} else {
-					console.table(messageOrData);
+					this.emit('table', [messageOrData]);
 				}
 			}
 		} catch (error) {
-			console.error(`[${this.label}]: Error showing table:`, error);
-			console.log(`[${this.label}]: Raw data:`, messageOrData);
+			this.emit('error', [`[${this.label}]: Error showing table:`, error]);
+			this.emit('log', [`[${this.label}]: Raw data:`, messageOrData]);
 		}
 	};
 
@@ -139,19 +175,19 @@ class PluginDebug {
 		try {
 			// For logs inside groups, skip the label prefix
 			if (this.groupDepth > 0) {
-				logMethod.call(console, ...args);
+				this.emit(logMethod, args);
 			} else {
 				// Normal formatting for logs outside groups
 				if (args.length > 0 && typeof args[0] === 'string') {
-					logMethod.call(console, `[${this.label}]: ${args[0]}`, ...args.slice(1));
+					this.emit(logMethod, [`[${this.label}]: ${args[0]}`, ...args.slice(1)]);
 				} else {
-					logMethod.call(console, `[${this.label}]:`, ...args);
+					this.emit(logMethod, [`[${this.label}]:`, ...args]);
 				}
 			}
 		} catch (error) {
 			// Fallback if the main logging method fails
-			console.error(`[${this.label}]: Error in logging:`, error);
-			console.log(`[${this.label}]: Original log data:`, ...args);
+			this.emit('error', [`[${this.label}]: Error in logging:`, error]);
+			this.emit('log', [`[${this.label}]: Original log data:`, ...args]);
 		}
 	};
 
@@ -169,22 +205,19 @@ class PluginDebug {
 		const method = console[methodName];
 		if ((!this.debugMode && methodName !== 'error') || typeof method !== 'function') return;
 
-		// Define a properly typed console method
-		const typedMethod = method as (...methodArgs: unknown[]) => void;
-		
 		if (methodName === 'group' || methodName === 'groupCollapsed') {
 			// For group headers, always include the label prefix
 			if (args.length > 0 && typeof args[0] === 'string') {
-				typedMethod.call(console, `[${this.label}]: ${args[0]}`, ...args.slice(1));
+				this.emit(methodName, [`[${this.label}]: ${args[0]}`, ...args.slice(1)]);
 			} else {
-				typedMethod.call(console, `[${this.label}]:`, ...args);
+				this.emit(methodName, [`[${this.label}]:`, ...args]);
 			}
 			return;
 		}
 
 		if (methodName === 'groupEnd') {
 			// For groupEnd, no formatting needed
-			typedMethod.call(console);
+			this.emit(methodName, []);
 			return;
 		}
 
@@ -214,13 +247,13 @@ class PluginDebug {
 
 		// For regular logging inside groups, skip the label prefix
 		if (this.groupDepth > 0) {
-			typedMethod.call(console, ...args);
+			this.emit(methodName, args);
 		} else {
 			// Normal formatting for logs outside groups
 			if (args.length > 0 && typeof args[0] === 'string') {
-				typedMethod.call(console, `[${this.label}]: ${args[0]}`, ...args.slice(1));
+				this.emit(methodName, [`[${this.label}]: ${args[0]}`, ...args.slice(1)]);
 			} else {
-				typedMethod.call(console, `[${this.label}]:`, ...args);
+				this.emit(methodName, [`[${this.label}]:`, ...args]);
 			}
 		}
 	}
@@ -249,6 +282,17 @@ const createDebugProxy = (debugInstance: PluginDebug): DebugWithConsoleMethods =
 	}) as DebugWithConsoleMethods;
 
 export const pluginDebug = createDebugProxy(new PluginDebug());
+
+/**
+ * A debug channel of its own, with its own label, group depth and buffer.
+ *
+ * `pluginDebug` is one object per bundle, so two decks of the same plugin share
+ * it: the second to open a group nests inside the first, because a line arriving
+ * from either deck looks the same to a shared instance. A channel per deck gives
+ * each one its own group, opened and flushed independently of the other.
+ */
+export const createPluginDebug = (): DebugWithConsoleMethods =>
+	createDebugProxy(new PluginDebug());
 
 
 /**

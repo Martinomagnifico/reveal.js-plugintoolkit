@@ -274,6 +274,8 @@ Console output:
     Validating token
 ```
 
+A group is held back until it ends, and then written out in one go. That matters when more than one plugin is running: a group that stayed open while your plugin waited for something would otherwise catch whatever another plugin logged in the meantime, and file it under your heading.
+
 
 ### Using other console methods
 
@@ -288,6 +290,31 @@ Console output:
 - `pluginDebug.table(tableData, columns)` - Display a table with specific columns
 - `pluginDebug.table("Tablename:", tableData)` - Display a table with a custom message
 - `pluginDebug.table("Tablename:", tableData, columns)` - Display a table with custom message and specific columns
+
+
+### One plugin, several decks
+
+`pluginDebug` is one object for the whole of your plugin, which is what you want until the same plugin runs on two decks on one page. Both decks then share its label and its group, so whichever opens a group second ends up inside the first one's.
+
+`createPluginDebug()` hands a deck a channel of its own, with its own label, group depth and held-back lines:
+
+```javascript
+import { createPluginDebug } from 'reveal.js-plugintoolkit';
+
+const channel = createPluginDebug();
+channel.initialize(config.debug, `MY-PLUGIN: ${deckElement.id}`);
+```
+
+A channel has the same methods as `pluginDebug`. Keep it with the rest of that deck's state and log on it instead, and each deck gets a group of its own:
+
+```
+▶ [MY-PLUGIN: deck1]: Starting up
+    Ready
+▶ [MY-PLUGIN: deck2]: Starting up
+    Ready
+```
+
+If your plugin only ever runs one deck per page, `pluginDebug` stays the simpler choice — nothing about it has changed.
 
 
 
