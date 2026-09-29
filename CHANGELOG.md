@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.6] - 2026-09-29
+
+### Fixed
+- Dependency fix
+
+
+## [1.2.5] - 2026-09-27
+
+### Fixed
+- `configTools.toJSONString` now really replaces smart quotes.
+
 ## [1.2.4] - 2026-09-23
 
 ### Added

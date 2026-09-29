@@ -17,5 +17,8 @@ export declare const isJSON: (str: string) => boolean;
  * Smart quotes are replaced first — an editor or a CMS will have turned `"` into
  * `“` — and a bare `key: value` list is wrapped in braces, so
  * `data-x="delay: 100"` parses like `{"delay": 100}`.
+ *
+ * A string that is already valid JSON is returned as it is, so smart quotes
+ * inside its values are text and stay that way.
  */
 export declare const toJSONString: (str?: unknown) => string;

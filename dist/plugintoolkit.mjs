@@ -367,12 +367,13 @@ var me = /* @__PURE__ */ n({
 	}
 }, F = (e) => {
 	if (e == null) return "";
-	let t = e;
-	if (typeof t == "string" && (t = t.replace(/[“”]/g, "\"").replace(/[‘’]/g, "'")), P(e)) return e;
+	if (P(e)) return e;
 	if (typeof e == "object") return JSON.stringify(e, null, 2);
 	if (typeof e == "string") {
-		let t = e.trim().replace(/'/g, "\"");
-		return t.charAt(0) === "{" ? t : `{${t}}`;
+		let t = e.replace(/[“”]/g, "\"").replace(/[‘’]/g, "'");
+		if (P(t)) return t;
+		let n = t.trim().replace(/'/g, "\"");
+		return n.charAt(0) === "{" ? n : `{${n}}`;
 	}
 	return "";
 }, ve = /* @__PURE__ */ n({

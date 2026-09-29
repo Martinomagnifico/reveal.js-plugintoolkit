@@ -25,22 +25,23 @@ export const isJSON = (str: string): boolean => {
  * Smart quotes are replaced first — an editor or a CMS will have turned `"` into
  * `“` — and a bare `key: value` list is wrapped in braces, so
  * `data-x="delay: 100"` parses like `{"delay": 100}`.
+ *
+ * A string that is already valid JSON is returned as it is, so smart quotes
+ * inside its values are text and stay that way.
  */
 export const toJSONString = (str?: unknown): string => {
 	// Nothing to convert.
 	if (str == null) return '';
-
-	let modifiedStr = str;
-	if (typeof modifiedStr === 'string') {
-		modifiedStr = modifiedStr.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
-	}
 
 	if (isJSON(str as string)) return str as string;
 
 	if (typeof str === 'object') return JSON.stringify(str, null, 2);
 
 	if (typeof str === 'string') {
-		const trimmed = str.trim().replace(/'/g, '"');
+		const normalized = str.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+		if (isJSON(normalized)) return normalized;
+
+		const trimmed = normalized.trim().replace(/'/g, '"');
 		return trimmed.charAt(0) === '{' ? trimmed : `{${trimmed}}`;
 	}
 
