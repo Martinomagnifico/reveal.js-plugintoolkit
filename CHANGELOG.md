@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.2.7] - 2026-10-04
 
 ### Added
 - `entranceTools`: a container that animates in says when it is shown, and whatever is inside it waits for that.
