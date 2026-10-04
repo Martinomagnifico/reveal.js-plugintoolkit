@@ -24,5 +24,7 @@ export { addThemeColor } from './theme-tools';
 export { addSlideStates } from './state-tools';
 
 export { addAnchor } from './position-tools';
+export { markPending, announce, reset, whenShown, pendingAround } from './entrance-tools';
 export type { ThemeColors, ThemeColorPair, ThemeColorOptions } from './theme-tools';
 export type { AnchorEdge, AnchorOptions } from './position-tools';
+export type { EntranceMoment, EntranceState, EntranceEventDetail } from './entrance-tools';

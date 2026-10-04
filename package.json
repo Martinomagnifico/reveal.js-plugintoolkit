@@ -31,11 +31,12 @@
     "build:demo": "npm run build && cd demo && vite build",
     "preview": "npm run build && cd demo && serve -s .",
     "prepublishOnly": "npm run build",
-    "test": "npm run build && node test/event-tools.test.mjs && node test/theme-tools.test.mjs && node test/state-tools.test.mjs && node test/position-tools.test.mjs",
+    "test": "npm run build && node test/event-tools.test.mjs && node test/theme-tools.test.mjs && node test/state-tools.test.mjs && node test/position-tools.test.mjs && node test/entrance-tools.test.mjs",
     "test:events": "node test/event-tools.test.mjs",
     "test:theme": "node test/theme-tools.test.mjs",
+    "test:entrance": "node test/entrance-tools.test.mjs",
     "test:states": "node test/state-tools.test.mjs",
-    "test:positions": "node test/position-tools.test.mjs"
+    "test:positions": "node test/position-tools.test.mjs && node test/entrance-tools.test.mjs"
   },
   "peerDependencies": {
     "reveal.js": ">=4.0.0"

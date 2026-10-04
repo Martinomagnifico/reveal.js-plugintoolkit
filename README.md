@@ -508,6 +508,44 @@ deck.getRevealElement().addEventListener('click', (event) => {
 
 And look elements up when it needs them, rather than once at the start. Elements outside `.slides`, such as an anchor from `positionTools`, are not rebuilt.
 
+### Containers that say when they are shown (`entranceTools`)
+
+When something animates in, such as a panel animated by [Appearance](https://github.com/martinomagnifico/reveal.js-appearance), whatever is inside it should start when the panel can be seen: a chart should not build while its panel is still on its way in. The plugin that animates the panel knows its timing, so it says when the panel is far enough in. A plugin inside the panel only waits for that, and does not need to know what animates the panel.
+
+The signal is written on the container, and each step is also sent as an event that bubbles:
+
+| `data-entrance` | Event | When |
+| --- | --- | --- |
+| `pending` | | It will animate in, and has not started |
+| `shown` | `entranceshown` | Far enough in: half way, or at its `data-entrance-at` (0 to 1) |
+| `in` | `entrancein` | Fully in |
+
+A plugin that animates gives the signal:
+
+```javascript
+import { entranceTools } from 'reveal.js-plugintoolkit';
+
+entranceTools.markPending(element);                   // when it prepares the element
+entranceTools.announce(element, { duration: 1000 });  // when it starts coming in
+entranceTools.reset(element);                         // when it is hidden again
+```
+
+`announce` takes milliseconds, and an optional `delay` for what is left before the element starts moving. Called on `animationstart`, the delay has already passed, so leave it out.
+
+A plugin that waits asks for it:
+
+```javascript
+const ok = await entranceTools.whenShown(figure);              // 'shown' is the default
+const allIn = await entranceTools.whenShown(figure, 'in');
+const live = await entranceTools.whenShown(figure, 'shown', abortController.signal);
+```
+
+`whenShown` looks at the element and its ancestors up to its slide, and waits until every one that is still pending has reached the moment. It resolves `true`, at once when nothing around the element is pending, including when the reader prefers reduced motion. It resolves `false` when the signal aborts, for example because the presenter stepped back. `pendingAround(element, moment)` lists the containers it would wait for.
+
+Every plugin bundles its own copy of the toolkit, so the one that announces is seldom the copy that waits. That works because the signal is in the page: the attribute, the events, and the running timers are on the element. A deck can use the state in CSS too, without any JavaScript: `[data-entrance="in"] .badge { opacity: 1; }`.
+
+Only containers that a plugin announces are waited for. To also wait for animations from plugins that do not give the signal, look at `getAnimations()` when `pendingAround` finds nothing.
+
 ### Some section functions (`sectionTools`)
 
 - `isSection`: Check if the current slide is a section.

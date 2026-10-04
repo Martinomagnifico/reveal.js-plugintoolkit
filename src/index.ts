@@ -17,6 +17,7 @@ export * as textTools from './utils/plugin-tools/text-tools';
 export * as themeTools from './utils/plugin-tools/theme-tools';
 export * as stateTools from './utils/plugin-tools/state-tools';
 export * as positionTools from './utils/plugin-tools/position-tools';
+export * as entranceTools from './utils/plugin-tools/entrance-tools';
 
 // Export types
 export type { RevealInstance } from './types';
@@ -31,4 +32,5 @@ export type {
 export type { PluginSource } from './utils/plugin-css/path-finder';
 export type { ThemeColors, ThemeColorPair, ThemeColorOptions } from './utils/plugin-tools/theme-tools';
 export type { AnchorEdge, AnchorOptions } from './utils/plugin-tools/position-tools';
+export type { EntranceMoment, EntranceState, EntranceEventDetail } from './utils/plugin-tools/entrance-tools';
 export type { EnvironmentInfo, RevealSlideEvent } from './types';
