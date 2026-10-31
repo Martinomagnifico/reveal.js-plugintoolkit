@@ -1,7 +1,7 @@
 import type { RevealInstance } from '../types';
 export type { RevealInstance };
 
-import deepmerge from 'deepmerge';
+import { mergeDeep } from '../utils/plugin-tools/config-tools';
 import { detectEnvironment } from './environment';
 
 
@@ -75,10 +75,7 @@ export class PluginBase<TConfig extends object = Record<string, never>> {
         const userConfig = (revealConfig[this.pluginId] || {}) as Partial<TConfig>;
         this.userConfigData = userConfig;
         
-        this.mergedConfig = deepmerge(baseConfig, userConfig, {
-            arrayMerge: (_, sourceArray) => sourceArray,
-            clone: true
-        });
+        this.mergedConfig = mergeDeep<TConfig>(baseConfig, userConfig);
     }
 
 

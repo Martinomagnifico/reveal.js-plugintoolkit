@@ -47,3 +47,29 @@ export const toJSONString = (str?: unknown): string => {
 
 	return '';
 };
+
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+	if (value === null || typeof value !== 'object') return false;
+	const proto = Object.getPrototypeOf(value);
+	return proto === Object.prototype || proto === null;
+};
+
+// A config from JSON can have these as own keys; assigning them would reach Object.prototype.
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+/**
+ * Merge plain objects into a new object; a later source wins. Arrays and other
+ * values are replaced, not merged, and none of the inputs is changed.
+ */
+export const mergeDeep = <T>(...sources: unknown[]): T => {
+	const result: Record<string, unknown> = {};
+	for (const source of sources) {
+		if (!isPlainObject(source)) continue;
+		for (const key of Object.keys(source)) {
+			if (UNSAFE_KEYS.has(key)) continue;
+			const value = source[key];
+			result[key] = isPlainObject(value) ? mergeDeep(result[key], value) : value;
+		}
+	}
+	return result as T;
+};

@@ -98,7 +98,7 @@ export default () => {
 The above code will generate this:
 
 ```javascript
-import deepmerge from 'deepmerge';
+import { configTools } from 'reveal.js-plugintoolkit';
 
 export default () => {
   // Plugin implementation
@@ -110,10 +110,7 @@ export default () => {
       const revealConfig = deck.getConfig();
       const userConfig = revealConfig['minimal'] || {};
       
-      this.mergedConfig = deepmerge(defaultConfig, userConfig, {
-        arrayMerge: (_, sourceArray) => sourceArray,
-        clone: true
-      });
+      this.mergedConfig = configTools.mergeDeep(defaultConfig, userConfig);
     },
     
     getCurrentConfig: function() {

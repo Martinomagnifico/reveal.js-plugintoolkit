@@ -9,13 +9,13 @@
  *
  *   node test/event-tools.test.mjs
  *
- * No test framework and no new dependencies: reveal.js and deepmerge already sit
+ * No test framework and no new dependencies: reveal.js is already
  * in node_modules, and the fixture is written to a temp directory at run time so
  * nothing needs to be committed alongside it.
  */
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
-import { mkdtemp, writeFile, copyFile, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, copyFile, rm } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, extname, dirname, resolve } from 'node:path';
@@ -48,7 +48,6 @@ const PAGE = `<!doctype html>
     <section><section><h2>B1</h2></section><section><h2>B2</h2></section><section><h2>B3</h2></section></section>
     <section><h2>C</h2></section>
   </div></div>
-  <script type="importmap">{"imports":{"deepmerge":"./deepmerge.mjs"}}</script>
   <script type="module">
     import Reveal from './reveal.mjs';
     import { eventTools } from './plugintoolkit.mjs';
@@ -67,9 +66,6 @@ async function buildFixture() {
 	// A second copy under its own URL, instantiated separately — which is how plugins ship, each bundling the toolkit rather than sharing one.
 	await copyFile(join(ROOT, 'dist/plugintoolkit.mjs'), join(dir, 'plugintoolkit-copy.mjs'));
 	await copyFile(join(ROOT, 'node_modules/reveal.js/dist/reveal.mjs'), join(dir, 'reveal.mjs'));
-	// deepmerge publishes UMD/CJS only, and the page loads as a module.
-	const umd = await readFile(join(ROOT, 'node_modules/deepmerge/dist/umd.js'), 'utf8');
-	await writeFile(join(dir, 'deepmerge.mjs'), `${umd}\nexport default deepmerge;\n`);
 	return dir;
 }
 

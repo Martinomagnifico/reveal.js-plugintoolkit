@@ -23,7 +23,7 @@
  */
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
-import { mkdtemp, writeFile, copyFile, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, copyFile, rm } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, extname, dirname, resolve } from 'node:path';
@@ -71,7 +71,6 @@ const PAGE = `<!doctype html>
 </style>
 </head>
 <body>
-  <script type="importmap">{"imports":{"deepmerge":"./deepmerge.mjs"}}</script>
   <script type="module">
     import Reveal from './reveal.mjs';
     import { positionTools } from './plugintoolkit.mjs';
@@ -124,9 +123,6 @@ async function buildFixture() {
 	await copyFile(join(ROOT, 'dist/plugintoolkit.mjs'), join(dir, 'plugintoolkit-copy.mjs'));
 	await copyFile(join(ROOT, 'node_modules/reveal.js/dist/reveal.mjs'), join(dir, 'reveal.mjs'));
 	await copyFile(join(ROOT, 'node_modules/reveal.js/dist/reveal.css'), join(dir, 'reveal.css'));
-	// deepmerge publishes UMD/CJS only, and the page loads as a module.
-	const umd = await readFile(join(ROOT, 'node_modules/deepmerge/dist/umd.js'), 'utf8');
-	await writeFile(join(dir, 'deepmerge.mjs'), `${umd}\nexport default deepmerge;\n`);
 	return dir;
 }
 

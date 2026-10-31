@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.8] - 2026-10-31
+
+### Added
+- `configTools.mergeDeep()`: merges config objects into a new object, so plugins do not need the npm `deepmerge`.
+
+### Changed
+- The toolkit no longer depends on `deepmerge`. That package has a prototype-poisoning advisory.
+- `npm run preview` uses `vite preview` instead of `serve`. `serve` brought in packages with known vulnerabilities.
+
 ## [1.2.7] - 2026-10-04
 
 ### Added

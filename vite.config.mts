@@ -26,15 +26,18 @@ export default defineConfig({
 			checks: {
 				emptyImportMeta: false,
 			},
-			external: ["reveal.js", "deepmerge"],
+			external: ["reveal.js"],
 			output: {
 				globals: {
 					"reveal.js": "Reveal",
-					deepmerge: "deepmerge",
 				},
 			},
 		},
 		outDir: "dist",
+	},
+	// `npm run dev` opens the demo.
+	server: {
+		open: "/demo/index.html",
 	},
 	// Declarations are emitted relative to the src/ root, so the entry lands at
 	// dist/index.d.ts. package.json "types" points there.

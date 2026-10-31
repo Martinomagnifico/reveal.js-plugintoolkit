@@ -17,7 +17,7 @@
  */
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
-import { mkdtemp, writeFile, copyFile, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, copyFile, rm } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, extname, dirname, resolve } from 'node:path';
@@ -57,7 +57,6 @@ const PAGE = `<!doctype html>
       <section><h2>Stack child B</h2></section>
     </section>
   </div></div>
-  <script type="importmap">{"imports":{"deepmerge":"./deepmerge.mjs"}}</script>
   <script type="module">
     import Reveal from './reveal.mjs';
     import { themeTools } from './plugintoolkit.mjs';
@@ -79,8 +78,6 @@ async function buildFixture() {
 	await copyFile(join(ROOT, 'node_modules/reveal.js/dist/reveal.css'), join(dir, 'reveal.css'));
 	// moon, because it is dark (so the inverted colour differs) and it colours headings differently from body text (#eee8d5 against #93a1a1), which black does not. A theme that paints both the same would let a one-reading-for-both bug pass.
 	await copyFile(join(ROOT, 'node_modules/reveal.js/dist/theme/moon.css'), join(dir, 'theme.css'));
-	const umd = await readFile(join(ROOT, 'node_modules/deepmerge/dist/umd.js'), 'utf8');
-	await writeFile(join(dir, 'deepmerge.mjs'), `${umd}\nexport default deepmerge;\n`);
 	return dir;
 }
 

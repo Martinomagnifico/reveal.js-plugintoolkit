@@ -22,3 +22,8 @@ export declare const isJSON: (str: string) => boolean;
  * inside its values are text and stay that way.
  */
 export declare const toJSONString: (str?: unknown) => string;
+/**
+ * Merge plain objects into a new object; a later source wins. Arrays and other
+ * values are replaced, not merged, and none of the inputs is changed.
+ */
+export declare const mergeDeep: <T>(...sources: unknown[]) => T;
